@@ -5,7 +5,9 @@ project(aoc)
 find_package(GTest)
 
 add_executable(${PROJECT_NAME}
-  main.cpp)
+  main.cpp
+  get_input.cpp
+  )
 
 target_link_libraries(${PROJECT_NAME}
   GTest::GTest
