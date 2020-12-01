@@ -11,6 +11,7 @@ find_package(GTest)
 add_executable(${PROJECT_NAME}
   main.cpp
   get_input.cpp
+  solve.cpp
   )
 
 target_link_libraries(${PROJECT_NAME}

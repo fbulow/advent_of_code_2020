@@ -37,3 +37,20 @@ TEST(one, no_solution)
 {
   ASSERT_FALSE(bool(solve(get_input(), 2, 0)));
 }
+
+TEST(one_part_two, solution)
+{
+  std::vector<int> input = get_input();
+  ASSERT_LT(328440, solve(input, 3).value());
+}
+
+TEST(one_part_two, obvious)
+{
+  ASSERT_EQ(2018, solve({2018, 1, 1}, 3).value());
+}
+
+TEST(one_part_two, solution_two)
+{
+  std::vector<int> input = get_input();
+  ASSERT_EQ(281473080, solve(input, 3).value());
+}
