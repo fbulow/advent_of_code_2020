@@ -1,27 +1,28 @@
 #include "solve.hpp"
 #include <algorithm>
-
+#include <cassert>
 optional<int> solve(vector<int>::iterator first,
 		    vector<int>::iterator end,
 		    int pick, int magic_number)
 {
-  while(first != end)
+  assert(pick>0);
+  if(first==end) return {};
+    
+  if(pick==1)
     {
-      if(pick>2)
-	{
-	  auto attempt=solve(next(first), end, pick-1, magic_number-*first);
-	  if (attempt)
-	    return (*first)*attempt.value();
-	}
+      if( end != find(first,
+		      end,
+		      magic_number))
+	return magic_number;
       else
-	{
-	  auto other = find_if(first,
-			       end,
-			       [first, magic_number](auto x){return x+(*first) == magic_number;});
-	  if(other!=end)
-	    return (*first)*(*other);
-	}
-      first++;
+	return {};
     }
-  return {};
+  else
+    {
+      auto attempt=solve(next(first), end, pick-1, magic_number-*first);
+      if(attempt)
+	return ((*first) * attempt.value());
+      else
+	return solve(next(first), end, pick, magic_number);
+    }
 }
