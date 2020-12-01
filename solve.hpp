@@ -1,7 +1,11 @@
 #pragma once
 #include<vector>
+#include<optional>
 using namespace std;
-int solve(vector<int> input, int magic_number=2020)
+
+
+
+std::optional<int> solve(vector<int> input, int pick = 2, int magic_number=2020)
 {
   auto first = input.begin();
   while(first != input.end())
@@ -14,5 +18,5 @@ int solve(vector<int> input, int magic_number=2020)
       else
 	return (*first)*(*other);
     }
-  throw std::exception{};
+  return {};
 }

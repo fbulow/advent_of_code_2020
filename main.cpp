@@ -33,3 +33,7 @@ TEST(one, solution)
   ASSERT_EQ(864864, solve(input));
 }
 
+TEST(one, no_solution)
+{
+  ASSERT_FALSE(bool(solve(get_input(), 2, 0)));
+}
