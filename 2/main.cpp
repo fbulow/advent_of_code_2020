@@ -57,3 +57,9 @@ TEST(solve, example_data)
 {
   EXPECT_EQ(2, solve(example_input()));
 }
+
+
+TEST(solve, input)
+{
+  EXPECT_EQ(640, solve(input()));
+}
