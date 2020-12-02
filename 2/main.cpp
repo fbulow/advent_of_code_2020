@@ -2,6 +2,7 @@
 #include<vector>
 #include "get_input.hpp"
 #include "letter_count.hpp"
+#include <functional>
 using namespace std;
 
 TEST(hello, world)
@@ -48,9 +49,10 @@ TEST(check, fail)
   EXPECT_FALSE(check(sut));
 }
 
-int solve(vector<RuleAndPassword> const & data)
+int solve(vector<RuleAndPassword> const & data,
+	  function<bool(RuleAndPassword const &)> check = check)
 {
-  return count_if(data.begin(), data.end(), [](auto x){return check(x);});
+  return count_if(data.begin(), data.end(), check);
 }
 
 TEST(solve, example_data)
@@ -63,3 +65,5 @@ TEST(solve, input)
 {
   EXPECT_EQ(640, solve(input()));
 }
+
+
