@@ -15,7 +15,7 @@ TEST(hello, world)
 struct Hill :public vector<string>
 {
   int width{0};
-  char get(int row, int column)
+  char get(int row, int column) const
   {
     return operator[](row)[column%width];
   }
@@ -42,8 +42,8 @@ auto constexpr example = "/home/fbulow/proj/advent_of_code_2020/3/example.txt";
 TEST(get_input, example)
 {
   auto const sut = getInput(example);
-  EXPECT_EQ('.', sut[0][0]);
-  EXPECT_EQ('#', sut[0][2]);
+  EXPECT_EQ('.', sut.get(0,0));
+  EXPECT_EQ('#', sut.get(0,2));
   EXPECT_EQ(11, sut.size());
   for(auto x:sut)
       ASSERT_EQ(11, sut.size());
@@ -51,7 +51,7 @@ TEST(get_input, example)
 
 bool hit(Hill const &data, unsigned int row, unsigned int column)
 {
-  return data[row][column]=='#';
+  return data.get(row,column)=='#';
 }
 
 TEST(example, hit_and_miss)
@@ -74,6 +74,12 @@ struct Position{
   {
     return {row+d.down, column+d.right};
   }
+  
+  void operator+=(Direction const & d)
+  {
+    row+=d.down;
+    column+=d.right;
+  }
 };
 
 
@@ -84,4 +90,30 @@ TEST(step, make_steps)
   EXPECT_EQ(3, sut.column);
 }
 
+TEST(step, make_step_increment)
+{
+  auto sut = Position{0,0};
+  sut+=Direction{3,1};
+  EXPECT_EQ(1, sut.row);
+  EXPECT_EQ(3, sut.column);
+}
 
+
+
+unsigned int solve(Hill const &h, Direction const & d)
+{
+  unsigned int count{0};
+  Position p{0,0};
+  while(p.row < h.size())
+    {
+      if(hit(h, p.row, p.column))
+	count++;
+      p+=d;
+    }
+  return count;
+}
+
+TEST(a, solve)
+{
+  ASSERT_EQ(7, solve(getInput(example), {3,1}));
+}
