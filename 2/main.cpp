@@ -61,9 +61,42 @@ TEST(solve, example_data)
 }
 
 
-TEST(solve, input)
+TEST(solve_a, input)
 {
   EXPECT_EQ(640, solve(input()));
 }
 
+bool check_toboggan(RuleAndPassword const &x)
+{
+  return
+    (x.password[x.rule.min-1] == x.rule.letter)
+    xor
+    (x.password[x.rule.max-1] == x.rule.letter);
+}
 
+
+TEST(check_toboggan, example_input)
+{
+  {
+    auto sut = example_input()[0];
+    EXPECT_TRUE(check_toboggan(sut));
+  }
+  {
+    auto sut = example_input()[1];
+    EXPECT_FALSE(check_toboggan(sut));
+  }
+  {
+    auto sut = example_input()[2];
+    EXPECT_FALSE(check_toboggan(sut));
+  }
+  
+}
+TEST(solve_b, example_data)
+{
+  EXPECT_EQ(1, solve(example_input(), check_toboggan));
+}
+
+TEST(solve_b, input)
+{
+  EXPECT_EQ(640, solve(input(), check_toboggan));
+}
