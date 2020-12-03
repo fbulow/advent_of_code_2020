@@ -12,9 +12,11 @@ TEST(hello, world)
 }
 
 
-vector<string> getInput(string filename)
+using Hill = vector<string>;
+
+Hill getInput(string filename)
 {
-  vector<string> ret;
+  Hill ret;
   ifstream in(filename);
   string line;
   optional<int> size;
@@ -34,10 +36,23 @@ auto constexpr example = "/home/fbulow/proj/advent_of_code_2020/3/example.txt";
 TEST(get_input, example)
 {
   auto const sut = getInput(example);
-  ASSERT_EQ('.', sut[0][0]);
-  ASSERT_EQ('#', sut[0][2]);
-  ASSERT_EQ(11, sut.size());
+  EXPECT_EQ('.', sut[0][0]);
+  EXPECT_EQ('#', sut[0][2]);
+  EXPECT_EQ(11, sut.size());
   for(auto x:sut)
       ASSERT_EQ(11, sut.size());
+}
+
+bool hit(Hill const &data, unsigned int line, unsigned int column)
+{
+  return data[line][column]=='#';
+}
+
+TEST(example, hit_and_miss)
+{
+  auto const sut = getInput(example);
+  EXPECT_FALSE(hit(sut, 0, 0));
+  EXPECT_FALSE(hit(sut, 0, 1));
+  EXPECT_TRUE (hit(sut, 0, 2));
 }
 
