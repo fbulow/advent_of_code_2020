@@ -124,3 +124,25 @@ TEST(input, solve)
 {
   ASSERT_EQ(237, solve(getInput(input), {3,1}));
 }
+
+unsigned int multipleSlopes(Hill const &h)
+{
+  unsigned int ret = 1;
+  for(auto d : {Direction{1,1},
+		Direction{3,1},
+		Direction{5, 1},
+		Direction{7, 1},
+		Direction{1, 2}})
+    ret*=solve(h, d);
+  return ret;
+}
+
+TEST(multipleSlopes, example)
+{
+  ASSERT_EQ(336, multipleSlopes(getInput(example)));
+}
+
+TEST(multipleSlopes, input)
+{
+  ASSERT_EQ(2106818610, multipleSlopes(getInput(input)));
+}
