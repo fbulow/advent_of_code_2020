@@ -12,20 +12,26 @@ TEST(hello, world)
 }
 
 
-using Hill = vector<string>;
+struct Hill :public vector<string>
+{
+  int width{0};
+  char get(int row, int column)
+  {
+    return operator[](row)[column%width];
+  }
+};
 
 Hill getInput(string filename)
 {
   Hill ret;
   ifstream in(filename);
   string line;
-  optional<int> size;
   while(std::getline(in,line))
     {
-      if(!size)
-	size = line.size();
+      if(ret.width==0)
+	ret.width = line.size();
       else
-	  assert(line.size()==size);
+	  assert(ret.width == line.size());
       ret.push_back(line);
     }
   return ret;
@@ -43,9 +49,9 @@ TEST(get_input, example)
       ASSERT_EQ(11, sut.size());
 }
 
-bool hit(Hill const &data, unsigned int line, unsigned int column)
+bool hit(Hill const &data, unsigned int row, unsigned int column)
 {
-  return data[line][column]=='#';
+  return data[row][column]=='#';
 }
 
 TEST(example, hit_and_miss)
@@ -55,4 +61,27 @@ TEST(example, hit_and_miss)
   EXPECT_FALSE(hit(sut, 0, 1));
   EXPECT_TRUE (hit(sut, 0, 2));
 }
+
+struct Direction{
+  unsigned int right;
+  unsigned int down;
+};
+
+struct Position{
+  unsigned int row;
+  unsigned int column;
+  Position operator+(Direction const & d)
+  {
+    return {row+d.down, column+d.right};
+  }
+};
+
+
+TEST(step, make_steps)
+{
+  auto const sut = Position{0,0} + Direction{3,1};
+  EXPECT_EQ(1, sut.row);
+  EXPECT_EQ(3, sut.column);
+}
+
 
