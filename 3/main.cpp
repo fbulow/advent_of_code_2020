@@ -117,3 +117,10 @@ TEST(a, solve)
 {
   ASSERT_EQ(7, solve(getInput(example), {3,1}));
 }
+
+auto constexpr input = "/home/fbulow/proj/advent_of_code_2020/3/input";
+
+TEST(input, solve)
+{
+  ASSERT_EQ(237, solve(getInput(input), {3,1}));
+}
