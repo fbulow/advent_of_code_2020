@@ -56,6 +56,16 @@ bool hasKey(string const &c, string const &key)
   return regex_search(c.begin(), c.end(), regex(key+":"));
 }
 
+
+auto constexpr byr = "byr";     
+auto constexpr iyr = "iyr";     
+auto constexpr eyr = "eyr";     
+auto constexpr hgt = "hgt";     
+auto constexpr hcl = "hcl";     
+auto constexpr ecl = "ecl";     
+auto constexpr pid = "pid";     
+auto constexpr cid = "cid";     
+
 TEST(hasKey, first)
 {
   
@@ -66,8 +76,9 @@ TEST(hasKey, first)
   EXPECT_EQ(second,
 	    getCredentials(example)[1]);
 
-  EXPECT_TRUE(hasKey(second, "byr"));//first
-  EXPECT_TRUE(hasKey(second, "iyr"));//last
-  EXPECT_TRUE(hasKey(second, "eyr"));//not first or last
-  EXPECT_FALSE(hasKey(second, "hgt"));//missing
+  EXPECT_TRUE(hasKey(second, byr));//first
+  EXPECT_TRUE(hasKey(second, iyr));//last
+  EXPECT_TRUE(hasKey(second, eyr));//not first or last
+  EXPECT_TRUE(hasKey(second, hcl));//after newline
+  EXPECT_FALSE(hasKey(second, hgt));//missing
 }
