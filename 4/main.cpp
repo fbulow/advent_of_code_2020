@@ -317,6 +317,8 @@ TEST(isValidPassport, invalid_ones)
   EXPECT_FALSE(isValidPassport(sut[1]));
   EXPECT_FALSE(isValidPassport(sut[2]));
   EXPECT_FALSE(isValidPassport(sut[3]));
+
+  EXPECT_EQ(0, count_if(sut.begin(), sut.end(), isValidPassport));
 }
 
 TEST(isValidPassport, valid_ones)
@@ -326,5 +328,13 @@ TEST(isValidPassport, valid_ones)
   EXPECT_TRUE(isValidPassport(sut[1]));
   EXPECT_TRUE(isValidPassport(sut[2]));
   EXPECT_TRUE(isValidPassport(sut[3]));
+
+  EXPECT_EQ(4, count_if(sut.begin(), sut.end(), isValidPassport));
+
 }
 
+TEST(solution, b)
+{
+  auto const sut = getBatch(input);
+  EXPECT_EQ(121, count_if(sut.begin(), sut.end(), isValidPassport));
+}
