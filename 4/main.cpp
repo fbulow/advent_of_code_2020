@@ -223,7 +223,8 @@ bool validateFields(string const & c)
     return inIntervall(get(c, byr), 1920, 2002);
   if(hasKey(c, iyr))
     return inIntervall(get(c, iyr), 2010, 2020);
-  //eyr
+  if(hasKey(c, eyr))
+    return inIntervall(get(c, eyr), 2010, 2030);
   if(hasKey(c, hgt))
 	return
 	  inIntervall(getCm(get(c,hgt)), 150, 193) or
@@ -238,11 +239,18 @@ bool validateFields(string const & c)
   return false;
 }
 
-TEST(validateFields, case_iyr)
+TEST(validateFields, case_eyr)
 {
   EXPECT_TRUE (validateFields("iyr:2010"));
   EXPECT_TRUE (validateFields("iyr:2020"));
   EXPECT_FALSE(validateFields("iyr:2003"));
+}
+
+TEST(validateFields, case_iyr)
+{
+  EXPECT_TRUE (validateFields("eyr:2020"));
+  EXPECT_TRUE (validateFields("eyr:2030"));
+  EXPECT_FALSE(validateFields("eyr:2003"));
 }
 
 
