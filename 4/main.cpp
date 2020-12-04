@@ -86,7 +86,7 @@ TEST(hasKey, first)
   EXPECT_FALSE(hasKey(second, hgt));//missing
 }
 
-bool isValid(string const &credential)
+bool hasAllFields(string const &credential)
 {
   for( auto key: {byr,     
 		  iyr,     
@@ -100,23 +100,23 @@ bool isValid(string const &credential)
   return true;
 }
   
-TEST(isValid, credential)
+TEST(hasAllFields, credential)
 {
-  EXPECT_TRUE (isValid(getBatch(example)[0]));
-  EXPECT_FALSE(isValid(getBatch(example)[1]));
+  EXPECT_TRUE (hasAllFields(getBatch(example)[0]));
+  EXPECT_FALSE(hasAllFields(getBatch(example)[1]));
 }
 
-TEST(isValid, Example)
+TEST(hasAllFields, Example)
 {
   auto const sut = getBatch(example);
-  EXPECT_EQ(2, count_if(sut.begin(), sut.end(), [](auto const &c){return isValid(c);}));
+  EXPECT_EQ(2, count_if(sut.begin(), sut.end(), [](auto const &c){return hasAllFields(c);}));
 
 }
 
-TEST(isValid, Input)
+TEST(hasAllFields, Input)
 {
   auto const sut = getBatch(input);
-  EXPECT_EQ(190, count_if(sut.begin(), sut.end(), [](auto const &c){return isValid(c);}));
+  EXPECT_EQ(190, count_if(sut.begin(), sut.end(), [](auto const &c){return hasAllFields(c);}));
 
 }
 
