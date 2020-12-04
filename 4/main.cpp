@@ -119,3 +119,29 @@ TEST(isValid, Input)
   EXPECT_EQ(190, count_if(sut.begin(), sut.end(), [](auto const &c){return isValid(c);}));
 
 }
+
+string removeKey(string const &s)
+{
+  return {s, s.find(":")+1};
+}
+
+TEST(removeKey, test)
+{
+  EXPECT_EQ("gry", removeKey("ecl:gry"));
+  EXPECT_EQ("grygg", removeKey("ecl:grygg"));
+}
+
+string get(string const & c, string const & key)
+{
+  smatch m;
+  regex_search(c, m, regex(key+":[^ \n]*"));
+  return removeKey(m[0]);
+}
+
+TEST(get, first)
+{
+  EXPECT_EQ("gry",
+	    get("ecl:gry pid:860033327 eyr:2020 hcl:#fffffd\n"
+		"byr:1937 iyr:2017 cid:147 hgt:183cm\n", ecl));
+
+}
