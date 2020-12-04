@@ -214,9 +214,6 @@ bool matches(string const &value, string const & sxpr)
 		     regex(sxpr));
 }
 
-
-
-
 bool validateFields(string const & c)
 {
   if(hasKey(c, byr))
@@ -239,18 +236,19 @@ bool validateFields(string const & c)
   return false;
 }
 
-TEST(validateFields, case_eyr)
+TEST(validateFields, case_iyr)
 {
   EXPECT_TRUE (validateFields("iyr:2010"));
   EXPECT_TRUE (validateFields("iyr:2020"));
   EXPECT_FALSE(validateFields("iyr:2003"));
 }
 
-TEST(validateFields, case_iyr)
+TEST(validateFields, case_eyr)
 {
   EXPECT_TRUE (validateFields("eyr:2020"));
   EXPECT_TRUE (validateFields("eyr:2030"));
   EXPECT_FALSE(validateFields("eyr:2003"));
+  EXPECT_FALSE(validateFields("eyr:1972"));
 }
 
 
@@ -292,10 +290,22 @@ bool isValidPassport(string const & p)
   return hasAllFields(p) and validateFields(p);
 }
 
+
+/*
+TEST(isValidPassport, invalid_ones_first)
+{
+  EXPECT_FALSE(isValidPassport("eyr:1972 cid:100\n"
+			       "hcl:#18171d ecl:amb hgt:170 pid:186cm iyr:2018 byr:1926\n"));
+}
+
+
 /*
 TEST(isValidPassport, invalid_ones)
 {
   auto const sut = getBatch(invalid_passports);
+
+  cout << sut[0]<<endl;
+  
   EXPECT_FALSE(isValidPassport(sut[0]));
   EXPECT_FALSE(isValidPassport(sut[1]));
   EXPECT_FALSE(isValidPassport(sut[2]));
