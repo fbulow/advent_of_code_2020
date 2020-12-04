@@ -146,25 +146,103 @@ TEST(get, first)
 }
 
 
-bool validateFields(string const & c)
+optional<int> getUnit(string hgt, string const &unit)
 {
-  return false;
+  string out;
+  if(not regex_match(hgt.begin(),
+		     hgt.end(),
+		     regex("[0-9]*"+unit+"$")))
+    return {};
+  
+  if(out.begin() == regex_replace(out.begin(),
+				  hgt.begin(),
+				  hgt.end(),
+				  regex(unit+"$"),
+				  ""))
+    return {};
+  else
+      return stoi(out);
 }
 
 
-TEST(validateFields, by_inspection)
+TEST(getUnit, no_unit)
+{
+  EXPECT_FALSE(getUnit("190","in"));
+}
+
+optional<int> getInch(string hgt)
+{
+  return getUnit(hgt, "in");
+}
+
+TEST(getInch, first)
+{
+  EXPECT_FALSE(bool(getInch("")));
+  EXPECT_FALSE(bool(getInch("50cm")));
+  EXPECT_EQ(5, getInch("5in").value());
+  EXPECT_EQ(60, getInch("60in").value());
+}
+
+optional<int> getCm(string hgt)
+{
+  return getUnit(hgt, "cm");
+}
+
+TEST(getCm, first)
+{
+  EXPECT_FALSE(bool(getCm("")));
+  EXPECT_EQ(5, getCm("5cm").value());
+}
+
+bool validateFields(string const & c)
+{
+  if(hasKey(c, byr))
+    {
+      auto y = stoi(get(c,byr));
+      return (y>=1920)and(y<=2002);
+    }
+  if(hasKey(c, hgt))
+    {
+      auto h = getCm(get(c,hgt));
+      if(h)
+	return (h.value()>=150) and (h.value()<=193);
+      h = getInch(get(c,hgt));
+      if(h)
+	return (h.value()>=59) and (h.value()<=76);
+      return false;
+    }
+
+  return false;
+}
+
+TEST(validateFields, case_byr)
 {
   EXPECT_TRUE (validateFields("byr:2002"));
   EXPECT_FALSE(validateFields("byr:2003"));
+}
+
+TEST(validateFields, case_hgt)
+{
   EXPECT_TRUE (validateFields("hgt:60in"));
   EXPECT_TRUE (validateFields("hgt:190cm"));
   EXPECT_FALSE(validateFields("hgt:190in"));
   EXPECT_FALSE(validateFields("hgt:190"));
+}
+/*
+TEST(validateFields, case_hcl)
+{
   EXPECT_TRUE (validateFields("hcl:#123abc"));
   EXPECT_FALSE(validateFields("hcl:#123abz"));
   EXPECT_FALSE(validateFields("hcl:123abc"));
+}
+TEST(validateFields, case_ecl)
+{
   EXPECT_TRUE (validateFields("ecl:brn"));
   EXPECT_FALSE(validateFields("ecl:wat"));
+}
+TEST(validateFields, case_pid)
+{
   EXPECT_TRUE (validateFields("pid:000000001"));
   EXPECT_FALSE(validateFields("pid:0123456789"));
 }
+*/
