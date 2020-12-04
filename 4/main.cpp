@@ -225,7 +225,15 @@ bool validateFields(string const & c)
 			 x.end(),
 			 regex("(amb)|(blu)|(brn)|(gry)|(grn)|(hzl)|(oth)"));
     }
+  if(hasKey(c, pid)) 
+    {
+      auto x = get(c, pid);
+      return regex_match(x.begin(),
+			 x.end(),
+			 regex("[0-9]{9}"));
 
+    }
+    
   return false;
 }
 
@@ -255,10 +263,10 @@ TEST(validateFields, case_ecl)
   EXPECT_TRUE (validateFields("ecl:brn"));
   EXPECT_FALSE(validateFields("ecl:wat"));
 }
-/*
+
 TEST(validateFields, case_pid)
 {
   EXPECT_TRUE (validateFields("pid:000000001"));
   EXPECT_FALSE(validateFields("pid:0123456789"));
 }
-*/
+
