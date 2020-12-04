@@ -211,6 +211,13 @@ bool validateFields(string const & c)
 	return (h.value()>=59) and (h.value()<=76);
       return false;
     }
+  if(hasKey(c, hcl))
+    {
+      auto x = get(c, hcl);
+      return regex_match(x.begin(),
+			 x.end(),
+			 regex("^#[0-9a-f]{6}$"));
+    }
 
   return false;
 }
@@ -228,13 +235,14 @@ TEST(validateFields, case_hgt)
   EXPECT_FALSE(validateFields("hgt:190in"));
   EXPECT_FALSE(validateFields("hgt:190"));
 }
-/*
+
 TEST(validateFields, case_hcl)
 {
   EXPECT_TRUE (validateFields("hcl:#123abc"));
   EXPECT_FALSE(validateFields("hcl:#123abz"));
   EXPECT_FALSE(validateFields("hcl:123abc"));
 }
+/*
 TEST(validateFields, case_ecl)
 {
   EXPECT_TRUE (validateFields("ecl:brn"));
