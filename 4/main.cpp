@@ -12,11 +12,13 @@ TEST(hello, world)
   ASSERT_TRUE(true);
 }
 
-vector<string> getCredentials(string const &filename)
+using Batch = vector<string>;
+
+Batch getBatch(string const &filename)
 {
+  Batch ret;
   ifstream in(filename);
   assert(in.is_open());
-  vector<string> ret;
   string line;
   ostringstream credentials{};
   while(getline(in, line))
@@ -34,20 +36,20 @@ vector<string> getCredentials(string const &filename)
   return ret;
 }
 
-TEST(getCredentials, first)
+TEST(getBatch, first)
 {
   EXPECT_EQ(
-	  getCredentials(example)[0],
+	  getBatch(example)[0],
 	  "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd\n"
 	  "byr:1937 iyr:2017 cid:147 hgt:183cm\n");
 
   EXPECT_EQ(
-	  getCredentials(example)[1],
+	  getBatch(example)[1],
 	  "iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884\n"
 	  "hcl:#cfa07d byr:1929\n");
 
   EXPECT_EQ(4,
-	    getCredentials(example).size());
+	    getBatch(example).size());
 }
 
 
@@ -74,7 +76,7 @@ TEST(hasKey, first)
 
   
   EXPECT_EQ(second,
-	    getCredentials(example)[1]);
+	    getBatch(example)[1]);
 
   EXPECT_TRUE(hasKey(second, byr));//first
   EXPECT_TRUE(hasKey(second, iyr));//last
@@ -82,3 +84,4 @@ TEST(hasKey, first)
   EXPECT_TRUE(hasKey(second, hcl));//after newline
   EXPECT_FALSE(hasKey(second, hgt));//missing
 }
+
