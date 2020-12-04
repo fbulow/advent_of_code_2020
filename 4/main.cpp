@@ -143,5 +143,28 @@ TEST(get, first)
   EXPECT_EQ("gry",
 	    get("ecl:gry pid:860033327 eyr:2020 hcl:#fffffd\n"
 		"byr:1937 iyr:2017 cid:147 hgt:183cm\n", ecl));
+}
 
+
+bool validateFields(string const & c)
+{
+  return false;
+}
+
+
+TEST(validateFields, by_inspection)
+{
+  EXPECT_TRUE (validateFields("byr:2002"));
+  EXPECT_FALSE(validateFields("byr:2003"));
+  EXPECT_TRUE (validateFields("hgt:60in"));
+  EXPECT_TRUE (validateFields("hgt:190cm"));
+  EXPECT_FALSE(validateFields("hgt:190in"));
+  EXPECT_FALSE(validateFields("hgt:190"));
+  EXPECT_TRUE (validateFields("hcl:#123abc"));
+  EXPECT_FALSE(validateFields("hcl:#123abz"));
+  EXPECT_FALSE(validateFields("hcl:123abc"));
+  EXPECT_TRUE (validateFields("ecl:brn"));
+  EXPECT_FALSE(validateFields("ecl:wat"));
+  EXPECT_TRUE (validateFields("pid:000000001"));
+  EXPECT_FALSE(validateFields("pid:0123456789"));
 }
