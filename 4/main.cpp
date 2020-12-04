@@ -270,3 +270,17 @@ TEST(validateFields, case_pid)
   EXPECT_FALSE(validateFields("pid:0123456789"));
 }
 
+bool isValidPassport(string const & p)
+{
+  return hasAllFields(p) and validateFields(p);
+}
+
+
+TEST(isValidPassport, invalid_ones)
+{
+  auto const sut = getBatch(invalid_passports);
+  EXPECT_FALSE(isValidPassport(sut[0]));
+  EXPECT_FALSE(isValidPassport(sut[1]));
+  EXPECT_FALSE(isValidPassport(sut[2]));
+  EXPECT_FALSE(isValidPassport(sut[3]));
+}

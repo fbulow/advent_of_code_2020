@@ -17,6 +17,7 @@ target_compile_options(${PROJECT_NAME}
   PUBLIC
     -Dexample="${CMAKE_CURRENT_SOURCE_DIR}/example"
     -Dinput="${CMAKE_CURRENT_SOURCE_DIR}/input"
+    -Dinvalid_passports="${CMAKE_CURRENT_SOURCE_DIR}/invalid_passports"
   )
 
 target_link_libraries(${PROJECT_NAME}
