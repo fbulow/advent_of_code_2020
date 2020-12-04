@@ -195,9 +195,9 @@ TEST(getCm, first)
 }
 
 
-bool inIntervall(int value, int min, int max)
+bool inIntervall(optional<int> value, int min, int max)
 {
-  return
+  return value     and
     (value >= min) and
     (value <= max);
 }
@@ -207,44 +207,27 @@ bool inIntervall(string value, int min, int max)
   return inIntervall(stoi(value), min, max);
 }
 
+bool matches(string const &value, string const & sxpr)
+{
+  return regex_match(value.begin(),
+		     value.end(),
+		     regex(sxpr));
+}
+
 bool validateFields(string const & c)
 {
   if(hasKey(c, byr))
     return inIntervall(get(c, byr), 1920, 2002);
   if(hasKey(c, hgt))
-    {
-      try{
-	return inIntervall(getCm(get(c,hgt)).value(), 150, 193);
-      }catch(...){}
-      
-      try{
-	return inIntervall(getInch(get(c,hgt)).value(), 59, 76);
-      }catch(...){}
-
-      return false;
-    }
+	return
+	  inIntervall(getCm(get(c,hgt)), 150, 193) or
+	  inIntervall(getInch(get(c,hgt)), 59, 76);
   if(hasKey(c, hcl))
-    {
-      auto x = get(c, hcl);
-      return regex_match(x.begin(),
-			 x.end(),
-			 regex("^#[0-9a-f]{6}$"));
-    }
+    return matches(get(c, hcl), "^#[0-9a-f]{6}$");
   if(hasKey(c, ecl))
-    {
-      auto x = get(c, ecl);
-      return regex_match(x.begin(),
-			 x.end(),
-			 regex("(amb)|(blu)|(brn)|(gry)|(grn)|(hzl)|(oth)"));
-    }
-  if(hasKey(c, pid)) 
-    {
-      auto x = get(c, pid);
-      return regex_match(x.begin(),
-			 x.end(),
-			 regex("[0-9]{9}"));
-
-    }
+    return matches(get(c, ecl), "(amb)|(blu)|(brn)|(gry)|(grn)|(hzl)|(oth)");
+  if(hasKey(c, pid))
+    return matches(get(c, pid), "[0-9]{9}");
     
   return false;
 }
