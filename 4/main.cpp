@@ -157,7 +157,7 @@ optional<int> getUnit(string hgt, string const &unit)
   if(out.begin() == regex_replace(out.begin(),
 				  hgt.begin(),
 				  hgt.end(),
-				  regex(unit+"$"),
+				  regex(unit),
 				  ""))
     return {};
   else
@@ -175,7 +175,7 @@ optional<int> getInch(string hgt)
   return getUnit(hgt, "in");
 }
 
-TEST(getInch, first)//Intermittent fails?
+TEST(getInch, first)
 {
   EXPECT_FALSE(bool(getInch("")));
   EXPECT_FALSE(bool(getInch("50cm")));
@@ -277,7 +277,7 @@ TEST(validateFields, case_byr)
   EXPECT_FALSE(validateField("byr:2003", byr));
 }
 
-TEST(validateFields, case_hgt) // Intermitent faults????
+TEST(validateFields, case_hgt)
 {
   EXPECT_TRUE (validateField("hgt:190cm", hgt));
   EXPECT_TRUE (validateField("hgt:60in", hgt));
