@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <regex>
+#include <algorithm>
 using namespace std;
 
 TEST(hello, world)
@@ -85,3 +86,36 @@ TEST(hasKey, first)
   EXPECT_FALSE(hasKey(second, hgt));//missing
 }
 
+bool isValid(string const &credential)
+{
+  for( auto key: {byr,     
+		  iyr,     
+		  eyr,     
+		  hgt,     
+		  hcl,     
+		  ecl,     
+		  pid})
+    if(not hasKey(credential, key))
+      return false;
+  return true;
+}
+  
+TEST(isValid, credential)
+{
+  EXPECT_TRUE (isValid(getBatch(example)[0]));
+  EXPECT_FALSE(isValid(getBatch(example)[1]));
+}
+
+TEST(isValid, Example)
+{
+  auto const sut = getBatch(example);
+  EXPECT_EQ(2, count_if(sut.begin(), sut.end(), [](auto const &c){return isValid(c);}));
+
+}
+
+TEST(isValid, Input)
+{
+  auto const sut = getBatch(input);
+  EXPECT_EQ(190, count_if(sut.begin(), sut.end(), [](auto const &c){return isValid(c);}));
+
+}
