@@ -175,7 +175,7 @@ optional<int> getInch(string hgt)
   return getUnit(hgt, "in");
 }
 
-TEST(getInch, first)
+TEST(getInch, first)//Intermittent fails?
 {
   EXPECT_FALSE(bool(getInch("")));
   EXPECT_FALSE(bool(getInch("50cm")));
@@ -214,75 +214,94 @@ bool matches(string const &value, string const & sxpr)
 		     regex(sxpr));
 }
 
-bool validateFields(string const & c)
+bool validateField(string const & c, string const & key)
 {
-  if(hasKey(c, byr))
-    return inIntervall(get(c, byr), 1920, 2002);
-  if(hasKey(c, iyr))
-    return inIntervall(get(c, iyr), 2010, 2020);
-  if(hasKey(c, eyr))
-    return inIntervall(get(c, eyr), 2010, 2030);
-  if(hasKey(c, hgt))
+  if (key==byr)
+      return inIntervall(get(c, byr), 1920, 2002);
+  else if (key==iyr)
+      return inIntervall(get(c, iyr), 2010, 2020);
+  else if (key==eyr)
+      return inIntervall(get(c, eyr), 2010, 2030);
+  else if (key==hgt)
 	return
 	  inIntervall(getCm(get(c,hgt)), 150, 193) or
 	  inIntervall(getInch(get(c,hgt)), 59, 76);
-  if(hasKey(c, hcl))
-    return matches(get(c, hcl), "^#[0-9a-f]{6}$");
-  if(hasKey(c, ecl))
-    return matches(get(c, ecl), "(amb)|(blu)|(brn)|(gry)|(grn)|(hzl)|(oth)");
-  if(hasKey(c, pid))
-    return matches(get(c, pid), "[0-9]{9}");
-    
-  return false;
+  else if (key== hcl)
+      return matches(get(c, hcl), "^#[0-9a-f]{6}$");
+  else if (key==ecl)
+      return matches(get(c, ecl), "(amb)|(blu)|(brn)|(gry)|(grn)|(hzl)|(oth)");
+  else if (key == pid)
+      return matches(get(c, pid), "[0-9]{9}");
+  else
+    assert(false);
+}
+
+bool validateFields(string const & c)
+{
+
+  vector<string> keys{
+    byr,     
+    iyr,     
+    eyr,     
+    hgt,     
+    hcl,     
+    ecl,     
+    pid};
+  return all_of(keys.begin(),
+		keys.end(),
+		[c](auto const &key){
+		  return validateField(c, key);
+		});
+
 }
 
 TEST(validateFields, case_iyr)
 {
-  EXPECT_TRUE (validateFields("iyr:2010"));
-  EXPECT_TRUE (validateFields("iyr:2020"));
-  EXPECT_FALSE(validateFields("iyr:2003"));
+  EXPECT_TRUE (validateField("iyr:2010",iyr));
+  EXPECT_TRUE (validateField("iyr:2020",iyr));
+  EXPECT_FALSE(validateField("iyr:2003",iyr));
 }
 
 TEST(validateFields, case_eyr)
 {
-  EXPECT_TRUE (validateFields("eyr:2020"));
-  EXPECT_TRUE (validateFields("eyr:2030"));
-  EXPECT_FALSE(validateFields("eyr:2003"));
-  EXPECT_FALSE(validateFields("eyr:1972"));
+  EXPECT_TRUE (validateField("eyr:2020",eyr));
+  EXPECT_TRUE (validateField("eyr:2030",eyr));
+  EXPECT_FALSE(validateField("eyr:2003",eyr));
+  EXPECT_FALSE(validateField("eyr:1972",eyr));
 }
 
 
 TEST(validateFields, case_byr)
 {
-  EXPECT_TRUE (validateFields("byr:2002"));
-  EXPECT_FALSE(validateFields("byr:2003"));
+  EXPECT_TRUE (validateField("byr:2002", byr));
+  EXPECT_FALSE(validateField("byr:2003", byr));
 }
 
 TEST(validateFields, case_hgt) // Intermitent faults????
 {
-  EXPECT_TRUE (validateFields("hgt:190cm"));
-  EXPECT_TRUE (validateFields("hgt:60in"));
-  EXPECT_FALSE(validateFields("hgt:190in"));
-  EXPECT_FALSE(validateFields("hgt:190"));
+  EXPECT_TRUE (validateField("hgt:190cm", hgt));
+  EXPECT_TRUE (validateField("hgt:60in", hgt));
+  EXPECT_FALSE(validateField("hgt:190in", hgt));
+  EXPECT_FALSE(validateField("hgt:190", hgt));
 }
 
 TEST(validateFields, case_hcl)
 {
-  EXPECT_TRUE (validateFields("hcl:#123abc"));
-  EXPECT_FALSE(validateFields("hcl:#123abz"));
-  EXPECT_FALSE(validateFields("hcl:123abc"));
+  EXPECT_TRUE (validateField("hcl:#123abc", hcl));
+  EXPECT_FALSE(validateField("hcl:#123abz", hcl));
+  EXPECT_FALSE(validateField("hcl:123abc", hcl));
 }
 
 TEST(validateFields, case_ecl)
 {
-  EXPECT_TRUE (validateFields("ecl:brn"));
-  EXPECT_FALSE(validateFields("ecl:wat"));
+  EXPECT_TRUE (validateField("ecl:brn", ecl));
+  EXPECT_FALSE(validateField("ecl:wat", ecl));
 }
 
 TEST(validateFields, case_pid)
 {
-  EXPECT_TRUE (validateFields("pid:000000001"));
-  EXPECT_FALSE(validateFields("pid:0123456789"));
+  EXPECT_TRUE (validateField("pid:000000001", pid));
+  EXPECT_FALSE(validateField("pid:0123456789", pid));
 }
 
 bool isValidPassport(string const & p)
@@ -291,24 +310,21 @@ bool isValidPassport(string const & p)
 }
 
 
-/*
-TEST(isValidPassport, invalid_ones_first)
-{
-  EXPECT_FALSE(isValidPassport("eyr:1972 cid:100\n"
-			       "hcl:#18171d ecl:amb hgt:170 pid:186cm iyr:2018 byr:1926\n"));
-}
-
-
-/*
 TEST(isValidPassport, invalid_ones)
 {
   auto const sut = getBatch(invalid_passports);
-
-  cout << sut[0]<<endl;
-  
   EXPECT_FALSE(isValidPassport(sut[0]));
   EXPECT_FALSE(isValidPassport(sut[1]));
   EXPECT_FALSE(isValidPassport(sut[2]));
   EXPECT_FALSE(isValidPassport(sut[3]));
 }
-*/
+
+TEST(isValidPassport, valid_ones)
+{
+  auto const sut = getBatch(valid_passports);
+  EXPECT_TRUE(isValidPassport(sut[0]));
+  EXPECT_TRUE(isValidPassport(sut[1]));
+  EXPECT_TRUE(isValidPassport(sut[2]));
+  EXPECT_TRUE(isValidPassport(sut[3]));
+}
+
