@@ -93,22 +93,26 @@ TEST(solution, a)
 	largest=s;
     }
   
-  EXPECT_EQ(0, largest);
+  EXPECT_EQ(880, largest);
 }
 
-/*
-TEST(solution, a)
+
+TEST(solution, b)
 {
   auto const sut = getInput(input);
-  vector<int> c;
-  c.reserve(sut.size());
-  ASSERT_TRUE(c.empty());
+  vector<int> x;
+  x.resize(sut.size());
 
   transform(sut.begin(),
 	    sut.end(),
-	    c.begin(),
-	    decode);
-  EXPECT_NE(136, *max_element(c.begin(), c.end()));
-  
+	    x.begin(),
+	    seatId);
+  ASSERT_EQ(880, *max_element(x.begin(), x.end()));
+
+  sort(x.begin(), x.end());
+
+  for(int i=1;i<x.size();i++)
+    if((x[i]-x[i-1])==2)
+      EXPECT_EQ(731, (x[i-1]+x[i])/2);
 }
-*/
+
