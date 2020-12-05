@@ -15,16 +15,28 @@ TEST(hello, world)
   ASSERT_TRUE(true);
 }
 
-int row(string const &bsp) //binary space partition
+unsigned int seatId(string const &bsp) //binary space partition
 {
-  return
-    64*(bsp[0]=='B')+
-    32*(bsp[1]=='B')+
-    16*(bsp[2]=='B')+
-    8*(bsp[3]=='B')+
-    4*(bsp[4]=='B')+
-    2*(bsp[5]=='B')+
-    1*(bsp[6]=='B');
+  unsigned int ret{0};
+  for(char x:bsp)
+    {
+      ret*=2;
+      if(x=='B' or x=='R')
+	ret++;
+    }
+
+  return ret;
+}
+
+
+unsigned int row(string const &bsp) //binary space partition
+{
+  return seatId(bsp)/8;
+}
+
+unsigned int column(string const &bsp) //binary space partition
+{
+  return seatId(bsp)%8;
 }
 
 TEST(row, first)
@@ -32,28 +44,13 @@ TEST(row, first)
   EXPECT_EQ(70, row("BFFFBBFRRR"));
 }
 
-int column(string const &bsp) //binary space partition
-{
-  char const one = 'R';
-  return
-    4*(bsp[7]==one)+
-    2*(bsp[8]==one)+
-    1*(bsp[9]==one);
-}
 
 TEST(column, first)
 {
     EXPECT_EQ(7, column("BFFFBBFRRR"));
 }
 
-
-int seatId(string const &bsp) //binary space partition
-{
-  return row(bsp)*8+column(bsp);
-}
-
-
-TEST(Example, decode)
+TEST(Example, seatId)
 {
   EXPECT_EQ(357, seatId("FBFBBFFRLR"));
   EXPECT_EQ(567, seatId("BFFFBBFRRR"));
@@ -82,37 +79,22 @@ TEST(getInput, first_and_last)
 }
 
 
-TEST(solution, a)
+TEST(solution, a_and_b)
 {
   auto const sut = getInput(input);
-  int largest = seatId(sut[0]);
-  for(auto const &x: sut)
-    {
-      auto s = seatId(x);
-      if(largest<s)
-	largest=s;
-    }
-  
-  EXPECT_EQ(880, largest);
-}
-
-
-TEST(solution, b)
-{
-  auto const sut = getInput(input);
-  vector<int> x;
+  vector<unsigned int> x;
   x.resize(sut.size());
 
   transform(sut.begin(),
 	    sut.end(),
 	    x.begin(),
 	    seatId);
-  ASSERT_EQ(880, *max_element(x.begin(), x.end()));
+  ASSERT_EQ(880, *max_element(x.begin(), x.end())); //A
 
   sort(x.begin(), x.end());
 
-  for(int i=1;i<x.size();i++)
+  for(size_t i=1;i<x.size();i++)
     if((x[i]-x[i-1])==2)
-      EXPECT_EQ(731, (x[i-1]+x[i])/2);
+      ASSERT_EQ(731, (x[i-1]+x[i])/2); //B
 }
 
