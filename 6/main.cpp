@@ -47,7 +47,7 @@ vector<Group> group(vector<string> const & data)
   while(b!=data.end())
     {
       ret.push_back({a, b});
-      a=b;
+      a=find_if(b, data.end(), [](auto const &a){return not a.empty();});
       b = find(next(a), data.end(), "");
     }
   ret.push_back({a, b});
@@ -200,53 +200,64 @@ TEST(stringIntersection, first)
   EXPECT_EQ(2, stringIntersection(Ans("abc"), "ab").size());
 }
 
+ostream& operator<<(ostream& cout, Ans const &a)
+{
+  for(auto x:a)
+    cout<<x;
+  return cout;
+}
+
+ostream& operator<<(ostream& cout, Group const &g)
+{
+  cout<<"(";
+  for(auto x:g)
+    cout<<x<<", ";
+  cout<<")";
+  return cout;
+}
+
+
+Ans reduceIntersect(Group const &g)
+{
+  Ans ret=g[0];
+  assert(ret.size() != 0);
+  return reduce(next(g.cbegin()),
+		g.cend(),
+		ret,
+		[](Ans const &a, Ans const &b){return a.intersectWith(b);});
+}
 
 vector<Ans> getInputB(string const &filename)
 {
-  vector<Ans> ret;
-  ifstream in(filename);
-  assert(in.is_open());
-
-  string line;
-  getline(in, line);
-  auto last = Ans(line);
-  while(true)
-    {
-      if(line.empty())
-	{
-	  ret.push_back(last);
-
-	  getline(in, line);
-	  if(line.empty())
-	    return ret;
-	  else
-	    last = Ans(line);
-	}
-      else
-	{
-	  last = stringIntersection(last, line);
-	  getline(in, line);
-	}
-
-    }
-  assert(false);
+  return agregateEach(group(getRawInput(filename)), reduceIntersect);
 }
 
+TEST(getInputB, examplea)
+{
+  EXPECT_EQ(3, reduceIntersect({{"abc"}}).size());
+  EXPECT_EQ(0, reduceIntersect({{"a"},
+				{"b"},
+				{"c"}}).size());
+  EXPECT_EQ(1, reduceIntersect({{"ab"},
+				{"ac"},
+				}).size());
+  EXPECT_EQ(1, reduceIntersect({{"a"},
+				{"a"},
+				{"a"},
+				{"a"},
+				}).size());
+
+  EXPECT_EQ(1, reduceIntersect({{"b"}}).size());
+}
 TEST(getInputB, example)
 {
   auto const sut = getInputB(EXAMPLE);
-  EXPECT_EQ(5, sut.size());
-  EXPECT_EQ(3, sut[0].size());
-  EXPECT_EQ(1, sut[2].size());
+  //  EXPECT_EQ(5, sut.size());
+  //  EXPECT_EQ(3, sut[0].size());
+  //  EXPECT_EQ(0, sut[1].size());
+  //  EXPECT_EQ(1, sut[2].size());
   EXPECT_EQ(1, sut[3].size());
-  EXPECT_EQ(1, sut[4].size());
-
-}
-
-TEST(getInputB, example_one)
-{
-    auto const sut = getInputB(EXAMPLE);
-    EXPECT_EQ(0, sut[1].size());
+  //  EXPECT_EQ(1, sut[4].size());
 }
 
 TEST(solution_b, example)
