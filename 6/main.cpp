@@ -47,12 +47,6 @@ TEST(solution, example)
   EXPECT_EQ(11, solution(getInputA(EXAMPLE)));
 }
 
-TEST(solution_a, input)
-{
-  EXPECT_NE(6589, solution(getInputA(INPUT)));//Error, assuming no newline on last line of input.
-  EXPECT_EQ(6596, solution(getInputA(INPUT)));
-}
-
 TEST(toAns, first)
 {
   EXPECT_EQ(3, Ans("abc").size());
@@ -102,9 +96,18 @@ TEST(solution_b, example)
 }
 
 
+TEST(solution_a, input)
+{
+  EXPECT_EQ(6596, solution(getInputA(INPUT)));
+  EXPECT_EQ(6596, solve(INPUT, reduceUnion));
+}
+
 TEST(solution_b, input)
 {
   EXPECT_EQ(3219, solution(getInputB(INPUT)));
+  EXPECT_EQ(3219, solve(INPUT, reduceIntersect));
+  
 }
+
 
 /**/

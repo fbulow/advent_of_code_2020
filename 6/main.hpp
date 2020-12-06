@@ -88,6 +88,23 @@ vector<Ans> agregateEach(vector<Group> const & data, auto reducer)
   return ret;
 }
 
+size_t solve(vector<Group> const & data, auto reducer)
+{
+  vector<size_t> ret(data.size());
+  transform(data.cbegin(), data.cend(),
+	    ret.begin(),
+	    [reducer](Group const &g){return reducer(g).size();});
+  return accumulate( ret.begin(),
+		     ret.end(),
+		     0);
+}
+
+size_t solve(string const &filename, auto reducer)
+{
+  return solve(group(getRawInput(filename)), reducer);
+}
+
+
 
 int solution(vector<Ans> const &data)
 {
@@ -98,6 +115,7 @@ int solution(vector<Ans> const &data)
 	    [](Ans const &x){return x.size();});
   return accumulate(s.begin(), s.end(), 0);
 }
+
 
 Ans stringIntersection(Ans const & a, string const & s)
 {
