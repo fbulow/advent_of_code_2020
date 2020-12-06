@@ -9,7 +9,7 @@
 //#include <string_view>
 #include <vector>
 #include<set>
-
+#include<numeric>
 
 using namespace std;
 
@@ -61,3 +61,23 @@ TEST(getInput, example)
   EXPECT_TRUE(sut[4].contains('b'));
 }
 
+int solution(vector<Ans> const &data)
+{
+  vector<int> s(data.size());
+  transform(data.begin(),
+	    data.end(),
+	    s.begin(),
+	    [](Ans const &x){return x.size();});
+  return accumulate(s.begin(), s.end(), 0);
+}
+
+TEST(solution, example)
+{
+  EXPECT_EQ(11, solution(getInput(EXAMPLE)));
+}
+
+TEST(solution_a, input)
+{
+  EXPECT_NE(6589, solution(getInput(INPUT)));//Error, assuming no newline on last line of input.
+  EXPECT_EQ(6596, solution(getInput(INPUT)));
+}
