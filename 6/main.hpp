@@ -88,7 +88,7 @@ vector<Ans> agregateEach(vector<Group> const & data, auto reducer)
   return ret;
 }
 
-size_t solve(vector<Group> const & data, auto reducer)
+size_t reduceAndCount(vector<Group> const & data, auto reducer)
 {
   vector<size_t> ret(data.size());
   transform(data.cbegin(), data.cend(),
@@ -99,9 +99,9 @@ size_t solve(vector<Group> const & data, auto reducer)
 		     0);
 }
 
-size_t solve(string const &filename, auto reducer)
+size_t reduceAndCount(string const &filename, auto reducer)
 {
-  return solve(group(getRawInput(filename)), reducer);
+  return reduceAndCount(group(getRawInput(filename)), reducer);
 }
 
 

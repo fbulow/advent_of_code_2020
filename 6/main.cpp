@@ -99,13 +99,13 @@ TEST(solution_b, example)
 TEST(solution_a, input)
 {
   EXPECT_EQ(6596, solution(getInputA(INPUT)));
-  EXPECT_EQ(6596, solve(INPUT, reduceUnion));
+  EXPECT_EQ(6596, reduceAndCount(INPUT, reduceUnion));
 }
 
 TEST(solution_b, input)
 {
   EXPECT_EQ(3219, solution(getInputB(INPUT)));
-  EXPECT_EQ(3219, solve(INPUT, reduceIntersect));
+  EXPECT_EQ(3219, reduceAndCount(INPUT, reduceIntersect));
   
 }
 
