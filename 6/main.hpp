@@ -124,13 +124,3 @@ Ans reduceIntersect(Group const &g)
 		[](Ans const &a, Ans const &b){return a.intersectWith(b);});
 }
 
-vector<Ans> getInputA(string const &filename)
-{
-  return agregateEach(group(getRawInput(filename)), reduceUnion);
-}
-
-vector<Ans> getInputB(string const &filename)
-{
-  return agregateEach(group(getRawInput(filename)), reduceIntersect);
-}
-

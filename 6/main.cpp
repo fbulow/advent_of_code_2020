@@ -27,22 +27,6 @@ TEST(Ans, unionWidth)
   EXPECT_EQ(4, Ans{"abc"}.unionWith(Ans{"bcd"}).size());
 }
 
-TEST(getInput, example)
-{
-  auto const sut = getInputA(EXAMPLE);
-  EXPECT_EQ(5, sut.size());
-  EXPECT_EQ(3, sut[0].size());
-  EXPECT_EQ(3, sut[1].size());
-  EXPECT_EQ(3, sut[2].size());
-  EXPECT_EQ(1, sut[3].size());
-  EXPECT_EQ(1, sut[4].size());
-
-  EXPECT_EQ(1, sut[4].size());
-  
-  EXPECT_TRUE(sut[4].contains('b'));
-}
-
-
 TEST(toAns, first)
 {
   EXPECT_EQ(3, Ans("abc").size());
@@ -75,17 +59,6 @@ TEST(getInputB, examplea)
   EXPECT_EQ(1, reduceIntersect({{"b"}}).size());
 }
 
-TEST(getInputB, example)
-{
-  auto const sut = getInputB(EXAMPLE);
-   EXPECT_EQ(5, sut.size());
-   EXPECT_EQ(3, sut[0].size());
-   EXPECT_EQ(0, sut[1].size());
-   EXPECT_EQ(1, sut[2].size());
-   EXPECT_EQ(1, sut[3].size());
-   EXPECT_EQ(1, sut[4].size());
-}
-
 TEST(solution, a)
 {
   EXPECT_EQ(11, reduceAndCount(EXAMPLE, reduceUnion));
@@ -100,4 +73,4 @@ TEST(solution, b)
 }
 
 
-/**/
+
