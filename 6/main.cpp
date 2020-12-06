@@ -42,10 +42,6 @@ TEST(getInput, example)
   EXPECT_TRUE(sut[4].contains('b'));
 }
 
-TEST(solution, example)
-{
-  EXPECT_EQ(11, solution(getInputA(EXAMPLE)));
-}
 
 TEST(toAns, first)
 {
@@ -90,21 +86,15 @@ TEST(getInputB, example)
    EXPECT_EQ(1, sut[4].size());
 }
 
-TEST(solution_b, example)
+TEST(solution, a)
 {
-  EXPECT_EQ(6, solution(getInputB(EXAMPLE)));
-}
-
-
-TEST(solution_a, input)
-{
-  EXPECT_EQ(6596, solution(getInputA(INPUT)));
+  EXPECT_EQ(11, reduceAndCount(EXAMPLE, reduceUnion));
   EXPECT_EQ(6596, reduceAndCount(INPUT, reduceUnion));
 }
 
-TEST(solution_b, input)
+TEST(solution, b)
 {
-  EXPECT_EQ(3219, solution(getInputB(INPUT)));
+  EXPECT_EQ(6, reduceAndCount(EXAMPLE, reduceIntersect));
   EXPECT_EQ(3219, reduceAndCount(INPUT, reduceIntersect));
   
 }

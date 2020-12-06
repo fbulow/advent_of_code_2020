@@ -104,19 +104,6 @@ size_t reduceAndCount(string const &filename, auto reducer)
   return reduceAndCount(group(getRawInput(filename)), reducer);
 }
 
-
-
-int solution(vector<Ans> const &data)
-{
-  vector<int> s(data.size());
-  transform(data.begin(),
-	    data.end(),
-	    s.begin(),
-	    [](Ans const &x){return x.size();});
-  return accumulate(s.begin(), s.end(), 0);
-}
-
-
 Ans stringIntersection(Ans const & a, string const & s)
 {
   Ans ret{};
