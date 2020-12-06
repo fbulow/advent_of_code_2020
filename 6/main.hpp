@@ -49,8 +49,7 @@ struct Ans : public set<char>
   
   Ans(string const &s)
     :set<char>(s.begin(), s.end())
-  {
-  }
+  {}
   
   Ans unionWith(Ans const& other) const
   {
@@ -69,7 +68,6 @@ struct Ans : public set<char>
 		     inserter(ret, ret.begin()));
     return ret;
   }
-  
 };
 
 Ans reduceUnion(Group const &g)
