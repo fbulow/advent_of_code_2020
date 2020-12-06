@@ -29,7 +29,7 @@ TEST(Ans, unionWidth)
 
 TEST(getInput, example)
 {
-  auto const sut = getInput(EXAMPLE);
+  auto const sut = getInputA(EXAMPLE);
   EXPECT_EQ(5, sut.size());
   EXPECT_EQ(3, sut[0].size());
   EXPECT_EQ(3, sut[1].size());
@@ -44,13 +44,13 @@ TEST(getInput, example)
 
 TEST(solution, example)
 {
-  EXPECT_EQ(11, solution(getInput(EXAMPLE)));
+  EXPECT_EQ(11, solution(getInputA(EXAMPLE)));
 }
 
 TEST(solution_a, input)
 {
-  EXPECT_NE(6589, solution(getInput(INPUT)));//Error, assuming no newline on last line of input.
-  EXPECT_EQ(6596, solution(getInput(INPUT)));
+  EXPECT_NE(6589, solution(getInputA(INPUT)));//Error, assuming no newline on last line of input.
+  EXPECT_EQ(6596, solution(getInputA(INPUT)));
 }
 
 TEST(toAns, first)

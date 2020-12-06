@@ -79,13 +79,6 @@ Ans reduceUnion(Group const &g)
 		[](Ans const &a, Ans const &b){return a.unionWith(b);});
 }
 
-Ans agregateAnyOf(Ans a, Ans const &b)
-{
-    for(char x: b)
-      a.insert(x);
-    return a;
-};
-
 vector<Ans> agregateEach(vector<Group> const & data, auto reducer)
 {
   vector<Ans> ret(data.size());
@@ -95,10 +88,6 @@ vector<Ans> agregateEach(vector<Group> const & data, auto reducer)
   return ret;
 }
 
-vector<Ans> getInput(string const &filename)
-{
-  return agregateEach(group(getRawInput(filename)), reduceUnion);
-}
 
 int solution(vector<Ans> const &data)
 {
@@ -120,23 +109,6 @@ Ans stringIntersection(Ans const & a, string const & s)
   return ret;
 }
 
-ostream& operator<<(ostream& cout, Ans const &a)
-{
-  for(auto x:a)
-    cout<<x;
-  return cout;
-}
-
-ostream& operator<<(ostream& cout, Group const &g)
-{
-  cout<<"(";
-  for(auto x:g)
-    cout<<x<<", ";
-  cout<<")";
-  return cout;
-}
-
-
 Ans reduceIntersect(Group const &g)
 {
   Ans ret=g[0];
@@ -145,6 +117,11 @@ Ans reduceIntersect(Group const &g)
 		g.cend(),
 		ret,
 		[](Ans const &a, Ans const &b){return a.intersectWith(b);});
+}
+
+vector<Ans> getInputA(string const &filename)
+{
+  return agregateEach(group(getRawInput(filename)), reduceUnion);
 }
 
 vector<Ans> getInputB(string const &filename)
