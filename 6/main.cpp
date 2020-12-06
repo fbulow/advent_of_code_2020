@@ -41,12 +41,8 @@ vector<Ans> getInput(string const &filename)
 	for(char c:line)
 	  last.insert(c);
     }
-  if(not line.empty())
-    {
-      for(char c:line)
-	last.insert(c);
-      ret.push_back(last);
-    }
+  ret.push_back(last);
+    
   return ret;
 }
 
