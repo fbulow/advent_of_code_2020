@@ -15,8 +15,8 @@ add_executable(${PROJECT_NAME}
 
 target_compile_options(${PROJECT_NAME}
   PUBLIC
-    -Dexample="${CMAKE_CURRENT_SOURCE_DIR}/example"
-    -Dinput="${CMAKE_CURRENT_SOURCE_DIR}/input"
+    -DEXAMPLE="${CMAKE_CURRENT_SOURCE_DIR}/example"
+    -DINPUT="${CMAKE_CURRENT_SOURCE_DIR}/input"
   )
 
 target_link_libraries(${PROJECT_NAME}
