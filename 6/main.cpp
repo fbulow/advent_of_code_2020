@@ -34,10 +34,11 @@ TEST(getRawInput, first)
   EXPECT_EQ(15, getRawInput(EXAMPLE).size());
 }
 
+using Group=vector<string>;
 
-vector<vector<string>> group(vector<string> const & data)
+vector<Group> group(vector<string> const & data)
 {
-  vector<vector<string>> ret;
+  vector<Group> ret;
 
   auto a = data.begin();
   auto b = find(data.begin(), data.end(), "");
@@ -63,14 +64,59 @@ struct Ans : public set<char>
   Ans()
   {
   }
+
+  Ans(Ans const & other)
+    :set<char>(other)
+  {}
   
   Ans(string const &s)
   {
     for(char c: s)
       insert(c);
   }
-};
 
+  Ans unionWith(Ans const& other) const
+  {
+    Ans ret;
+    set_union(cbegin(), cend(),
+	      other.cbegin(), other.cend(),
+	      inserter(ret, ret.begin()));
+    return ret;
+  }
+
+  Ans intersectWith(Ans const& other) const
+  {
+    Ans ret;
+    set_intersection(cbegin(), cend(),
+		     other.cbegin(), other.cend(),
+		     inserter(ret, ret.begin()));
+    return ret;
+  }
+  
+};
+TEST(Ans, intersectWith)
+{
+  Ans a;
+  a = Ans("abd");
+  EXPECT_EQ(2, Ans{"abc"}.intersectWith(Ans{"bcd"}).size());
+}
+
+TEST(Ans, unionWidth)
+{
+  Ans a;
+  a = Ans("abd");
+  EXPECT_EQ(4, Ans{"abc"}.unionWith(Ans{"bcd"}).size());
+}
+
+
+Ans reduceUnion(Group const &g)
+{
+  Ans ret;
+  return reduce(g.cbegin(),
+		g.cend(),
+		ret,
+		[](Ans const &a, Ans const &b){return a.unionWith(b);});
+}
 
 Ans agregateAnyOf(Ans a, Ans const &b)
 {
@@ -80,28 +126,23 @@ Ans agregateAnyOf(Ans a, Ans const &b)
 };
 
 
-vector<Ans> getInput(vector<vector<string>> const & data, auto agregate=agregateAnyOf)
+vector<Ans> agregateEach(vector<Group> const & data, auto reducer)
 {
-  vector<Ans> ret;
-  for(auto const &grp:data)
-    {
-      Ans element;
-      for (auto const &v: grp)
-	element = agregateAnyOf(element, v);
-      ret.push_back(element);
-    }
+  vector<Ans> ret(data.size());
+  transform(data.cbegin(), data.cend(),
+	    ret.begin(),
+	    reducer);
   return ret;
 }
 
-vector<Ans> getInput(string const &filename, auto agregate=agregateAnyOf)
+vector<Ans> getInput(string const &filename)
 {
-  return getInput(group(getRawInput(filename)),
-		  agregate);
+  return agregateEach(group(getRawInput(filename)), reduceUnion);
 }
 
 TEST(getInput, example)
 {
-  auto const sut = getInput(EXAMPLE, agregateAnyOf);
+  auto const sut = getInput(EXAMPLE);
   EXPECT_EQ(5, sut.size());
   EXPECT_EQ(3, sut[0].size());
   EXPECT_EQ(3, sut[1].size());
@@ -126,13 +167,13 @@ int solution(vector<Ans> const &data)
 
 TEST(solution, example)
 {
-  EXPECT_EQ(11, solution(getInput(EXAMPLE, agregateAnyOf)));
+  EXPECT_EQ(11, solution(getInput(EXAMPLE)));
 }
 
 TEST(solution_a, input)
 {
-  EXPECT_NE(6589, solution(getInput(INPUT, agregateAnyOf)));//Error, assuming no newline on last line of input.
-  EXPECT_EQ(6596, solution(getInput(INPUT, agregateAnyOf)));
+  EXPECT_NE(6589, solution(getInput(INPUT)));//Error, assuming no newline on last line of input.
+  EXPECT_EQ(6596, solution(getInput(INPUT)));
 }
 
 TEST(toAns, first)
