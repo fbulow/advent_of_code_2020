@@ -4,6 +4,7 @@
 #include <regex>
 #include <iostream>
 #include <sstream>
+#include <numeric>
 TEST(hello, world)
 {
   EXPECT_TRUE(true);
@@ -42,22 +43,30 @@ TEST(getWords, first)
 	    sut[0]);
 }
 
+string join(auto b, auto e)
+{
+  string ret={};
+  return accumulate(b,
+		    e,
+		    ret,
+		    [](auto a, auto b)
+		    {
+		      if(a.empty())
+			return b;
+		      else
+			return a+" "+b;});
+}
+
 string getContainer(Words const &w)
 {
   auto iter = find_if(w.cbegin(),
 		      w.cend(),
 		      [](auto const &x){return "bags"==x;});
   assert(*next(iter) == "contain");
-  string ret=w[0];
-  auto i = next(w.cbegin());
-  while(i!=iter)
-    {
-      ret+=" ";
-      ret+=*i;
-      i = next(i);
-    }
-  return ret;
+  return join(w.cbegin(), iter);
 }
+
+
 
 string getContainer(string const &str)
 {
@@ -69,3 +78,4 @@ TEST(getContainer, first)
   EXPECT_EQ("light red",
 	    getContainer("light red bags contain 1 bright white bag, 2 muted yellow bags."));
 }
+
