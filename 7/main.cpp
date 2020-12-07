@@ -10,19 +10,6 @@ TEST(hello, world)
 }
 using namespace std;
 
-
-string getContainer(string const &str)
-{
-  return str.substr(0,
-		    str.find(" bags contain "));
-}
-
-TEST(getContainer, first)
-{
-  EXPECT_EQ("light red",
-	    getContainer("light red bags contain 1 bright white bag, 2 muted yellow bags."));
-}
-
 vector<string> getWords(istream &in)
 {
   vector<string> ret{};
@@ -53,4 +40,32 @@ TEST(getWords, first)
 	    sut.size());
   EXPECT_EQ("bags.",
 	    sut[0]);
+}
+
+string getContainer(Words const &w)
+{
+  auto iter = find_if(w.cbegin(),
+		      w.cend(),
+		      [](auto const &x){return "bags"==x;});
+  assert(*next(iter) == "contain");
+  string ret=w[0];
+  auto i = next(w.cbegin());
+  while(i!=iter)
+    {
+      ret+=" ";
+      ret+=*i;
+      i = next(i);
+    }
+  return ret;
+}
+
+string getContainer(string const &str)
+{
+  return getContainer(getWords(str));
+}
+
+TEST(getContainer, first)
+{
+  EXPECT_EQ("light red",
+	    getContainer("light red bags contain 1 bright white bag, 2 muted yellow bags."));
 }
