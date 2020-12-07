@@ -57,6 +57,11 @@ string join(auto b, auto e)
 			return a+" "+b;});
 }
 
+string join(auto a)
+{
+  return join(a.cbegin(), a.cend());
+}
+
 string getContainer(Words const &w)
 {
   auto iter = find_if(w.cbegin(),
@@ -77,5 +82,29 @@ TEST(getContainer, first)
 {
   EXPECT_EQ("light red",
 	    getContainer("light red bags contain 1 bright white bag, 2 muted yellow bags."));
+}
+
+Words getContents(Words const &w)
+{
+  auto iter = find_if(w.cbegin(),
+		      w.cend(),
+		      [](auto const &x){return "bags"==x;});
+  assert(*next(iter) == "contain");
+
+  advance(iter,2);
+  return Words(iter, w.cend());
+}
+
+Words getContents(string const &str)
+{  
+  return getContents(getWords(str));
+}
+
+TEST(getContents, first)
+{
+  EXPECT_EQ("1 bright white bag, 2 muted yellow bags.",
+	    join(getContents("light red bags contain 1 bright white bag, 2 muted yellow bags.")));
+  EXPECT_EQ("1 shiny gold bag.",
+	    join(getContents("bright white bags contain 1 shiny gold bag.")));
 }
 
