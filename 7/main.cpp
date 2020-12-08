@@ -108,17 +108,61 @@ TEST(getContents, first)
 	    join(getContents("bright white bags contain 1 shiny gold bag.")));
 }
 
-TEST(token_iterator, word)
+vector<Words> splitContents(auto&& begin,
+			    auto&& end,
+			    auto& ret)
 {
-  string s{"light red bags contain 1 bright white bag, 2 muted yellow bags."};
-  regex  e("(.*) bags contain(s?) (.* )");
+  auto i = find(begin,
+		end,
+		[](string const &x){return ',' == x.back()
+		    ;});
+  if(i==end)
+    return ret;
+  else
+      {
+	ret.push_back({});//{begin,i});
+	return splitContents(i, end, ret);
+      }
+}
 
-  // default constructor = end-of-sequence:
-  std::regex_token_iterator<std::string::iterator> rend;
-  
-  std::regex_token_iterator<std::string::iterator> a(s.begin(), s.end(), e, {1,3});
+vector<Words> splitContents(Words const &w)
+{
+  vector<Words> ret{};
+  auto begin = w.begin();
+  auto end = w.end();
+  while(begin<end)
+    {
+      auto i = find_if(begin,
+		       end,
+		       [](string x){return x.back()==',' or x.back()=='.';});
+      ret.push_back({begin,i});
+      assert(ret.size()<100);
+      begin = next(i);
+    }
+  return ret;
+}
 
-  while(a!=rend)
-    cout<<*(a++)<<endl;
+
+TEST(splitContets, word)
+{
+  auto const sut =
+    getContents("bright white bags contain 1 shiny gold bag.");
+  EXPECT_EQ(1, splitContents(sut).size());
+}
+
+TEST(splitContets, words)
+{
+  auto const sut = splitContents(getContents("muted yellow bags contain 2 shiny gold bags, 9 faded blue bags."));
+  EXPECT_EQ(2, sut.size());
+
+  {
+    auto const ref = vector<string>{"2", "shiny", "gold"};
+    EXPECT_EQ(ref, sut[0]);
+  }
+
+  {
+    auto const ref = vector<string>{"9", "faded", "blue"};
+    EXPECT_EQ(ref, sut[1]);
+  }
 }
 
