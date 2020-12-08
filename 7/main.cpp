@@ -108,3 +108,17 @@ TEST(getContents, first)
 	    join(getContents("bright white bags contain 1 shiny gold bag.")));
 }
 
+TEST(token_iterator, word)
+{
+  string s{"light red bags contain 1 bright white bag, 2 muted yellow bags."};
+  regex  e("(.*) bags contain(s?) (.* )");
+
+  // default constructor = end-of-sequence:
+  std::regex_token_iterator<std::string::iterator> rend;
+  
+  std::regex_token_iterator<std::string::iterator> a(s.begin(), s.end(), e, {1,3});
+
+  while(a!=rend)
+    cout<<*(a++)<<endl;
+}
+
