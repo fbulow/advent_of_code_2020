@@ -16,17 +16,19 @@ using namespace std;
 
 bool findSum(long int value, int count, auto begin, auto end)
 {
-  if(begin==end)
-    return false;
-  else if(count == 0)
-    return end != find(begin, end, value);
-  else
+  while(begin!=end)
     {
-      if (findSum(value-*begin, count-1, next(begin), end))
-	return true;
+      if(count == 0)
+	return end != find(begin, end, value);
       else
-	return findSum(value, count, next(begin), end);
+	{
+	  if (findSum(value-*begin, count-1, next(begin), end))
+	    return true;
+	  else
+	    advance(begin, 1);
+	}
     }
+  return false;
 }
   
 TEST(findSum, first)
@@ -68,7 +70,7 @@ TEST(checkPremble, first)
 vector<long int> getData(istream &&in)
 {
   vector<long int> ret;
-  int a;
+  long int a;
   in>>a;
   while(!in.eof())
     {
@@ -97,9 +99,8 @@ TEST(a, example)
 }
 
 
-long int solveA(vector<long int> const & data)
+long int solveA(vector<long int> const & data, int premble)
 {
-  int premble = 5;
   int count = 1;
   auto b = data.begin();
   
@@ -113,6 +114,11 @@ long int solveA(vector<long int> const & data)
 
 TEST(solveA, example)
 {
-  EXPECT_EQ(127, solveA(getData(ifstream(EXAMPLE))));
+  EXPECT_EQ(127, solveA(getData(ifstream(EXAMPLE)), 5));
+}
+
+TEST(solveA, input)
+{
+  EXPECT_EQ(258585477, solveA(getData(ifstream(INPUT)), 25));
 }
 
