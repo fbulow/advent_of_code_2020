@@ -3,7 +3,7 @@
 #include <vector>
 #include <fstream>
 //#include <regex>
-//#include <iostream>
+#include <iostream>
 //#include <sstream>
 //#include <numeric>
 
@@ -117,8 +117,49 @@ TEST(solveA, example)
   EXPECT_EQ(127, solveA(getData(ifstream(EXAMPLE)), 5));
 }
 
+constexpr auto answerA{258585477};
+
 TEST(solveA, input)
 {
-  EXPECT_EQ(258585477, solveA(getData(ifstream(INPUT)), 25));
+  EXPECT_EQ(answerA, solveA(getData(ifstream(INPUT)), 25));
+}
+
+auto contSum(long int value, auto begin, auto end)
+{
+  assert(*begin > 0);
+  assert(begin<end);
+  
+  if(value<0)
+    return end;
+  else if(value==*begin)
+    return begin;
+  else
+    return contSum(value-*begin, next(begin), end);
+}
+
+long int solveB(long int value, auto const &data)
+{
+  auto b = data.begin();
+  auto ans = contSum(value, b, data.end());
+  while(ans==data.end())
+    {
+      advance(b, 1);
+      ans = contSum(value, b, data.end());
+    }
+  advance(ans,1);
+  return *min_element(b,ans)+
+	 *max_element(b,ans);
+}
+
+TEST(sovleB, example)
+{
+  EXPECT_EQ(62, solveB(127, getData(ifstream(EXAMPLE))));
+}
+
+TEST(sovleB, input)
+{
+  EXPECT_TRUE(35321204 < solveB(answerA, getData(ifstream(INPUT))));
+              36981213
+  cout<<"Answer b: " <<solveB(answerA, getData(ifstream(INPUT)))<<endl;
 }
 
