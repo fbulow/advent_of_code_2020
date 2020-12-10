@@ -4,11 +4,9 @@
 #include <fstream>
 #include <iostream>
 #include <limits>
-//#include <regex>
-//#include <sstream>
 #include <numeric>
 
- using namespace std;
+using namespace std;
 
 using Joltage  = unsigned int;
 using Adaptors = vector<Joltage>;
@@ -32,14 +30,6 @@ Adaptors getData(istream &&in)
   return ret;
 }
 
-TEST(getData, example)
-{
-  EXPECT_EQ(11, getData(ifstream(EXAMPLE_SMALL)).size());
-  EXPECT_EQ(94, getData(ifstream(INPUT)).size());
-}
-
-// MUST always pick smallest adaptor, otherwise the smallest one can never be connected;
-
 set<Joltage> allAdaptors(istream &&in)
 {
   set<Joltage> ret;
@@ -48,9 +38,11 @@ set<Joltage> allAdaptors(istream &&in)
   return ret;
 }
 
+constexpr auto maxDiff = 3;
+
 Joltage deviceAdaptor(auto const &x)
 {
-  return 3 + *max_element(x.begin(), x.end());
+  return maxDiff + *max_element(x.begin(), x.end());
 }
 
 set<Joltage> allJoltages(istream &&in)
@@ -60,7 +52,6 @@ set<Joltage> allJoltages(istream &&in)
   ret.insert(deviceAdaptor(ret));
   return ret;
 }
-
 
 Joltage solveA(string filename)
 {
@@ -77,34 +68,40 @@ Joltage solveA(string filename)
   return occurences(1)*occurences(3);
 }
 
-TEST(solutionA, example)
-{
-  EXPECT_EQ(35, solveA(EXAMPLE_SMALL));
-  cout<<"Solution A: "<< solveA(INPUT)<<endl;
-}
-
 unsigned long int solveB(string filename)
 {
   auto v = getData(ifstream(filename));
   auto device = deviceAdaptor(v);
   v.push_back(device);
 
-  vector<unsigned long int> data(8+device); //Allocation, use with offset.
-  assert(data.size()==8+device);
-  for(auto &x: data)
-    x=0;
+  vector<unsigned long int> steps;
+  steps.resize(1+device, 0);
   
-  auto steps = data.data()+4;
   steps[0]=1;
   for(int x: v)
-      steps[x] = steps[x-1] + steps[x-2]  + steps[x-3] ;
+    for(int i=1;i<=maxDiff;i++)
+      if(x>=i)
+	steps[x]+= steps[x-i];
   
   return steps[device];
 }
+
+TEST(getData, example)
+{
+  EXPECT_EQ(11, getData(ifstream(EXAMPLE_SMALL)).size());
+  EXPECT_EQ(94, getData(ifstream(INPUT)).size());
+}
+
+
+TEST(solutionA, example)
+{
+  EXPECT_EQ(35, solveA(EXAMPLE_SMALL));
+  cout<<"Solution A: "<< solveA(INPUT)<<endl;
+}
+
 
 TEST(solve, b)
 {
   EXPECT_EQ(8, solveB(EXAMPLE_SMALL));
   cout<<"Solution b: "<<solveB(INPUT)<<endl;;
-  
 }
