@@ -159,7 +159,6 @@ TEST(sovleB, example)
 TEST(sovleB, input)
 {
   EXPECT_TRUE(35321204 < solveB(answerA, getData(ifstream(INPUT))));
-              36981213
   cout<<"Answer b: " <<solveB(answerA, getData(ifstream(INPUT)))<<endl;
 }
 
