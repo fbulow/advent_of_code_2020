@@ -171,6 +171,33 @@ TEST(combinations, connect_or_not)
 {
   EXPECT_EQ (2, combinations(10,  12, {11}));
 }
+
+unsigned long int solveB(string filename)
+{
+  auto v = getData(ifstream(filename));
+  auto device = deviceAdaptor(v);
+  v.push_back(device);
+
+  vector<unsigned long int> data(8+device);
+  assert(data.size()==8+device);
+  for(auto &x: data)
+    x=0;
+  
+  auto steps = data.data()+4;
+  steps[0]=1;
+  for(int x: v)
+      steps[x] = steps[x-1] + steps[x-2]  + steps[x-3] ;
+  
+  return steps[device];
+}
+
+TEST(solve, b)
+{
+  EXPECT_EQ(8, solveB(EXAMPLE_SMALL));
+  cout<<"Solution b: "<<solveB(INPUT)<<endl;;
+  
+}
+
 /*
 TEST(combinations, three)
 {
