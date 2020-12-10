@@ -49,7 +49,6 @@ bool canConnect(Joltage outlet, Joltage adaptor)
 {
   switch(adaptor-outlet)
     {
-    case 0:
     case 1:
     case 2:
     case 3:
@@ -61,7 +60,6 @@ bool canConnect(Joltage outlet, Joltage adaptor)
 TEST(can_connect, first)
 {
   EXPECT_TRUE(canConnect(10, 11));
-  EXPECT_TRUE(canConnect(11, 11));
   EXPECT_FALSE(canConnect(11, 10));
 }
 
@@ -126,43 +124,54 @@ TEST(solutionA, example)
   EXPECT_EQ(35, solutionA(EXAMPLE_SMALL));
   cout<<"Solution A: "<< solutionA(INPUT)<<endl;
 }
-  
-long unsigned int combinations(Joltage outlet, Joltage device, auto begin, auto end)
+
+long unsigned int combinations(Joltage device, auto begin, auto end, map<Joltage, long unsigned int> &waysToGetThere)
 {
-  if(canConnect(outlet,device))
+  if(begin==end)
     {
-      if(begin==end)
-	return 1;
+      for(auto x:waysToGetThere)
+	cout<<x.first<<", "<<x.second<<endl;
+      cout<<endl;
+      auto last = prev(waysToGetThere.end());
+      if(not canConnect(last->first, device))
+	return 0;
       else
-	return 1+combinations(outlet, device, next(begin), end);
+	return last->second;
     }
-  else if(begin==end)
-    return 0;
-  else if(canConnect(outlet, *begin))
-    return
-      combinations(*begin, device, next(begin), end)+
-      combinations(outlet, device, next(begin), end);
+  else if (canConnect(prev(waysToGetThere.end())->first, device))
+    return 1 + combinations(device, next(begin), end, waysToGetThere);
   else
-    return 0;
+    {
+      long unsigned int ways=0;
+      for(Joltage j: {*begin-3, *begin-2, *begin-1})
+	{
+	  auto it = find_if(waysToGetThere.begin(), waysToGetThere.end(), [j](auto const &x){return x.first==j;});;
+	  if(it!=waysToGetThere.end())
+	    ways+=it->second;
+	}
+      waysToGetThere[*begin] = ways;
+      return combinations(device, next(begin), end, waysToGetThere);
+    }
 }
 
 long unsigned int combinations(Joltage outlet, Joltage device, set<Joltage> adaptors)
 {
-  return combinations(outlet, device, adaptors.begin(), adaptors.end());
+  map<Joltage, long unsigned int> waysToGetThere;
+  waysToGetThere[outlet]=1;
+  return combinations(device, adaptors.begin(), adaptors.end(), waysToGetThere);
 }
 
 TEST(combinations, example)
 {
-  EXPECT_EQ(1, combinations(10,  10, {}));
   EXPECT_EQ(1, combinations(10,  11, {}));
   EXPECT_EQ(0, combinations(10,  20, {}));
 }
 
 TEST(combinations, connect_or_not)
 {
-  EXPECT_EQ (2, combinations(10,  11, {11}));
+  EXPECT_EQ (2, combinations(10,  12, {11}));
 }
-
+/*
 TEST(combinations, three)
 {
   EXPECT_EQ (3, combinations(10,  14, {11,12}));
@@ -179,4 +188,6 @@ TEST(solution, b)
 {
   ASSERT_EQ(8, solutionB(EXAMPLE_SMALL));
   cout<< "Solution b "<<solutionB(INPUT)<<endl;
+  EXPECT_TRUE(false);
 }
+*/
