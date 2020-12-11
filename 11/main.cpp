@@ -112,19 +112,28 @@ vector<Coord> const & directions(){
   return ret;
 }
 
-int countAdjecent(Room const &r, Coord const &c)
+char nearSeat(Coord start, Room const &r, Coord const &dir)
+{
+  start+=dir;
+  return r[start.row][start.column];
+}
+
+int countAdjecent(Room const &r, Coord const &c, auto ns)
 {
   auto d = directions();
   
   return count_if(d.begin(),
 		  d.end(),
-		  [=](auto coord)
+		  [=](auto direction)
 		  {
-		    auto checkSeat = coord+c;
-		    return '#' == r[checkSeat.row][checkSeat.column];
+		    return '#' == ns(c, r, direction);
 		  });
-    
 }
+int countAdjecentA(Room const &r, Coord const &c)
+{
+  return countAdjecent(r, c, nearSeat);
+}
+
 
 void step(Room const &r, Room &ret, auto countAdjecent)
 {
@@ -153,10 +162,15 @@ Room step(Room const &r, auto countAdjecent)
   return ret;
 }
 
+Room stepA(Room const &r)
+{
+  return step(r,countAdjecentA);
+}
+	   
 
 TEST(step, one)
 {
-  auto sut = step(frameIt(getRoom(EXAMPLE)), countAdjecent);
+  auto sut = stepA(frameIt(getRoom(EXAMPLE)));
   auto i =0;
   
   EXPECT_EQ("............", sut[i++]);
@@ -172,9 +186,9 @@ TEST(step, one)
   EXPECT_EQ(".#.#####.##.", sut[i++]);
   EXPECT_EQ("............", sut[i++]);
 }
-TEST(step, two)
+TEST(stepA, two)
 {
-  auto sut = step(step(frameIt(getRoom(EXAMPLE)), countAdjecent), countAdjecent);
+  auto sut = stepA(stepA(frameIt(getRoom(EXAMPLE))));
 
   auto i=0;
   EXPECT_EQ("............", sut[i++]);
@@ -192,9 +206,9 @@ TEST(step, two)
   
 }
 
-TEST(step, three)
+TEST(stepA, three)
 {
-  auto sut = step(step(step(frameIt(getRoom(EXAMPLE)), countAdjecent), countAdjecent), countAdjecent);
+  auto sut = stepA(stepA(stepA(frameIt(getRoom(EXAMPLE)))));
 
   auto i=0;
   EXPECT_EQ("............", sut[i++]);
@@ -239,7 +253,7 @@ int solve(string filename, auto countAdjecent)
 
 int solveA(string filename)
 {
-  return solve(filename, countAdjecent);
+  return solve(filename, countAdjecentA);
 }
 
 TEST(solve, a)
