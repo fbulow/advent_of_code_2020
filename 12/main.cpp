@@ -1,3 +1,4 @@
+#include <cmath>
 #include <string>
 #include <vector>
 #include <fstream>
@@ -82,6 +83,8 @@ class Ship
   void chDir(int deg)
   {
     dir+=deg/90;
+    while(dir<0)
+      dir+=4;
     dir%=4;
   }
 
@@ -119,7 +122,32 @@ public:
       case 'R':
 	chDir(-inst.arg);
 	return;
+      case 'N':
+      case 'S':
+      case 'E':
+      case 'W':
+	pos_ = step(pos(), inst.cmd, inst.arg);
+	return;
+      case 'F':
+	pos_ = step(pos(),
+		    direction(),
+		    inst.arg);
+	return;
       }
     assert(false);
   }
 };
+
+
+int manhattanMetric(Pos const &p)
+{
+  return abs(p.row)+abs(p.column);
+}
+
+int solveA(string const &filename)
+{
+  Ship s;
+  for(auto x:Instructions(filename).data)
+    s.apply(x);
+  return manhattanMetric(s.pos());
+}
