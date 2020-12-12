@@ -186,6 +186,7 @@ TEST(step, one)
   EXPECT_EQ(".#.#####.##.", sut[i++]);
   EXPECT_EQ("............", sut[i++]);
 }
+
 TEST(stepA, two)
 {
   auto sut = stepA(stepA(frameIt(getRoom(EXAMPLE))));
@@ -291,4 +292,74 @@ TEST(nextSeat, stickprov)
   EXPECT_EQ('#', nextSeat({1,1}, sut, {1,0}));
   EXPECT_EQ('.', nextSeat({1,1}, sut, {-1,0}));
   EXPECT_EQ('L', nextSeat({1,1}, sut, {1,1}));
+}
+
+int countAdjecentB(Room const &r, Coord const &c)
+{
+  return countAdjecent(r, c, nextSeat);
+}
+int solveB(string filename)
+{
+  return solve(filename, countAdjecentB);
+}
+
+TEST(solve, b)
+{
+  ASSERT_EQ(26, solveB(EXAMPLE));
+  cout<<"Solution b; "<<solveB(INPUT)<<endl;
+}
+
+Room stepB(Room const &r)
+{
+  return step(r, countAdjecentB);
+}
+
+TEST(stepB, one)
+{
+  auto sut = stepB(frameIt(getRoom(EXAMPLE)));
+  auto i =0;
+  
+  EXPECT_EQ("............", sut[i++]);
+  EXPECT_EQ(".#.##.##.##.", sut[i++]);
+  EXPECT_EQ(".#######.##.", sut[i++]);
+  EXPECT_EQ(".#.#.#..#...", sut[i++]);
+  EXPECT_EQ(".####.##.##.", sut[i++]);
+  EXPECT_EQ(".#.##.##.##.", sut[i++]);
+  EXPECT_EQ(".#.#####.##.", sut[i++]);
+  EXPECT_EQ("...#.#......", sut[i++]);
+  EXPECT_EQ(".##########.", sut[i++]);
+  EXPECT_EQ(".#.######.#.", sut[i++]);
+  EXPECT_EQ(".#.#####.##.", sut[i++]);
+  EXPECT_EQ("............", sut[i++]);
+}
+TEST(countA, error)
+{
+  Room sut{
+    "...."s,
+    ".#.#"s,
+    ".###"s,
+    ".#.#"s,
+    ".###"s};
+
+  EXPECT_EQ(3, countAdjecentA(sut, {2,1}));
+  EXPECT_EQ(4, countAdjecentB(sut, {2,1}));
+}
+
+TEST(stepB, two)
+{
+  auto sut = stepB(stepB(frameIt(getRoom(EXAMPLE))));
+  auto i =0;
+  
+  EXPECT_EQ("............", sut[i++]);
+  EXPECT_EQ(".#.LL.L#.##.", sut[i++]);
+  EXPECT_EQ(".#LLLLLL.L#.", sut[i++]);
+  EXPECT_EQ(".L.L.L..L...", sut[i++]);
+  EXPECT_EQ(".#LLL.LL.L#.", sut[i++]);
+  EXPECT_EQ(".#.LL.LL.LL.", sut[i++]);
+  EXPECT_EQ(".#.LLLL#.##.", sut[i++]);
+  EXPECT_EQ("...L.L......", sut[i++]);
+  EXPECT_EQ(".#LLLLLLLL#.", sut[i++]);
+  EXPECT_EQ(".#.LLLLLL.L.", sut[i++]);
+  EXPECT_EQ(".#.#LLLL.##.", sut[i++]);
+  EXPECT_EQ("............", sut[i++]);
 }
