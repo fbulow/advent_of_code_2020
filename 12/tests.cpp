@@ -92,3 +92,12 @@ TEST(Solve, a)
   cout<<"Solution A: "<<ans<<endl;
   EXPECT_EQ(2228, ans);
 }
+
+TEST(Solve, b)
+{
+  EXPECT_EQ(286,   solveB(EXAMPLE));
+
+  auto const ans = solveB(INPUT);
+  cout<<"Solution A: "<<ans<<endl;
+  EXPECT_EQ(42908, ans);
+}

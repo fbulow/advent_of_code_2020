@@ -53,6 +53,22 @@ struct Pos{
   {
     return (row==other.row) and (column==other.column);
   }
+
+  void rotateRight(int angle)
+  {
+    if(angle<0)
+      angle+=360*(1-angle/360);
+    assert(angle>0);
+    angle/=90;
+    for(auto i=0;i<angle;i++)
+      rotateRight90();
+  }
+  
+  void rotateRight90()
+  {
+    swap(row, column);
+    column*=-1;
+  }
 };
 
 Pos step(Pos p, char direction, int distance)
@@ -91,6 +107,11 @@ class Ship
   Pos pos_{0,0};
   
 public:
+  void rotateRight(int angle)
+  {
+    pos_.rotateRight(angle);
+  }
+  
   Pos pos() const
   {
     return pos_;
@@ -138,6 +159,60 @@ public:
   }
 };
 
+char oppositeDirection(char dir)
+{
+  switch(dir)
+    {
+    case 'E':
+      return 'W';
+    case 'W':
+      return 'E';
+    case 'N':
+      return 'S';
+    case 'S':
+      return 'N';
+    }
+  assert(false);
+  return ' ';
+}
+
+
+
+struct ShipAndWaypoint{
+  Ship s;
+  Ship w;
+  ShipAndWaypoint()
+  {
+    w.apply({'E', 10});
+    w.apply({'N', 1 });
+  }
+  
+  void apply(Inst const &inst)
+  {
+    switch(inst.cmd)
+      {
+      case 'F':
+	s.apply({'S', inst.arg*w.pos().row});
+	s.apply({'E', inst.arg*w.pos().column});
+	return;
+      case 'N':
+      case 'S':
+      case 'E':
+      case 'W':
+	w.apply(inst);
+	return;
+      case 'L':
+	apply({'R', -inst.arg});
+	return;
+      case 'R':
+	w.rotateRight(inst.arg);
+	return;
+      }
+    assert(false);
+  }
+};
+
+
 
 int manhattanMetric(Pos const &p)
 {
@@ -150,4 +225,12 @@ int solveA(string const &filename)
   for(auto x:Instructions(filename).data)
     s.apply(x);
   return manhattanMetric(s.pos());
+}
+
+int solveB(string const &filename)
+{
+  ShipAndWaypoint s;
+  for(auto x:Instructions(filename).data)
+    s.apply(x);
+  return manhattanMetric(s.s.pos());
 }
