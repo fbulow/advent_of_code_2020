@@ -32,3 +32,10 @@ TEST(solve, a)
   EXPECT_EQ(295, solveA(EXAMPLE));
   cout<<"Solution a: "<<solveA(INPUT)<<endl;
 }
+
+TEST(arrivalRequirement, first)
+{
+  Plan sut(ifstream{EXAMPLE});
+  EXPECT_TRUE(sut.arrivalRequirement(1068781));
+  EXPECT_FALSE(sut.arrivalRequirement(1068780));
+}

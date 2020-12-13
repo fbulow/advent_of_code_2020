@@ -27,7 +27,15 @@ long int nextAvaliableTime(long int arrival,
   return arrival;
 }
 
+using TimeStamp=long int;
+
+
+
 struct Plan{
+  TimeStamp arrival;
+  vector<TimeStamp> times;
+  vector<TimeStamp> wait;
+
   Plan(ifstream&& in)
   {
     assert(in.is_open());
@@ -37,6 +45,7 @@ struct Plan{
     getline(in, line);
     auto b = line.begin();
     auto e = line.end();
+    TimeStamp waitCount =0;
     while(b<e)
       {
 	auto x =find(b,e, ',');
@@ -44,18 +53,26 @@ struct Plan{
 	try
 	  {
 	    times.emplace_back(stoll(newNumber));
+	    wait.push_back(waitCount);
 	  }
 	catch(std::invalid_argument)
 	  {}
+	waitCount++;
 	b=next(x);
       }
   }
   
-  long int arrival;
-  vector<long int> times;
+  bool arrivalRequirement(TimeStamp t)
+  {
+    for (size_t i=0;i<times.size();i++)
+      if((t+wait[i])%times[i] != 0)
+	return false;
+    return true;
+  }
+  
 };
 
-long int solveA(string filename)
+TimeStamp solveA(string filename)
 {
   Plan p(ifstream{filename});
   auto t = nextAvaliableTime(p.arrival, p.times);
