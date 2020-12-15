@@ -58,7 +58,7 @@ TEST(solve, b)
 
 TEST(MagicTimeBuilder, a)
 {
-  MagicTimeBuilder sut;
+  MagicTimeCalculator sut;
   sut.addBus(7,0);
   EXPECT_EQ(0, sut.candidate);
   sut.addBus(13,1);

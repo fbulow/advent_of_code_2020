@@ -89,7 +89,7 @@ bool sovlesB(Plan const &p, TimeStamp t)
   return true;
 }
 
-struct MagicTimeBuilder
+struct MagicTimeCalculator
 {
   TimeStamp candidate{0};
   TimeStamp step{1};
@@ -108,7 +108,7 @@ struct MagicTimeBuilder
 TimeStamp solveB(string filename)
 {
   Plan p(ifstream{filename});
-  MagicTimeBuilder mtb;
+  MagicTimeCalculator mtb;
   for(size_t i=0; i < p.times.size(); i++)
     mtb.addBus(p.times[i],
 	       p.wait[i]);
