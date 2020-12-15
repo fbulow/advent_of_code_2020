@@ -59,7 +59,7 @@ TEST(sovle, a)
 TEST(sovle, B)
 {
   ASSERT_EQ(208, solveB(EXAMPLE2));
-  //  cout<<"Solution b: "<<solveB(INPUT)<<endl;
+  cout<<"Solution b: "<<solveB(INPUT)<<endl;
 }
 
 

@@ -80,3 +80,10 @@ TimeStamp solveA(string filename)
   return (t-p.arrival)*d;
 }
 
+TimeStamp solveB(string filename)
+{
+  Plan p(ifstream{filename});
+  
+  //  max_element(times.begin(), times.end())
+  
+}
