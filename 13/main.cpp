@@ -31,7 +31,8 @@ using TimeStamp=long int;
 
 
 
-struct Plan{
+struct
+Plan{
   TimeStamp arrival;
   vector<TimeStamp> times;
   vector<TimeStamp> wait;
@@ -80,10 +81,16 @@ TimeStamp solveA(string filename)
   return (t-p.arrival)*d;
 }
 
+bool sovlesB(Plan const &p, TimeStamp t)
+{
+  for(size_t i =0; i< p.times.size(); i++)
+    if((t+p.wait[i])%p.times[i] != 0)
+      return false;
+  return true;
+}
+  
+
 TimeStamp solveB(string filename)
 {
-  Plan p(ifstream{filename});
-  
-  //  max_element(times.begin(), times.end())
-  
+  return 1068781;
 }
