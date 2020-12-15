@@ -88,9 +88,29 @@ bool sovlesB(Plan const &p, TimeStamp t)
       return false;
   return true;
 }
-  
+
+struct MagicTimeBuilder
+{
+  TimeStamp candidate{0};
+  TimeStamp step{1};
+
+  void addBus(TimeStamp line,
+	       TimeStamp wait)
+  {
+    while((candidate+wait)%line != 0)
+      candidate+=step;
+    step*=line;
+  }
+};
+
+
 
 TimeStamp solveB(string filename)
 {
-  return 1068781;
+  Plan p(ifstream{filename});
+  MagicTimeBuilder mtb;
+  for(size_t i=0; i < p.times.size(); i++)
+    mtb.addBus(p.times[i],
+	       p.wait[i]);
+  return mtb.candidate;
 }

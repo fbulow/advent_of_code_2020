@@ -56,3 +56,16 @@ TEST(solve, b)
   cout<<"Solution b: "<<solveB(INPUT)<<endl;
 }
 
+TEST(MagicTimeBuilder, a)
+{
+  MagicTimeBuilder sut;
+  sut.addBus(7,0);
+  EXPECT_EQ(0, sut.candidate);
+  sut.addBus(13,1);
+  EXPECT_EQ(77, sut.candidate);
+  sut.addBus(59,4);
+  sut.addBus(31,6);
+  sut.addBus(19,7);
+  
+  EXPECT_EQ(1068781, sut.candidate);
+}
