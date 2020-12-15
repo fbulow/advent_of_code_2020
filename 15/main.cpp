@@ -10,27 +10,46 @@
 using namespace std;
 
 using I = unsigned int;
-struct Spoken: list<I>
+class Spoken: public list<I>
 {
+  map<I,I> data; //spoken -> last said
+  I stepNr{1};
+  I lastSpoken;
+public:
   template<class ... A>
   Spoken(A...args)
     :list<I>{(I) args...}
-  {}
+    ,data{}
+  {
+    lastSpoken = *rbegin();
+    pop_back();
+    for(auto spoken: *this)
+	data[spoken] = stepNr++;
+  }
+
+  I nr()
+  {
+    return stepNr;
+  }
   
   void turn()
   {
-    auto value = last();
-    auto last = find(next(rbegin()),
-		     rend(),
-		     value);
-    if(last==rend())
-      push_back(0);
+    auto &x = data[lastSpoken];
+    if(0==x)
+      {
+	data[lastSpoken] = stepNr;
+	lastSpoken = 0;
+      }
     else
-      push_back(distance(rbegin(), last));
+      {
+	lastSpoken = stepNr-x;
+	x=stepNr;
+      }
+    stepNr++;
   }
   I last() const
   {
-    return *rbegin();
+    return lastSpoken;
   }
 };
 ostream& operator<<(ostream& cout, Spoken const &s)
@@ -42,7 +61,14 @@ ostream& operator<<(ostream& cout, Spoken const &s)
   
 I solveA(Spoken s)
 {
-  while(s.size()<2020)
+  while(s.nr()<2020)
+    s.turn();
+  return s.last();
+}
+
+I solveB(Spoken s)
+{
+  while(s.nr()<30000000)
     s.turn();
   return s.last();
 }
