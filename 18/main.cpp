@@ -10,7 +10,9 @@
 #include<list>
 using namespace std;
 
-using I = long int;
+using I = long long int;
+
+
 
 struct Machine{
   I memory{0};
@@ -21,7 +23,7 @@ struct Machine{
     if(op=='b')//beginning
       {
 	assert(0==memory);
-	memory = stoi(str);
+	memory = stoll(str);
 	op=' ';
 	return;
       }
@@ -32,12 +34,12 @@ struct Machine{
       }
     else if('+' == op)
       {
-	memory+=stoi(str);
+	memory+=stoll(str);
 	op=' ';
       }
     else if('*' == op)
       {
-	memory*=stoi(str);
+	memory*=stoll(str);
 	op=' ';
       }
   }
@@ -61,39 +63,90 @@ I evalSimple(string const & str)
 }
 
 
-
-I eval(string str)
+bool expandedParenthesis(string &str, auto evaluator)
 {
-  regex re("\\([^)(]*\\)");
+  static regex const re("\\([^)(]*\\)");
   smatch m;
+  bool ret{false};
   while(regex_search(str, m, re))
     {
+      ret=true;
       string s = m[0];
       s = {next(s.begin()), prev(s.end())};
       str.replace(m.position(0),
 		  m.length(0),
-		  to_string(evalSimple(s)));
+		  to_string(evaluator(s)));
     }
+  return ret;
+}
+
+I eval(string str)
+{
+  while(expandedParenthesis(str, evalSimple))
+    {}
   return evalSimple(str);
 }
 
-I solveA(string filename)
+I solve(string filename, auto evaluator)
 {
-  ifstream in(INPUT);
+  ifstream in(filename);
   list<string> data;
   string line;
   assert(in.is_open());
   while(getline(in, line))
-    //    if(not line.empty())
-      data.push_back(line);
-  cout<<"Size   "<< data.size()<<endl;
-  cout<<"begin  "<< *data.begin()<<endl;
-  cout<<"rbegin "<< *data.rbegin()<<endl;
+    data.push_back(line);
   return accumulate(data.begin(),
 		    data.end(),
 		    I{0},
-		    [](auto sum, string const &s)
+		    [evaluator](auto sum, string const &s)
 		    {
-		      return sum+eval(s);
+		      try{
+			return sum+evaluator(s);
+		      }
+		      catch(exception const &ex){
+			cout<<"Error "<<s<<endl;
+			throw ex;
+		      }
 		    });
+}
+
+I solveA(string filename)
+{
+  return solve(filename, eval);
+}
+
+bool performAdditions(string &str)
+{
+  static regex const re("[0-9]+ \\+ [0-9]+");
+  smatch m;
+  bool ret{false};
+  while(regex_search(str, m, re))
+    {
+      ret=true;
+      string s = m[0];
+      //      cout<<endl<<str<<endl;
+      str.replace(m.position(0),
+		  m.length(0),
+		  to_string(evalSimple(s)));
+      //      cout<<str<<endl<<endl;
+
+    }
+  return ret;
+}
+
+
+I evalB(string str)
+{
+  cout<<str<<endl;
+  while(expandedParenthesis(str, evalB))
+    {}//cout<<str<<endl;
+  while(performAdditions(str))
+    {}//cout<<str<<endl;
+
+  return evalSimple(str);
+}
+
+I solveB(string filename)
+{
+  return solve(filename, evalB);
 }

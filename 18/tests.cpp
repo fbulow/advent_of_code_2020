@@ -3,7 +3,7 @@
 
 TEST(eval, number)
 {
- // EXPECT_EQ(1, eval("1"));
+ EXPECT_EQ(1, eval("1"));
 }
 
 TEST(eval, add)
@@ -48,4 +48,22 @@ TEST(solve, a)
   auto ans = solveA(INPUT);
   ASSERT_GT(ans, 1000557957);
   cout<<"Solution a: "<<ans<<endl;
+}
+
+TEST(evalB, examples)
+{
+  EXPECT_EQ(231,
+	    evalB("1 + 2 * 3 + 4 * 5 + 6"));
+  
+  EXPECT_EQ(51,		evalB("1 + (2 * 3) + (4 * (5 + 6))"));
+  EXPECT_EQ(46,		evalB("2 * 3 + (4 * 5)"));
+  EXPECT_EQ(1445,	evalB("5 + (8 * 3 + 9 + 3 * 4 * 3)"));
+  EXPECT_EQ(669060,	evalB("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))"));
+  EXPECT_EQ(23340,	evalB("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2"));
+}
+
+TEST(solve, b)
+{
+  auto ans = solveB(INPUT);
+  cout<<"Solution b: "<<ans<<endl;
 }
