@@ -86,3 +86,34 @@ TEST(solve, a)
   cout<<"Solution a: "<<ans<<endl;
   EXPECT_EQ(21980, ans);
 }
+
+TEST(rule, name)
+{
+
+  EXPECT_EQ("departure location",
+	    Rule("departure location: 29-766 or 786-950").name);
+}
+
+TEST(answer, example)
+{
+  EXPECT_EQ(20,
+	    answer({
+		Rule("departure location: 29-766 or 786-950"),
+		Rule("arrival station: 42-597 or 620-957")
+	      }
+	      ,{1,0},
+	      Ticket ("10, 20")));
+}
+
+     
+TEST(Conclude, example)
+{
+  Conclude const sut(EXAMPLE);
+  EXPECT_EQ(Ticket("7,1,14"), sut.my);
+  EXPECT_EQ(7, *sut.values[0].begin());
+
+  auto secondElement = sut.values[1];
+  EXPECT_TRUE(secondElement.contains(1));
+  EXPECT_TRUE(secondElement.contains(3));
+  EXPECT_FALSE(secondElement.contains(4));
+}

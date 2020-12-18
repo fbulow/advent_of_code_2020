@@ -23,6 +23,7 @@ struct MinMax
 };
 
 struct Rule{
+  string name;
   vector<MinMax> data;
   bool ok(I value) const
   {
@@ -34,7 +35,11 @@ struct Rule{
 		  });
   }
   Rule(string const &line)
+    :name(line.begin(), find(line.begin(),
+			     line.end(),
+			     ':'))
   {
+    
     string sx(next(find(line.begin(),
 			line.end(),
 			':')),
@@ -82,6 +87,11 @@ struct Ticket
   I operator[](size_t i) const
   {return numbers[i];}
 
+  bool operator==(auto const&other) const
+  {
+    return other.numbers==numbers;
+  }
+  
   size_t size() const
   {return numbers.size();}
 
@@ -99,6 +109,13 @@ struct Ticket
   }
 };
 
+
+ostream& operator<<(ostream& cout, Ticket const &t)
+{
+  for(auto x: t.numbers)
+    cout<<x<<",";
+  return cout;
+}
 
 ostream& operator<<(ostream& cout, MinMax const &mm)
 {
@@ -127,7 +144,7 @@ struct Input
 {
   vector<Rule> rules;
   vector<Ticket> nearby;
-
+  Ticket my;
   Input(deque<string> &&q)
     :rules{q.begin(), find(q.begin(),
 			   q.end(), "")}
@@ -136,6 +153,9 @@ struct Input
 		  q.end(),
 		  "nearby tickets:")),
 	q.end()}
+    ,my{*next(find(q.begin(),
+		   q.end(),
+		   "your ticket:"))}
   {}
 
   Input(string filename)
@@ -155,29 +175,69 @@ struct Input
   }
 };
 
-
-/*
-struct Conclusion: Input
+void sliceToValues(vector<set<I>> &values, Ticket const &ticket)
 {
-  Conclusion(deque<string> &&q)
-    :rules{q.begin(), find(q.begin(),
-			   q.end(), "")}
-    ,nearby{
-	next(find(q.begin(),
-		  q.end(),
-		  "nearby tickets:")),
-	q.end()}
-  {}
-  Conclusion(deque<string> &&data)
-    :Input(data)
-  {
-    
-  }
-     
-  Conclusion(string filename)
-    :Conclusion(readStream(filename))
-  {}
+  assert(values.size()==ticket.size());
+  auto dest = values.begin();
+  for(auto &t:ticket)
+    {
+      dest->insert(t);
+      advance(dest, 1);
+    }
+}
 
+struct Conclude: Input
+{
+  Ticket my;
+  vector<set<I>> values;
+  // {
+  //   set<I>{7},
+  //   set<I>{1,3}
+  // };
+  
+  Conclude(deque<string> data)
+    :Input(deque<string>(data.begin(), data.end()))
+    ,my(*next(find(data.begin(), data.end(), "your ticket:")))
+  {
+    values.resize(my.size());
+    sliceToValues(values, my);
+    for(auto &n:nearby)
+      if(n.scanningErrorRate(rules) == 0)
+	 sliceToValues(values, n);
+      
+  }  
+  Conclude(string filename)
+    :Conclude(readStream(filename))
+  {}
+  
+  // vector<set<size_t>> candidates;
+  // vector<set<size_t>> values;
+
+  // Conclude(string filename)
+  //   :Input(filename)
+  // {
+  //   candidates.resize(rules.size());
+  //   values.resize(rules.size());
+    
+  //   for(Ticket const &t: nearby)
+  //     if(0==t.scanningErrorRate(rules))
+  // 	for(size_t i=0; i < values.size() ; i++)
+  // 	  values[i].insert(
+	  
+  // 	}
+  // }
 
 };
-*/
+  
+
+long int answer(vector<Rule> const &fields,
+		vector<size_t> const &order,
+		Ticket const &my)
+{
+  I prod = 1;
+  for(size_t i =0 ; i < fields.size(); i++)
+    if(fields[i].name.starts_with("departure"))
+      prod*=my[order[i]];
+  return prod;
+}
+		
