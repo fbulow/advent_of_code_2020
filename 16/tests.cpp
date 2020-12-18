@@ -84,4 +84,5 @@ TEST(solve, a)
   auto ans = Input(INPUT).ticketScanningErrorRate();
   ASSERT_LT(ans, 1701758303);
   cout<<"Solution a: "<<ans<<endl;
+  EXPECT_EQ(21980, ans);
 }

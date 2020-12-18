@@ -23,3 +23,29 @@ TEST(eval, mixed)
   //  EXPECT_EQ(71, eval("13 * 5 + 6"));
   
 }
+
+TEST(parenthesis, value)
+{
+  EXPECT_EQ(8,  eval("(8)"));
+  EXPECT_EQ(51, eval("1 + (2 * 3) + (4 * (5 + 6))"));
+  
+}
+
+TEST(given, other_cases)
+{
+
+  EXPECT_EQ(26,     eval("2 * 3 + (4 * 5)"));
+  EXPECT_EQ(437,    eval("5 + (8 * 3 + 9 + 3 * 4 * 3)"));
+  EXPECT_EQ(12240,  eval("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))"));
+  EXPECT_EQ(13632,  eval("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2"));
+
+
+}
+
+
+TEST(solve, a)
+{
+  auto ans = solveA(INPUT);
+  ASSERT_GT(ans, 1000557957);
+  cout<<"Solution a: "<<ans<<endl;
+}

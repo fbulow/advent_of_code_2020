@@ -1,6 +1,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <regex>
 // #include <cmath>
 // #include <iostream>
 // #include <limits>
@@ -9,7 +10,7 @@
 #include<list>
 using namespace std;
 
-using I = int;
+using I = long int;
 
 struct Machine{
   I memory{0};
@@ -43,8 +44,7 @@ struct Machine{
 };
 
 
-
-I eval(string const & str)
+I evalSimple(string const & str)
 {
   Machine m;
   istringstream cin(str);
@@ -58,4 +58,42 @@ I eval(string const & str)
   if(not cmd.empty())
     m.push(cmd);
   return m.memory;
+}
+
+
+
+I eval(string str)
+{
+  regex re("\\([^)(]*\\)");
+  smatch m;
+  while(regex_search(str, m, re))
+    {
+      string s = m[0];
+      s = {next(s.begin()), prev(s.end())};
+      str.replace(m.position(0),
+		  m.length(0),
+		  to_string(evalSimple(s)));
+    }
+  return evalSimple(str);
+}
+
+I solveA(string filename)
+{
+  ifstream in(INPUT);
+  list<string> data;
+  string line;
+  assert(in.is_open());
+  while(getline(in, line))
+    //    if(not line.empty())
+      data.push_back(line);
+  cout<<"Size   "<< data.size()<<endl;
+  cout<<"begin  "<< *data.begin()<<endl;
+  cout<<"rbegin "<< *data.rbegin()<<endl;
+  return accumulate(data.begin(),
+		    data.end(),
+		    I{0},
+		    [](auto sum, string const &s)
+		    {
+		      return sum+eval(s);
+		    });
 }

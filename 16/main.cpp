@@ -112,6 +112,17 @@ ostream& operator<<(ostream& cout, Rule const &r)
   return cout;
 }
 
+deque<string> readStream(string filename)
+{
+  ifstream in(filename);
+  assert(in.is_open());
+  string line;
+  deque<string> q;
+  while(getline(in,line))
+    q.push_back(line);
+  return q;
+}
+
 struct Input
 {
   vector<Rule> rules;
@@ -126,19 +137,11 @@ struct Input
 		  "nearby tickets:")),
 	q.end()}
   {}
-  
-  Input(string filename)
-    :Input([&filename](){ //Evaluated immediately
-      ifstream in(filename);
-      assert(in.is_open());
-      string line;
-      deque<string> q;
-      while(getline(in,line))
-	q.push_back(line);
-      return q;
-    }())
-  {}
 
+  Input(string filename)
+    :Input(readStream(filename))
+  {}
+  
   I ticketScanningErrorRate() const
   {
     
@@ -150,7 +153,31 @@ struct Input
 			return sum+ticket.scanningErrorRate(this->rules);
 		      });
   }
-  
 };
 
 
+/*
+struct Conclusion: Input
+{
+  Conclusion(deque<string> &&q)
+    :rules{q.begin(), find(q.begin(),
+			   q.end(), "")}
+    ,nearby{
+	next(find(q.begin(),
+		  q.end(),
+		  "nearby tickets:")),
+	q.end()}
+  {}
+  Conclusion(deque<string> &&data)
+    :Input(data)
+  {
+    
+  }
+     
+  Conclusion(string filename)
+    :Conclusion(readStream(filename))
+  {}
+
+
+};
+*/
