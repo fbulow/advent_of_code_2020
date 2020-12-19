@@ -127,39 +127,39 @@ TEST(Conclude, options)
 
 TEST(uncertainty, cases)
 {
-  auto ans = uncertainty({set<size_t>{1,2}, set<size_t>{1}});
+  auto ans = Options({set<size_t>{1,2}, set<size_t>{1}}).uncertainty();
   EXPECT_EQ(3, ans);
 }
 
 TEST(solved, first)
 {
   {
-    auto ref = vector<Option>{Option{1},Option{2}};
-    EXPECT_TRUE(solved(ref));
+    auto ref = Options({Option{1},Option{2}});
+    EXPECT_TRUE(ref.solved());
   }
   {
-    auto ref = vector<Option>{Option{1,2},Option{2}};
-    EXPECT_FALSE(solved(ref));
+    auto ref = Options({Option{1,2},Option{2}});
+    EXPECT_FALSE(ref.solved());
   }
   {
-    auto ref = vector<Option>{Option{},Option{2}};
-    EXPECT_FALSE(solved(ref));
+    auto ref = Options({Option{},Option{2}});
+    EXPECT_FALSE(ref.solved());
   }
   {
-    auto ref = vector<Option>{Option{2},Option{2}};
-    EXPECT_FALSE(solved(ref));
+    auto ref = Options({Option{2},Option{2}});
+    EXPECT_FALSE(ref.solved());
   }
 
   
 }
 TEST(reduce_known, complete)
 {
-  auto ans = recursiveReduce({
+  auto ans = recursiveReduce(Options({
       set<size_t>{1,2},
       set<size_t>{1},
-      set<size_t>{2,3}});
+      set<size_t>{2,3}}));
   
-  EXPECT_TRUE(solved(ans));
+  EXPECT_TRUE(ans.solved());
 }
 
 

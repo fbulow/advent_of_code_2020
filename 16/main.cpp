@@ -195,60 +195,63 @@ void sliceToValues(vector<set<I>> &values, Ticket const &ticket)
 // }
 
 using Option = set<size_t>;
-
-bool solved(vector<Option> const &options)
+struct Options: public vector<Option>
 {
-  if (not all_of(options.begin(),
-		 options.end(),
-		 [](auto x){return x.size()==1;}))
-    return false;
-  else
-    {
-      set<I> s;
-      for(auto &x:options)
-	s.insert(*x.begin());
-      return s.size()==options.size();
-    }
-}
+  Options(vector<Option> &&data)
+    :vector<Option>(move(data))
+  {}
+  bool solved() const 
+  {
+    if (not all_of(begin(),
+		   end(),
+		   [](auto x){return x.size()==1;}))
+      return false;
+    else
+      {
+	set<I> s;
+	for(auto &x:*this)
+	  s.insert(*x.begin());
+	return s.size()==size();
+      }
+  }
 
-set<I> getKnown(vector<Option> const &data)
-{
-  set<I> ret;
-  for (auto x: data)
-    if (1 == x.size())
-      ret.insert(*x.begin());
-  return ret;
-}
+  set<I> getKnown() const 
+  {
+    set<I> ret;
+    for (auto x: *this)
+      if (1 == x.size())
+	ret.insert(*x.begin());
+    return ret;
+  }
 
-vector<Option> reduce(vector<Option> data)
-{
-  for(auto i:getKnown(data))
-    for(auto &d:data)
-      if(1<d.size())
-	d.erase(i);
-  return data;
-}
-
-int uncertainty(vector<Option> const &options)
-{
-  return accumulate(options.begin(),
-		    options.end(),
-		    0,
-		    [](int sum, auto option)
-		    {
-		      return sum+option.size();
-		    });
+  void reduce()
+  {
+    for(auto i:getKnown())
+      for(auto &d:*this)
+	if(1<d.size())
+	  d.erase(i);
+  }
+  int uncertainty() const
+  {
+    return accumulate(begin(),
+		      end(),
+		      0,
+		      [](int sum, auto option)
+		      {
+			return sum+option.size();
+		      });
 		    
-}
+  }
+};
 
-vector<Option> recursiveReduce(vector<Option> data)
+Options recursiveReduce(Options data)
 {
-  auto u = uncertainty(data);
-  data=reduce(data);
-  while(uncertainty(data) < u)
+  auto u = data.uncertainty();
+  data.reduce();
+  while(data.uncertainty() < u)
     {
-      u = uncertainty(data);
-      data=reduce(data);
+      u = data.uncertainty();
+      data.reduce();
     }
   return data;
 }
