@@ -106,7 +106,7 @@ TEST(answer, example)
 }
 
      
-TEST(Conclude, example)
+TEST(Conclude, values)
 {
   Conclude const sut(EXAMPLE);
   EXPECT_EQ(Ticket("7,1,14"), sut.my);
@@ -117,3 +117,66 @@ TEST(Conclude, example)
   EXPECT_TRUE(secondElement.contains(3));
   EXPECT_FALSE(secondElement.contains(4));
 }
+
+TEST(Conclude, options)
+{
+  Conclude const sut(EXAMPLE);
+  set<size_t> ref{0,1};
+  EXPECT_EQ(ref, sut.options[0]);
+}
+
+TEST(uncertainty, cases)
+{
+  auto ans = uncertainty({set<size_t>{1,2}, set<size_t>{1}});
+  EXPECT_EQ(3, ans);
+}
+
+TEST(solved, first)
+{
+  {
+    auto ref = vector<Option>{Option{1},Option{2}};
+    EXPECT_TRUE(solved(ref));
+  }
+  {
+    auto ref = vector<Option>{Option{1,2},Option{2}};
+    EXPECT_FALSE(solved(ref));
+  }
+  {
+    auto ref = vector<Option>{Option{},Option{2}};
+    EXPECT_FALSE(solved(ref));
+  }
+  {
+    auto ref = vector<Option>{Option{2},Option{2}};
+    EXPECT_FALSE(solved(ref));
+  }
+
+  
+}
+TEST(reduce_known, complete)
+{
+  auto ans = recursiveReduce({
+      set<size_t>{1,2},
+      set<size_t>{1},
+      set<size_t>{2,3}});
+  
+  EXPECT_TRUE(solved(ans));
+}
+
+
+
+
+TEST(Conclude, show_input)
+{
+  Conclude sut(INPUT);
+
+  //  sut.options=recursiveReduce(sut.options);
+  
+  for (auto x: sut.options)
+    {
+      cout<<"->  ";
+      for(auto y: x)
+	cout<<y<<", ";
+      cout<<endl;
+    }
+}
+

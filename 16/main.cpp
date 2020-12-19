@@ -186,26 +186,113 @@ void sliceToValues(vector<set<I>> &values, Ticket const &ticket)
     }
 }
 
+// void select(vector<set<size_t>> &options, size_t index, size_t value)
+// {
+//   assert(options[index].contains(value));
+//   options[index]={value};
+//   for(auto &x: options)
+//     x.erase(value);
+// }
+
+using Option = set<size_t>;
+
+bool solved(vector<Option> const &options)
+{
+  if (not all_of(options.begin(),
+		 options.end(),
+		 [](auto x){return x.size()==1;}))
+    return false;
+  else
+    {
+      set<I> s;
+      for(auto &x:options)
+	s.insert(*x.begin());
+      return s.size()==options.size();
+    }
+}
+
+set<I> getKnown(vector<Option> const &data)
+{
+  set<I> ret;
+  for (auto x: data)
+    if (1 == x.size())
+      ret.insert(*x.begin());
+  return ret;
+}
+
+vector<Option> reduce(vector<Option> data)
+{
+  for(auto i:getKnown(data))
+    for(auto &d:data)
+      if(1<d.size())
+	d.erase(i);
+  return data;
+}
+
+int uncertainty(vector<Option> const &options)
+{
+  return accumulate(options.begin(),
+		    options.end(),
+		    0,
+		    [](int sum, auto option)
+		    {
+		      return sum+option.size();
+		    });
+		    
+}
+
+vector<Option> recursiveReduce(vector<Option> data)
+{
+  auto u = uncertainty(data);
+  data=reduce(data);
+  while(uncertainty(data) < u)
+    {
+      u = uncertainty(data);
+      data=reduce(data);
+    }
+  return data;
+}
+
 struct Conclude: Input
 {
   Ticket my;
   vector<set<I>> values;
-  // {
-  //   set<I>{7},
-  //   set<I>{1,3}
-  // };
+  vector<Option> options; // options[0].contains(5) means that rule[0] is met by all values in values[5].
+
+  void setUpOptions()
+  {
+    options.resize(rules.size());
+    for(int i=0;i<options.size();i++)
+      for(int r=0;r<rules.size();r++)
+	{
+	  auto &rule = rules[r];
+	  if( all_of(values[i].begin(),
+		     values[i].end(),
+		     [rule](I v){
+		       return rule.ok(v);
+		     }) )
+	    options[r].insert(i);
+	}
+  }
   
   Conclude(deque<string> data)
     :Input(deque<string>(data.begin(), data.end()))
     ,my(*next(find(data.begin(), data.end(), "your ticket:")))
   {
+    setUpValues();
+    setUpOptions();
+  }
+
+  void setUpValues()
+  {  
     values.resize(my.size());
     sliceToValues(values, my);
     for(auto &n:nearby)
       if(n.scanningErrorRate(rules) == 0)
 	 sliceToValues(values, n);
       
-  }  
+  }
+  
   Conclude(string filename)
     :Conclude(readStream(filename))
   {}
