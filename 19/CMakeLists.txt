@@ -18,6 +18,7 @@ target_compile_options(${PROJECT_NAME}
     -DEXAMPLE="${CMAKE_CURRENT_SOURCE_DIR}/example"
     -DEXAMPLE2="${CMAKE_CURRENT_SOURCE_DIR}/example2"
     -DINPUT="${CMAKE_CURRENT_SOURCE_DIR}/input"
+    -DINPUTB="${CMAKE_CURRENT_SOURCE_DIR}/inputb"
     #-O2
   )
 

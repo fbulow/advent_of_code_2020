@@ -30,3 +30,53 @@ TEST(rule, ctor_right)
   EXPECT_EQ(121, sut.right[1]);
   
 }
+
+TEST(getIndex, test)
+{
+  EXPECT_EQ(123, getIndex("123: 72 | 52 121"));
+}
+
+TEST(RegexBuilder, test)
+{
+  auto sut = RegexBuilder({
+      "72: \"b\"",
+      "0: 72 72"});
+  EXPECT_EQ("b", sut.get(72));
+  EXPECT_EQ("bb", sut.get(0));
+}
+
+TEST(just, match)
+{
+  EXPECT_TRUE(regex_match("aba", regex("a(ab|ba)")));
+}
+
+TEST(RegexBuilder, theOr)
+{
+  auto sut = RegexBuilder({
+      "71: \"a\"",
+      "72: \"b\"",
+      "0: 71 | 72"});
+  EXPECT_EQ("b", sut.get(72));
+  EXPECT_EQ("(a|b)", sut.get(0));
+}
+
+
+TEST(getInput, rules)
+{
+  auto re = getRegexpA(EXAMPLE);
+  EXPECT_TRUE(regex_match("aab", re));
+  EXPECT_TRUE(regex_match("aba", re));
+  EXPECT_FALSE(regex_match("abb", re));
+}
+
+TEST(solution, a)
+{
+  auto ans = solveA(INPUT);
+  cout<<"Solution a: "<<ans<<endl;
+}
+
+TEST(solution, b)
+{
+  auto ans = solveA(INPUTB);
+  cout<<"Solution b: "<<ans<<endl;
+}
