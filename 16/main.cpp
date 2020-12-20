@@ -25,6 +25,12 @@ struct MinMax
 struct Rule{
   string name;
   vector<MinMax> data;
+  bool allValuesOk(auto values) const
+  {
+    return all_of(values.begin(),
+		  values.end(),
+		  [this](auto &x){return ok(x);});
+  }
   bool ok(I value) const
   {
     return any_of(data.begin(),
@@ -95,6 +101,16 @@ struct Ticket
   size_t size() const
   {return numbers.size();}
 
+  bool obviousInvalid(vector<Rule> const & rules)
+  {
+    return any_of(numbers.begin(),
+		  numbers.end(),
+		  [&rules](auto n){
+		    return ::obviousInvalid(n, rules);
+		  });
+  }
+    
+  
   int scanningErrorRate(vector<Rule> const &rules) const
   {
     auto it = find_if(begin(), end(),
@@ -182,7 +198,7 @@ void sliceToValues(vector<set<I>> &values, Ticket const &ticket)
   for(auto &t:ticket)
     {
       dest->insert(t);
-      advance(dest, 1);
+      dest++;
     }
 }
 
@@ -200,6 +216,9 @@ struct Options: public vector<Option>
   Options(vector<Option> &&data)
     :vector<Option>(move(data))
   {}
+  Options() = default;
+    
+  
   bool solved() const 
   {
     if (not all_of(begin(),
@@ -242,6 +261,21 @@ struct Options: public vector<Option>
 		      });
 		    
   }
+  bool failed() const
+  {
+    if( any_of(begin(),
+	       end(),
+	       [](auto &x){return x.empty();}) )
+      return true;
+    else
+      {
+	set<size_t> s;
+	for(auto &x: *this)
+	  for(auto &v: x)
+	    s.insert(v);
+	return s.size() < size(); //Has failed if elemnts are missing.
+      }
+  }
 };
 
 Options recursiveReduce(Options data)
@@ -260,21 +294,36 @@ struct Conclude: Input
 {
   Ticket my;
   vector<set<I>> values;
-  vector<Option> options; // options[0].contains(5) means that rule[0] is met by all values in values[5].
+  Options options; // options[0].contains(5) means that rule[0] is met by all values in values[5].
 
   void setUpOptions()
   {
-    options.resize(rules.size());
-    for(int i=0;i<options.size();i++)
-      for(int r=0;r<rules.size();r++)
+    assert(rules.size()==my.size());
+    assert(my.size()==values.size());
+
+    auto const N = values.size();
+    
+    options.resize(N);
+    for(int v=0;v<N;v++) //Value set
+      for(int r=0;r<N;r++)//Rule
 	{
-	  auto &rule = rules[r];
-	  if( all_of(values[i].begin(),
-		     values[i].end(),
-		     [rule](I v){
-		       return rule.ok(v);
-		     }) )
-	    options[r].insert(i);
+	  if(rules[r].allValuesOk(values[v]))
+	    options[r].insert(v);
+	  if(none_of(rules.begin(),
+		     rules.end(),
+		     [this, v](auto &r){return r.allValuesOk(values[v]);}))
+	    {
+	      cout<<"v "<<v<<endl;
+	      for(auto x:values[v])
+		{
+		  cout<<x<<"  ";
+		  for(int r=0;r<N;r++)//Rule
+		    if(rules[r].ok(x))
+		      cout<<r<<", ";
+		  cout<<endl;
+		}
+	    assert(false);
+	    }
 	}
   }
   
@@ -289,11 +338,11 @@ struct Conclude: Input
   void setUpValues()
   {  
     values.resize(my.size());
+    assert(my.scanningErrorRate(rules) == 0);
     sliceToValues(values, my);
     for(auto &n:nearby)
-      if(n.scanningErrorRate(rules) == 0)
+      if(not n.obviousInvalid(rules))
 	 sliceToValues(values, n);
-      
   }
   
   Conclude(string filename)

@@ -105,7 +105,17 @@ TEST(answer, example)
 	      Ticket ("10, 20")));
 }
 
-     
+
+TEST(allValuesOk, bug)
+{
+  Rule r("class: 1-3 or 5-7");
+  vector<int> v{7};
+  EXPECT_TRUE(r.allValuesOk(v));
+    
+}
+
+
+
 TEST(Conclude, values)
 {
   Conclude const sut(EXAMPLE);
@@ -163,13 +173,12 @@ TEST(reduce_known, complete)
 }
 
 
-
-
 TEST(Conclude, show_input)
 {
   Conclude sut(INPUT);
 
-  //  sut.options=recursiveReduce(sut.options);
+  EXPECT_FALSE(sut.options.failed());
+  EXPECT_FALSE(recursiveReduce(sut.options).failed());
   
   for (auto x: sut.options)
     {
