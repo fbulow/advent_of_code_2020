@@ -13,10 +13,10 @@ using I = long long int;
 class Tile{
 public:
   I nr;
-  string top;
-  string bottom;
-  string left;
-  string right;
+  string top;    //left to right 
+  string bottom; //left to right 
+  string left;   //top to bottom
+  string right;  //top to bottom
 
   Tile(vector<string> const & data)
   {
@@ -40,7 +40,26 @@ public:
 	      [](string const &s){return *s.rbegin();});
     
   }
+  void flip()  // flip left to right
+  {
+    reverse(begin(top), end(top));
+    reverse(begin(bottom), end(bottom));
+    swap(left, right);
+  }
+  void rotate() //Counter clockwise;
+  {
+    auto slask = top;
+    top = right;
 
+    right = bottom;
+    reverse(begin(right), end(right));
+
+    bottom = left;
+
+    left = slask;
+    reverse(begin(left), end(left));
+    
+  }
 
   
 };
