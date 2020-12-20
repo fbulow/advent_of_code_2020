@@ -172,20 +172,9 @@ TEST(reduce_known, complete)
   EXPECT_TRUE(ans.solved());
 }
 
-
-TEST(Conclude, show_input)
+TEST(solution, b)
 {
-  Conclude sut(INPUT);
-
-  EXPECT_FALSE(sut.options.failed());
-  EXPECT_FALSE(recursiveReduce(sut.options).failed());
-  
-  for (auto x: sut.options)
-    {
-      cout<<"->  ";
-      for(auto y: x)
-	cout<<y<<", ";
-      cout<<endl;
-    }
+  auto ans = solutionB(INPUT);
+  ASSERT_LT(615478467, ans);
+  cout<<"Solution b: "<<ans<<endl;
 }
-

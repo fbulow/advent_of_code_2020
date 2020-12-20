@@ -373,10 +373,35 @@ long int answer(vector<Rule> const &fields,
 		vector<size_t> const &order,
 		Ticket const &my)
 {
-  I prod = 1;
+  long int prod = 1;
   for(size_t i =0 ; i < fields.size(); i++)
     if(fields[i].name.starts_with("departure"))
       prod*=my[order[i]];
   return prod;
 }
 		
+long int solutionB(string filename)
+{
+  Conclude sut(filename);
+  auto const opt = recursiveReduce(sut.options);
+
+
+  vector<size_t> order(sut.options.size());
+
+  transform(opt.begin(),
+	    opt.end(),
+	    order.begin(),
+	    [](auto x){return *x.begin();});
+
+  // return sut.my[1  ]* 
+  //   sut.my[5  ]* 
+  //   sut.my[9  ]* 
+  //   sut.my[7  ]* 
+  //   sut.my[15 ]*
+  //   sut.my[12 ];
+  
+  return answer(sut.rules,
+		order,
+		sut.my);
+  
+}
