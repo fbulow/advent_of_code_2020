@@ -72,11 +72,32 @@ TEST(getInput, rules)
 TEST(solution, a)
 {
   auto ans = solveA(INPUT);
+  ASSERT_EQ(109, ans);
   cout<<"Solution a: "<<ans<<endl;
+}
+
+TEST(parseRuleEight, first)
+{
+  regex re(parseRuleEight("a"));
+  EXPECT_TRUE(regex_match("a", re));
+  EXPECT_TRUE(regex_match("aa", re));
+  EXPECT_TRUE(regex_match("aaa", re));
+
+  EXPECT_FALSE(regex_match("", re));
+}
+TEST(parseRuleEleven, first)
+{
+  regex re(parseRuleEleven("a", "b", 10));
+  EXPECT_TRUE(regex_match("ab",re));
+  EXPECT_TRUE(regex_match("aabb",re));
+  EXPECT_TRUE(regex_match("aaabbb",re));
+
+  EXPECT_FALSE(regex_match("aabbb",re));
 }
 
 TEST(solution, b)
 {
-  auto ans = solveA(INPUTB);
+  cout<<"_GLIBCXX_REGEX_STATE_LIMIT "<<_GLIBCXX_REGEX_STATE_LIMIT<<endl;
+  auto ans = solveB(INPUT);
   cout<<"Solution b: "<<ans<<endl;
 }

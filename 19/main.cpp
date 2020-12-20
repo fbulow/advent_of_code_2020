@@ -1,13 +1,13 @@
+#define _GLIBCXX_REGEX_STATE_LIMIT 10000000
+
+
 #include <fstream>
 #include <string>
 #include <vector>
 #include <regex>
-// #include <cmath>
 #include <iostream>
 #include <sstream>
-// #include <limits>
 #include <numeric>
-// #include <cassert>
 #include<list>
 using namespace std;
 
@@ -70,7 +70,7 @@ public:
     for(string &s: vs)
       data.emplace(getIndex(s), Rule(s));
   }
-  string get(I index)
+  virtual string get(I index)
   {
     Rule &r = find_if(data.begin(),
 		      data.end(),
@@ -103,7 +103,9 @@ public:
   }
 };
 
-regex getRegexpA(string filename)
+
+template<class REGBUILD>
+regex getRegexp(string filename)
 {
   vector<string> data;
   string line = "slask";
@@ -111,13 +113,19 @@ regex getRegexpA(string filename)
   while((not line.empty()) and getline(cin, line))
     data.push_back(line);
   
-  RegexBuilder sut(data);
+  REGBUILD sut(data);
   return regex(sut.get(0));
 }
 
-I solveA(string filename)
+regex getRegexpA(string filename)
 {
-  auto re = getRegexpA(filename);
+  return getRegexp<RegexBuilder>(filename); 
+}
+
+template<class REGBUILD>
+I solve(string filename)
+{
+  auto re = getRegexp<REGBUILD>(filename);
   ifstream cin(filename);
 
   string line;
@@ -126,6 +134,56 @@ I solveA(string filename)
     if (regex_match(line, re))
       count++;
 
-  return count;
-  
+  return count;  
+}
+
+I solveA(string filename)
+{
+  return solve<RegexBuilder>(filename);
+}
+
+string parseRuleEight(string fortyTwo)
+{
+  return "("+fortyTwo+")+";
+}
+
+string parseRuleEleven(string fortyTwo, string thirtyOne, int n)
+{
+  string ret = "(";
+  string body = fortyTwo+thirtyOne;
+  ret+=body;
+  while(n-->0)
+    {
+      body = fortyTwo+body+thirtyOne;
+      ret+="|"+body;
+    }
+  ret+=")";
+  return ret;
+}
+
+class RegexBuilderB : public RegexBuilder
+{
+public:
+  RegexBuilderB(vector<string> vs)
+    :RegexBuilder(vs)
+  {}
+  string get(I index) override
+  {
+    switch(index)
+      {
+      case 8:
+	return parseRuleEight(get(42));
+      case 11:
+	return parseRuleEleven(get(42), get(31),
+			       40 // Max line length is 80 so 40 should be enough...
+			       );
+      default:
+	return RegexBuilder::get(index);
+      }
+  }
+};
+
+I solveB(string filename)
+{
+  return solve<RegexBuilderB>(filename);
 }
