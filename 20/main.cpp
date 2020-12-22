@@ -24,51 +24,63 @@ struct Sides{
   }
 };
 
-class Tile : public Sides<string>
+class Tile 
 {
+  
 public:
   I nr;
-  Tile(vector<string> const & data)
+  vector<string> data;
+  Tile(vector<string> const & inputData)
+    :data(next(inputData.begin()), inputData.end())
   {
     {
-      istringstream cin(data[0]);
+      istringstream cin(inputData[0]);
       string slask;
       cin>>slask>>nr;
       assert(slask=="Tile");
     }
-    top = data[1];
-    bottom = *data.rbegin();
-    left.resize(10);
-    transform(next(data.begin()),
+  }
+
+  vector<string> sides() const
+  {return {top(), bottom(), left(), right()};}
+  
+  string top()    const {return data[0];}
+  string bottom() const {return *data.rbegin();}
+  string left()   const
+  {
+    string left;
+    left.resize(data.size());
+    transform(data.begin(),
 	      data.end(),
 	      left.begin(),
 	      [](string const &s){return *s.begin();});
-    right.resize(10);
-    transform(next(data.begin()),
+    return left;    
+  }
+    
+  string right()  const
+  {
+    string right;
+    right.resize(data.size());
+    transform(data.begin(),
 	      data.end(),
 	      right.begin(),
 	      [](string const &s){return *s.rbegin();});
-    
+    return right;
   }
+  
   void flip()  // Top to bottom
   {
-    reverse(begin(left), end(left));
-    reverse(begin(right), end(right));
-    swap(top, bottom);
+    reverse(data.begin(), data.end());
   }
 
   void rotate() //Counter clockwise;
   {
-    auto slask = top;
-    top = right;
+    //transpose
+    for(size_t row=0;row<(data.size()-1);row++)
+      for(size_t column=row+1;column<data[row].size();column++)
+        swap(data[row][column], data[column][row]);
 
-    right = bottom;
-    reverse(begin(right), end(right));
-
-    bottom = left;
-
-    left = slask;
-    reverse(begin(left), end(left));
+    flip();
   }
 };
 
