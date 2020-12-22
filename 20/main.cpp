@@ -28,7 +28,6 @@ class Tile : public Sides<string>
 {
 public:
   I nr;
-
   Tile(vector<string> const & data)
   {
     {
@@ -51,12 +50,13 @@ public:
 	      [](string const &s){return *s.rbegin();});
     
   }
-  void flip()  // flip left to right
+  void flip()  // Top to bottom
   {
-    reverse(begin(top), end(top));
-    reverse(begin(bottom), end(bottom));
-    swap(left, right);
+    reverse(begin(left), end(left));
+    reverse(begin(right), end(right));
+    swap(top, bottom);
   }
+
   void rotate() //Counter clockwise;
   {
     auto slask = top;
