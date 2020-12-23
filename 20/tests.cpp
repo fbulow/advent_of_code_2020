@@ -183,41 +183,30 @@ TEST(Requirement, match)
 TEST(Puzzle, getRequirement)
 {
   Puzzle sut;
-  Coord origin{0,0};
-  
+  Coord const origin{0,0};
   {
     auto req = sut.getRequirements(origin);
+    EXPECT_TRUE(req.right.empty());
+    EXPECT_TRUE(req.left.empty());
+    EXPECT_TRUE(req.bottom.empty());
+    EXPECT_TRUE(req.top.empty());
+    
     auto t1 = Pile(EXAMPLE).getTile(1951).value();
     EXPECT_TRUE(req.match(t1));
     sut.put(t1, origin);
   }
 
   {
-    Coord x = origin.down();
-    auto req = sut.getRequirements(x);
+    auto req = sut.getRequirements(origin.down());
     EXPECT_FALSE(req.top.empty());
-
-    auto t1 = Pile(EXAMPLE).getTile(1951).value();
-    EXPECT_FALSE(req.match(t1));
-    sut.put(t1, x);
   }
   {
-    Coord x = origin.up();
-    auto req = sut.getRequirements(x);
+    auto req = sut.getRequirements(origin.up());
     EXPECT_FALSE(req.bottom.empty());
-
-    auto t1 = Pile(EXAMPLE).getTile(1951).value();
-    EXPECT_FALSE(req.match(t1));
-    sut.put(t1, x);
   }
   {
-    Coord x = origin.right();
-    auto req = sut.getRequirements(x);
+    auto req = sut.getRequirements(origin.right());
     EXPECT_FALSE(req.left.empty());
-
-    auto t1 = Pile(EXAMPLE).getTile(1951).value();
-    EXPECT_FALSE(req.match(t1));
-    sut.put(t1, x);
   }
   {
     auto req = sut.getRequirements(origin.left());
