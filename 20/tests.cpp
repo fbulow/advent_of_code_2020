@@ -230,4 +230,11 @@ TEST(Puzzle, put_internal)
   EXPECT_NO_THROW(sut.place(1489, origin.up().up().right()));
 }
   
+TEST(Puzzle, whatFitsHere)
+{
+  Puzzle sut(EXAMPLE);
+  Coord const origin{0,0};
+  EXPECT_NO_THROW(sut.place(1951, origin));
+  EXPECT_EQ(2311, sut.whatFitsHere(origin.right()).value());
 
+}

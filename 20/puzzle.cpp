@@ -1,12 +1,16 @@
 struct Puzzle
 {
   Pile pile;
-  map<Key, set<Tile>> edgeMatch;
+  map<Key, set<I>> edgeMatch;
   map<Coord, Tile> table;
 
   Puzzle(string filename)
     :pile(filename)
-  {}
+  {
+    for(auto t:pile)
+      for(auto s:t.sides())
+        edgeMatch[bigKey(s)].insert(t.nr);
+  }
   
   Requirement getRequirements(Coord c)
   {
@@ -48,6 +52,20 @@ struct Puzzle
     table.insert({c,t});
   }
 
+  void removeFromPile(auto findPileIterator)
+  {
+    auto nr = findPileIterator->nr;
+    pile.erase(findPileIterator);
+
+    auto it = find_if(edgeMatch.begin(),
+                      edgeMatch.end(),
+                      [nr](pair<Key, set<I>> const &x){return x.second.contains(nr);});
+    assert(it!=edgeMatch.end());
+    it->second.erase(nr);
+    if(it->second.size()==0)
+      edgeMatch.erase(it);
+  }
+  
   void place(I i, Coord c)
   {
     auto it = pile.findTile(i);
@@ -66,12 +84,19 @@ struct Puzzle
         positionCounter++;
       }
     table.insert({c,*it});
-    pile.erase(it);
+    removeFromPile(it);
   }
-
+      
   
-  optional<Tile> whatFitsHere(Coord c)
+  optional<I> whatFitsHere(Coord c)
   {
+    for(auto x:getRequirements(c).sides())
+      if(not x.empty())
+        {
+          auto candidates = edgeMatch[bigKey(x)];
+          assert(candidates.size()==1);
+          return *candidates.begin();
+        }
     return {};
   }
   
