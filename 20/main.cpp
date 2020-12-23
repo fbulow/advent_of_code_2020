@@ -142,8 +142,14 @@ struct Pile
 };
 
 struct Coord{
-  int column;
   int row;
+  int column;
+
+  Coord up()    const { return{row-1, column};}
+  Coord down()  const { return{row+1, column};}
+  Coord left()  const { return{row, column-1};}
+  Coord right() const { return{row, column+1};}
+  
   bool operator==(auto const &other) const
   {return (row==other.row) and (column == other.column);}
   
@@ -231,3 +237,68 @@ auto solveA(string filename)
 		      return product;
 		    });
 }    
+
+struct Requirement:Sides<string>
+{
+  bool match(Tile const &t) const
+  {
+    if (not top.empty() and top!=t.top())
+      return false;
+    if (not bottom.empty() and bottom!=t.bottom())
+      return false;
+    if (not left.empty() and left!=t.left())
+      return false;
+    if (not right.empty() and right!=t.right())
+      return false;
+
+
+    return true;
+  }
+};
+  
+class Puzzle
+{
+  map<Coord, Tile> table;
+public:
+  Requirement getRequirements(Coord c)
+  {
+    Requirement ret;
+    {
+      auto x=get(c.up());
+      if(x) ret.top = x.value().bottom();
+    }
+    {
+      auto x=get(c.down());
+      if(x) ret.bottom = x.value().top();
+    }
+    {
+      auto x=get(c.left());
+      if(x) ret.left = x.value().right();
+    }
+    {
+      auto x=get(c.right());
+      if(x) ret.right = x.value().left();
+    }
+      
+    return ret;
+
+  }
+
+  optional<Tile> get(Coord c)
+  {
+    auto it = find_if(table.begin(),
+                      table.end(),
+                      [c](auto x){return x.first==c;});
+    if(it == table.end()) return {};
+
+    return it->second;
+  }
+
+      
+  void put(Tile const &t, Coord c)
+  {
+    table.insert({c,t});
+  }
+  
+};
+

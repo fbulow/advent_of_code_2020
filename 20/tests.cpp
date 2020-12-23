@@ -157,3 +157,72 @@ TEST(solve, a)
   EXPECT_EQ(30425930368573, ans);
   cout<<"Solution a: "<<ans<<endl;
 }
+
+TEST(Requirement, match)
+{
+  Tile const t({"Tile 1951:",
+      "#.##...##.",
+      "#.####...#",
+      ".....#..##",
+      "#...######",
+      ".##.#....#",
+      ".###.#####",
+      "###.##.##.",
+      ".###....#.",
+      "..#.#..#.#",
+      "#...##.#.."});
+    
+  Requirement r;
+  EXPECT_TRUE(r.match(t));
+  r.top=("#...##.#..");
+  EXPECT_FALSE(r.match(t));
+  r.top="#.##...##.";
+  EXPECT_TRUE(r.match(t));
+}
+
+TEST(Puzzle, getRequirement)
+{
+  Puzzle sut;
+  Coord origin{0,0};
+  
+  {
+    auto req = sut.getRequirements(origin);
+    auto t1 = Pile(EXAMPLE).getTile(1951).value();
+    EXPECT_TRUE(req.match(t1));
+    sut.put(t1, origin);
+  }
+
+  {
+    Coord x = origin.down();
+    auto req = sut.getRequirements(x);
+    EXPECT_FALSE(req.top.empty());
+
+    auto t1 = Pile(EXAMPLE).getTile(1951).value();
+    EXPECT_FALSE(req.match(t1));
+    sut.put(t1, x);
+  }
+  {
+    Coord x = origin.up();
+    auto req = sut.getRequirements(x);
+    EXPECT_FALSE(req.bottom.empty());
+
+    auto t1 = Pile(EXAMPLE).getTile(1951).value();
+    EXPECT_FALSE(req.match(t1));
+    sut.put(t1, x);
+  }
+  {
+    Coord x = origin.right();
+    auto req = sut.getRequirements(x);
+    EXPECT_FALSE(req.left.empty());
+
+    auto t1 = Pile(EXAMPLE).getTile(1951).value();
+    EXPECT_FALSE(req.match(t1));
+    sut.put(t1, x);
+  }
+  {
+    auto req = sut.getRequirements(origin.left());
+    EXPECT_FALSE(req.right.empty());
+  }
+
+  
+}
