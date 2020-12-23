@@ -182,7 +182,7 @@ TEST(Requirement, match)
 
 TEST(Puzzle, getRequirement)
 {
-  Puzzle sut;
+  Puzzle sut(EXAMPLE);
   Coord const origin{0,0};
   {
     auto req = sut.getRequirements(origin);
@@ -212,6 +212,22 @@ TEST(Puzzle, getRequirement)
     auto req = sut.getRequirements(origin.left());
     EXPECT_FALSE(req.right.empty());
   }
-
-  
 }
+
+TEST(Puzzle, put_internal)
+{
+  Puzzle sut(EXAMPLE);
+  Coord const origin{0,0};
+
+  EXPECT_EQ(9, sut.pile.size());
+  EXPECT_NO_THROW(sut.place(1951, origin));
+  EXPECT_EQ(8, sut.pile.size());
+
+  EXPECT_THROW(sut.place(1427, origin.right()), exception);//1427 is not adjecent to 1951.
+  EXPECT_NO_THROW(sut.place(2311, origin.right()));
+  EXPECT_NO_THROW(sut.place(2729, origin.up()));
+  EXPECT_NO_THROW(sut.place(2971, origin.up().up()));
+  EXPECT_NO_THROW(sut.place(1489, origin.up().up().right()));
+}
+  
+

@@ -73,13 +73,16 @@ public:
     reverse(data.begin(), data.end());
   }
 
-  void rotate() //Counter clockwise;
+  void transpose()
   {
-    //transpose
     for(size_t row=0;row<(data.size()-1);row++)
       for(size_t column=row+1;column<data[row].size();column++)
         swap(data[row][column], data[column][row]);
-
+  }
+  
+  void rotate() //Counter clockwise;
+  {
+    transpose();
     flip();
   }
 };
@@ -108,11 +111,16 @@ struct Pile
   size_t size() const
   {return data.size();}
 
-  optional<Tile> getTile(I nr)
+  auto findTile(I nr)
   {
-    auto x= find_if(data.begin(),
+    return find_if(data.begin(),
 		    data.end(),
 		    [nr](auto &t){return t.nr==nr;});
+  }
+
+  optional<Tile> getTile(I nr)
+  {
+    auto x = findTile(nr);
     if(x==data.end())
       return {};
     else
@@ -256,49 +264,4 @@ struct Requirement:Sides<string>
   }
 };
   
-class Puzzle
-{
-  map<Coord, Tile> table;
-public:
-  Requirement getRequirements(Coord c)
-  {
-    Requirement ret;
-    {
-      auto x=get(c.up());
-      if(x) ret.top = x.value().bottom();
-    }
-    {
-      auto x=get(c.down());
-      if(x) ret.bottom = x.value().top();
-    }
-    {
-      auto x=get(c.left());
-      if(x) ret.left = x.value().right();
-    }
-    {
-      auto x=get(c.right());
-      if(x) ret.right = x.value().left();
-    }
-      
-    return ret;
-
-  }
-
-  optional<Tile> get(Coord c)
-  {
-    auto it = find_if(table.begin(),
-                      table.end(),
-                      [c](auto x){return x.first==c;});
-    if(it == table.end()) return {};
-
-    return it->second;
-  }
-
-      
-  void put(Tile const &t, Coord c)
-  {
-    table.insert({c,t});
-  }
-  
-};
-
+#include"puzzle.cpp"
