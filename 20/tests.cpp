@@ -236,5 +236,13 @@ TEST(Puzzle, whatFitsHere)
   Coord const origin{0,0};
   EXPECT_NO_THROW(sut.place(1951, origin));
   EXPECT_EQ(2311, sut.whatFitsHere(origin.right()).value());
+  EXPECT_NO_THROW(sut.place(sut.whatFitsHere(origin.right()).value(),
+                            origin.right()));  
+}
 
+TEST(Puzzle, solve)
+{
+  Puzzle sut(EXAMPLE);
+  sut.solve();
+  cout<<"sut: "<<endl <<sut<<endl;
 }

@@ -10,6 +10,14 @@ struct Puzzle
     for(auto t:pile)
       for(auto s:t.sides())
         edgeMatch[bigKey(s)].insert(t.nr);
+
+    // for(auto it = edgeMatch.begin(); it != edgeMatch.end(); ) {
+    //   if(it->second.size() != 2)
+    //     it = edgeMatch.erase(it);
+    //   else
+    //     ++it;
+    // }
+    
   }
   
   Requirement getRequirements(Coord c)
@@ -40,7 +48,7 @@ struct Puzzle
   {
     auto it = find_if(table.begin(),
                       table.end(),
-                      [c](auto x){return x.first==c;});
+                      [c](auto const &x){return x.first==c;});
     if(it == table.end()) return {};
     
     return it->second;
@@ -57,19 +65,15 @@ struct Puzzle
     auto nr = findPileIterator->nr;
     pile.erase(findPileIterator);
 
-    auto it = find_if(edgeMatch.begin(),
-                      edgeMatch.end(),
-                      [nr](pair<Key, set<I>> const &x){return x.second.contains(nr);});
-    assert(it!=edgeMatch.end());
-    it->second.erase(nr);
-    if(it->second.size()==0)
-      edgeMatch.erase(it);
+    for(auto &x:edgeMatch)
+      x.second.erase(nr);
   }
   
-  void place(I i, Coord c)
+
+  void place(vector<Tile>::iterator it, Coord const &c)
   {
-    auto it = pile.findTile(i);
-    assert(it!=pile.end());
+    if(it==pile.end())
+      return;
     Tile t=*it;
     auto req=getRequirements(c);
     auto positionCounter=0;
@@ -86,18 +90,69 @@ struct Puzzle
     table.insert({c,*it});
     removeFromPile(it);
   }
-      
+  void place(I i, Coord const &c)
+  {
+    return place(pile.findTile(i), c);
+
+  }
   
   optional<I> whatFitsHere(Coord c)
   {
-    for(auto x:getRequirements(c).sides())
+    auto sides = getRequirements(c).sides();
+    for(auto x:sides)
       if(not x.empty())
         {
-          auto candidates = edgeMatch[bigKey(x)];
-          assert(candidates.size()==1);
+          auto candidates = edgeMatch.find(bigKey(x))->second;
+          if(candidates.size()==0)
+            return {};
+          else if(candidates.size()>=3)
+            {
+              cout<<x<<endl<<"size "<<candidates.size()<<endl;
+              for(auto x:candidates)
+                cout<< x<<endl;
+              assert(false);
+            }              
+          else if(candidates.size()!=1)
+            assert(false);
           return *candidates.begin();
         }
     return {};
   }
+
+  void solve(Coord c)
+  {
+    if(pile.size()==0)
+      return; //done
+    auto optNr = whatFitsHere(c);
+    if(not optNr) return;
+    auto nr = optNr.value();
+    place(nr, c);
+    solve(c.up());
+    solve(c.down());
+    solve(c.left());
+    solve(c.right());
+  }
+
+  void solve()
+  {
+    Coord c={0,0};
+    place(pile.begin()->nr, c);
+    solve(c.up());
+    solve(c.down());
+    solve(c.left());
+    solve(c.right());
+  }
   
 };
+
+ostream& operator<<(ostream &cout, Coord const &c)
+{
+  cout<<"{"<<c.row<<", "<<c.column<<"}";
+  return cout;
+}
+ostream& operator<<(ostream &cout, Puzzle const &p)
+{
+  for(auto x:p.table)
+    cout<<x.first<<" "<<x.second.nr<<endl;
+  return cout;
+}
