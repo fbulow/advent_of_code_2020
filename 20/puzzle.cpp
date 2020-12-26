@@ -1,3 +1,10 @@
+bool noMoreThanTwoTilesLinked(map<Key, set<I>> const &edgeMatch)
+{
+  return all_of(edgeMatch.begin(), edgeMatch.end(),
+                [](auto &x){return x.second.size()<3;});
+}
+
+
 struct Puzzle
 {
   Pile pile;
@@ -10,14 +17,13 @@ struct Puzzle
     for(auto t:pile)
       for(auto s:t.sides())
         edgeMatch[bigKey(s)].insert(t.nr);
-
-    // for(auto it = edgeMatch.begin(); it != edgeMatch.end(); ) {
-    //   if(it->second.size() != 2)
-    //     it = edgeMatch.erase(it);
-    //   else
-    //     ++it;
-    // }
     
+    for(auto it = edgeMatch.begin(); it != edgeMatch.end(); ) {
+      if(it->second.size() != 2)
+        it = edgeMatch.erase(it);
+      else
+        ++it;
+    }
   }
   
   Requirement getRequirements(Coord c)
@@ -70,25 +76,24 @@ struct Puzzle
   }
   
 
-  void place(vector<Tile>::iterator it, Coord const &c)
+  void place(vector<Tile>::iterator tile, Coord const &c)
   {
-    if(it==pile.end())
+    if(tile==pile.end())
       return;
-    Tile t=*it;
     auto req=getRequirements(c);
     auto positionCounter=0;
-    while(not req.match(t))
+    while(not req.match(*tile))
       {
         if(positionCounter==10)
           throw exception{};
         else if(positionCounter%2==0)
-          t.flip();
+          tile->flip();
         else
-          t.transpose();
+          tile->transpose();
         positionCounter++;
       }
-    table.insert({c,*it});
-    removeFromPile(it);
+    table.insert({c, *tile});
+    removeFromPile(tile);
   }
   void place(I i, Coord const &c)
   {
@@ -98,11 +103,16 @@ struct Puzzle
   
   optional<I> whatFitsHere(Coord c)
   {
+    assert(noMoreThanTwoTilesLinked(edgeMatch));
+
     auto sides = getRequirements(c).sides();
     for(auto x:sides)
       if(not x.empty())
         {
-          auto candidates = edgeMatch.find(bigKey(x))->second;
+          auto mapElement = edgeMatch.find(bigKey(x));
+          if(mapElement==edgeMatch.end())
+            return {};
+          auto candidates  = mapElement->second;
           if(candidates.size()==0)
             return {};
           else if(candidates.size()>=3)
@@ -142,7 +152,6 @@ struct Puzzle
     solve(c.left());
     solve(c.right());
   }
-  
 };
 
 ostream& operator<<(ostream &cout, Coord const &c)
@@ -152,7 +161,24 @@ ostream& operator<<(ostream &cout, Coord const &c)
 }
 ostream& operator<<(ostream &cout, Puzzle const &p)
 {
-  for(auto x:p.table)
-    cout<<x.first<<" "<<x.second.nr<<endl;
+  auto rows=p.table|views::transform([](auto x){return x.first.row;});
+  auto cols=p.table|views::transform([](auto x){return x.first.column;});
+  for(auto row =  *min_element(rows.begin(), rows.end());
+           row <= *max_element(rows.begin(), rows.end());
+      row++)
+    {
+      for(auto column = *min_element(cols.begin(), cols.end());
+             column <=  *max_element(cols.begin(), cols.end());
+        column++)
+        {
+          auto it = p.table.find({row, column});
+          if(it==p.table.end())
+            cout<<"    ";
+          else
+            cout<<it->second.nr;
+          cout<<"  ";
+        }
+      cout<<endl;
+    }
   return cout;
 }

@@ -240,9 +240,38 @@ TEST(Puzzle, whatFitsHere)
                             origin.right()));  
 }
 
-TEST(Puzzle, solve)
+TEST(noMoreThanTwoTilesLinked, true_and_false)
+{
+
+  map<Key, set<I>> sut;
+  
+  EXPECT_TRUE(noMoreThanTwoTilesLinked(sut));
+  sut[0].insert(0);
+  EXPECT_TRUE(noMoreThanTwoTilesLinked(sut));
+  sut[0].insert(1);
+  EXPECT_TRUE(noMoreThanTwoTilesLinked(sut));
+  sut[0].insert(2);
+  EXPECT_FALSE(noMoreThanTwoTilesLinked(sut));
+  sut[0].erase(1);
+  EXPECT_TRUE(noMoreThanTwoTilesLinked(sut));
+}
+
+TEST(Puzzle, dont_solve_twice)
 {
   Puzzle sut(EXAMPLE);
-  sut.solve();
-  cout<<"sut: "<<endl <<sut<<endl;
+  EXPECT_EQ(0, sut.table.size());
+  sut.place(1951, {0,0});
+  EXPECT_EQ(1, sut.table.size());
+  sut.solve({0,0});
+  EXPECT_EQ(1, sut.table.size());
+}
+
+
+TEST(Puzzle, full_solution_part_a)
+{
+  Puzzle sut(EXAMPLE);
+  sut.pile.findTile(1951)->flip(); //To make it identical to reference solution.
+  sut.place(1951, {0,0});
+  sut.solve({1,0});
+  //  cout<<"sut: "<<endl <<sut<<endl;
 }

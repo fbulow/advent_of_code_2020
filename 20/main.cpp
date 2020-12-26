@@ -68,16 +68,18 @@ public:
     return right;
   }
   
-  void flip()  // Top to bottom
+  Tile& flip()  // Top to bottom
   {
     reverse(data.begin(), data.end());
+    return *this;
   }
 
-  void transpose()
+  Tile& transpose()
   {
     for(size_t row=0;row<(data.size()-1);row++)
       for(size_t column=row+1;column<data[row].size();column++)
         swap(data[row][column], data[column][row]);
+    return *this;
   }
   
   void rotate() //Counter clockwise;
@@ -126,12 +128,11 @@ struct Pile
     else
       return {*x};
   }
-
-  
   Tile const& operator[](size_t i) const
   {
     return data[i];
   }
+  
 
   auto begin() const
   {
@@ -196,7 +197,10 @@ using Key = unsigned int;
 Key bigKey(string s)
 {
   string r(s.rbegin(), s.rend());
-  return max(encodeBinary(s), encodeBinary(r));
+  auto a = encodeBinary(s);
+  auto b = encodeBinary(r);
+  assert(a!=b); //No palindrome.
+  return max(a,b);
 }
 
 bool isCorner(Tile const &t, set<unsigned int> const& edges)
