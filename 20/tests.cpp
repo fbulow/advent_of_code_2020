@@ -267,6 +267,15 @@ TEST(Puzzle, dont_solve_twice)
 }
 
 
+Puzzle referenceSolution()
+{
+  Puzzle sut(EXAMPLE);
+  sut.pile.findTile(1951)->flip(); //To make it identical to reference solution.
+  sut.place(1951, {0,0});
+  sut.solve({1,0});
+  return sut;
+}
+
 TEST(Puzzle, full_solution_part_a)
 {
   Puzzle sut(EXAMPLE);
@@ -274,4 +283,62 @@ TEST(Puzzle, full_solution_part_a)
   sut.place(1951, {0,0});
   sut.solve({1,0});
   //  cout<<"sut: "<<endl <<sut<<endl;
+}
+
+TEST(getRow, first_row)
+{
+  cout<<referenceSolution()<<endl;
+  
+  EXPECT_EQ(".#.#..#.##...#.##..#####",
+            getRow(referenceSolution(), 0));
+
+  EXPECT_EQ("###....#.#....#..#......",
+            getRow(referenceSolution(), 1));
+
+  EXPECT_EQ("#..#.##..#..###.#.##....",
+            getRow(referenceSolution(), 8));
+
+}
+
+TEST(subRowCount, first)
+{
+  auto sut = referenceSolution();
+  EXPECT_EQ(24, sut.sideSize());
+}
+
+
+TEST(collage, example)
+{
+  auto sut = referenceSolution();
+
+  auto refCollage = Collage{
+    ".#.#..#.##...#.##..#####",
+    "###....#.#....#..#......",
+    "##.##.###.#.#..######...",
+    "###.#####...#.#####.#..#",
+    "##.#....#.##.####...#.##",
+    "...########.#....#####.#",
+    "....#..#...##..#.#.###..",
+    ".####...#..#.....#......",
+    "#..#.##..#..###.#.##....",
+    "#.####..#.####.#.#.###..",
+    "###.#.#...#.######.#..##",
+    "#.####....##..########.#",
+    "##..##.#...#...#.#.#.#..",
+    "...#..#..#.#.##..###.###",
+    ".#.#....#.##.#...###.##.",
+    "###.#...#..#.##.######..",
+    ".#.#.###.##.##.#..#.##..",
+    ".####.###.#...###.#..#.#",
+    "..#.#..#..#.#.#.####.###",
+    "#..####...#.#.#.###.###.",
+    "#####..#####...###....##",
+    "#.##..#..#...#..####...#",
+    ".#.###..##..##..####.##.",
+    "...###...##...#...#..###"
+  };
+  
+  
+  EXPECT_EQ(refCollage, sut.collage());
+
 }

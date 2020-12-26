@@ -1,3 +1,4 @@
+#include<cmath>
 bool noMoreThanTwoTilesLinked(map<Key, set<I>> const &edgeMatch)
 {
   return all_of(edgeMatch.begin(), edgeMatch.end(),
@@ -5,11 +6,36 @@ bool noMoreThanTwoTilesLinked(map<Key, set<I>> const &edgeMatch)
 }
 
 
+using Table = map<Coord, Tile>;
+using Collage = vector<string>;
+
+string getRow(Table const &table, int row)
+{
+  string ret;
+  auto r=table|views::transform([](auto x){return x.first.row;});
+  set<int> all_rows{r.begin(), r.end()};
+  
+  auto firstRow = *next(all_rows.begin(), row/8);
+  auto cols=table|views::transform([](auto x){return x.first.column;});
+  
+  for(auto column = *min_element(cols.begin(), cols.end());
+      column <=  *max_element(cols.begin(), cols.end());
+      column++)
+    {
+      auto s = table.find(Coord{firstRow, column})->second.data[row%8+1];
+      ret += s.substr(1,s.size()-2);
+    }
+  return ret;
+}
+
+
+
+
 struct Puzzle
 {
   Pile pile;
   map<Key, set<I>> edgeMatch;
-  map<Coord, Tile> table;
+  Table table;
 
   Puzzle(string filename)
     :pile(filename)
@@ -152,6 +178,22 @@ struct Puzzle
     solve(c.left());
     solve(c.right());
   }
+
+  int sideSize() const
+  {
+    return 8 * sqrt(table.size());
+  }
+
+  vector<string> collage() const
+  {
+    vector<string> ret;
+    ret.reserve(sideSize());
+    for(int row=0; row<sideSize(); row++)
+      ret.push_back(getRow(table, row));
+    return ret;
+  }
+
+    
 };
 
 ostream& operator<<(ostream &cout, Coord const &c)
@@ -181,4 +223,9 @@ ostream& operator<<(ostream &cout, Puzzle const &p)
       cout<<endl;
     }
   return cout;
+}
+
+string getRow(Puzzle const &puzzle, int row)
+{
+  return getRow(puzzle.table, row);
 }
