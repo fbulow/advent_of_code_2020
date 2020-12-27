@@ -6,13 +6,36 @@ bool noMoreThanTwoTilesLinked(map<Key, set<I>> const &edgeMatch)
                 [](auto &x){return x.second.size()<3;});
 }
 
-
-struct Table 
-{
+struct PuzzleSize{
   int rowMax = numeric_limits<int>::min();
   int rowMin = numeric_limits<int>::max();
   int colMax = numeric_limits<int>::min();
   int colMin = numeric_limits<int>::max();
+  void add(Coord c)
+  {
+    if(rowMin > c.row    ) rowMin = c.row;
+    if(colMin > c.column ) colMin = c.column;
+    if(rowMax < c.row    ) rowMax = c.row;
+    if(colMax < c.column ) colMax = c.column;
+  }
+  
+  bool valid() const
+  {
+    return  (rowMin < rowMax) and (colMin < colMax);
+  }
+};
+
+struct Table 
+{
+  PuzzleSize puzzleSize;
+  int rowMax() const
+  {assert(puzzleSize.valid()); return puzzleSize.rowMax;}
+  int rowMin() const
+  {assert(puzzleSize.valid()); return puzzleSize.rowMin;}
+  int colMax() const
+  {assert(puzzleSize.valid()); return puzzleSize.colMax;}
+  int colMin() const
+  {assert(puzzleSize.valid()); return puzzleSize.colMin;}
   
   map<Coord, Tile> data;
   auto begin() const {return data.begin();}
@@ -20,11 +43,7 @@ struct Table
   auto find(Coord c) const {return data.find(c);}
   auto insert(pair<Coord, Tile> d)
   {
-    if(rowMin > d.first.row    ) rowMin = d.first.row;
-    if(colMin > d.first.column ) colMin = d.first.column;
-    if(rowMax < d.first.row    ) rowMax = d.first.row;
-    if(colMax < d.first.column ) colMax = d.first.column;
-    
+    puzzleSize.add(d.first);
     return data.emplace(move(d));}
   auto size() const {return data.size();}
   
@@ -225,12 +244,9 @@ ostream& operator<<(ostream &cout, Coord const &c)
 }
 ostream& operator<<(ostream &cout, Puzzle const &p)
 {
-  assert(p.table.rowMin < p.table.rowMax);
-  assert(p.table.colMin < p.table.colMax);
-  
-  for(auto row = p.table.rowMin; row<=p.table.rowMax; row++)
+  for(auto row = p.table.rowMin(); row<=p.table.rowMax(); row++)
     {
-      for(auto column = p.table.colMin; column<=p.table.colMax; column++)
+      for(auto column = p.table.colMin(); column<=p.table.colMax(); column++)
         {
           auto it = p.table.find({row, column});
           if(it==p.table.end())

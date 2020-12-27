@@ -342,3 +342,10 @@ TEST(collage, example)
   EXPECT_EQ(refCollage, sut.collage());
 
 }
+
+TEST(Puzzle, solve_input)
+{
+  Puzzle p(INPUT);
+  p.solve();
+  cout<<p<<endl;
+}
