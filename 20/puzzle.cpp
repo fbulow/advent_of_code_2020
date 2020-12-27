@@ -1,4 +1,5 @@
 #include<cmath>
+#include<limits>
 bool noMoreThanTwoTilesLinked(map<Key, set<I>> const &edgeMatch)
 {
   return all_of(edgeMatch.begin(), edgeMatch.end(),
@@ -6,7 +7,28 @@ bool noMoreThanTwoTilesLinked(map<Key, set<I>> const &edgeMatch)
 }
 
 
-using Table = map<Coord, Tile>;
+struct Table 
+{
+  int rowMax = numeric_limits<int>::min();
+  int rowMin = numeric_limits<int>::max();
+  int colMax = numeric_limits<int>::min();
+  int colMin = numeric_limits<int>::max();
+  
+  map<Coord, Tile> data;
+  auto begin() const {return data.begin();}
+  auto end() const {return data.end();}
+  auto find(Coord c) const {return data.find(c);}
+  auto insert(pair<Coord, Tile> d)
+  {
+    if(rowMin > d.first.row    ) rowMin = d.first.row;
+    if(colMin > d.first.column ) colMin = d.first.column;
+    if(rowMax < d.first.row    ) rowMax = d.first.row;
+    if(colMax < d.first.column ) colMax = d.first.column;
+    
+    return data.emplace(move(d));}
+  auto size() const {return data.size();}
+  
+};
 using Collage = vector<string>;
 
 string getRow(Table const &table, int row)
@@ -203,15 +225,12 @@ ostream& operator<<(ostream &cout, Coord const &c)
 }
 ostream& operator<<(ostream &cout, Puzzle const &p)
 {
-  auto rows=p.table|views::transform([](auto x){return x.first.row;});
-  auto cols=p.table|views::transform([](auto x){return x.first.column;});
-  for(auto row =  *min_element(rows.begin(), rows.end());
-           row <= *max_element(rows.begin(), rows.end());
-      row++)
+  assert(p.table.rowMin < p.table.rowMax);
+  assert(p.table.colMin < p.table.colMax);
+  
+  for(auto row = p.table.rowMin; row<=p.table.rowMax; row++)
     {
-      for(auto column = *min_element(cols.begin(), cols.end());
-             column <=  *max_element(cols.begin(), cols.end());
-        column++)
+      for(auto column = p.table.colMin; column<=p.table.colMax; column++)
         {
           auto it = p.table.find({row, column});
           if(it==p.table.end())
