@@ -48,7 +48,40 @@ struct Table
   auto size() const {return data.size();}
   
 };
-using Collage = vector<string>;
+
+struct Collage;
+unsigned int markMonsters(Collage& collage);
+
+struct Collage : vector<string>
+{
+  Collage()=default;
+  Collage(vector<string>&& v)
+    :vector<string>(move(v))
+  {}
+  Collage& transpose()
+  {
+    ::transpose(*this);
+    return *this;
+  }
+  Collage& flip()
+  {
+    reverse(begin(), end());
+    return *this;
+  }
+  
+  auto markMonsters()
+  {
+    return ::markMonsters(*this);
+  }
+  
+};
+
+ostream& operator<<(ostream& cout, Collage const &c)
+{
+  for(auto row:c)
+    cout<<row<<endl;
+  return cout;
+}
 
 string getRow(Table const &table, int row)
 {
@@ -196,21 +229,22 @@ struct Puzzle
     return {};
   }
 
-  void solve(Coord c)
+  Puzzle& solve(Coord c)
   {
     if(pile.size()==0)
-      return; //done
+      return *this; //done
     auto optNr = whatFitsHere(c);
-    if(not optNr) return;
+    if(not optNr) return *this;
     auto nr = optNr.value();
     place(nr, c);
     solve(c.up());
     solve(c.down());
     solve(c.left());
     solve(c.right());
+    return *this;
   }
 
-  void solve()
+  Puzzle& solve()
   {
     Coord c={0,0};
     place(pile.begin()->nr, c);
@@ -218,6 +252,7 @@ struct Puzzle
     solve(c.down());
     solve(c.left());
     solve(c.right());
+    return *this;
   }
 
   int sideSize() const
@@ -225,9 +260,9 @@ struct Puzzle
     return 8 * sqrt(table.size());
   }
 
-  vector<string> collage() const
+  Collage collage() const
   {
-    vector<string> ret;
+    Collage ret;
     ret.reserve(sideSize());
     for(int row=0; row<sideSize(); row++)
       ret.push_back(getRow(table, row));
@@ -264,3 +299,5 @@ string getRow(Puzzle const &puzzle, int row)
 {
   return getRow(puzzle.table, row);
 }
+
+#include"collage.cpp"

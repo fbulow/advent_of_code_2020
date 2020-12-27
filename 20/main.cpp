@@ -24,6 +24,13 @@ struct Sides{
   }
 };
 
+void transpose(auto &data)
+{
+  for(size_t row=0;row<(data.size()-1);row++)
+    for(size_t column=row+1;column<data[row].size();column++)
+      swap(data[row][column], data[column][row]);
+}
+
 class Tile 
 {
   
@@ -76,9 +83,7 @@ public:
 
   Tile& transpose()
   {
-    for(size_t row=0;row<(data.size()-1);row++)
-      for(size_t column=row+1;column<data[row].size();column++)
-        swap(data[row][column], data[column][row]);
+    ::transpose(data);
     return *this;
   }
   

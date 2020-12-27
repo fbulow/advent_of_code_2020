@@ -287,7 +287,7 @@ TEST(Puzzle, full_solution_part_a)
 
 TEST(getRow, first_row)
 {
-  cout<<referenceSolution()<<endl;
+  //cout<<referenceSolution()<<endl;
   
   EXPECT_EQ(".#.#..#.##...#.##..#####",
             getRow(referenceSolution(), 0));
@@ -311,7 +311,7 @@ TEST(collage, example)
 {
   auto sut = referenceSolution();
 
-  auto refCollage = Collage{
+  auto refCollage = Collage({
     ".#.#..#.##...#.##..#####",
     "###....#.#....#..#......",
     "##.##.###.#.#..######...",
@@ -335,8 +335,8 @@ TEST(collage, example)
     "#####..#####...###....##",
     "#.##..#..#...#..####...#",
     ".#.###..##..##..####.##.",
-    "...###...##...#...#..###"
-  };
+    "...###...##...#...#..###"}
+    );
   
   
   EXPECT_EQ(refCollage, sut.collage());
@@ -347,5 +347,56 @@ TEST(Puzzle, solve_input)
 {
   Puzzle p(INPUT);
   p.solve();
-  cout<<p<<endl;
+  //  cout<<p<<endl;
+}
+
+TEST(Collage, countMonsters)
+{
+  Collage sut({
+      ".####...#####..#...###..",
+      "#####..#..#.#.####..#.#.",
+      ".#.#...#.###...#.##.##..",
+      "#.#.##.###.#.##.##.#####",
+      "..##.###.####..#.####.##",
+      "...#.#..##.##...#..#..##",
+      "#.##.#..#.#..#..##.#.#..",
+      ".###.##.....#...###.#...",
+      "#.####.#.#....##.#..#.#.",
+      "##...#..#....#..#...####",
+      "..#.##...###..#.#####..#",
+      "....#.##.#.#####....#...",
+      "..##.##.###.....#.##..#.",
+      "#...#...###..####....##.",
+      ".#.##...#.##.#.#.###...#",
+      "#.###.#..####...##..#...",
+      "#.###...#.##...#.######.",
+      ".###.###.#######..#####.",
+      "..##.#..#..#.#######.###",
+      "#.#..##.########..#..##.",
+      "#.#####..#.#...##..#....",
+      "#....##..#.#########..##",
+      "#...#.....#..##...###.##",
+      "#..###....##.#...##.##.#"});
+  
+  EXPECT_EQ(2, markMonsters(sut));
+  //  cout<<sut<<endl;
+}
+
+TEST(Collage, roughness)
+{
+  auto sut = referenceSolution().collage();
+
+  EXPECT_EQ(273, seaRoughness(sut));
+  //  cout<<sut<<endl;
+}
+
+
+TEST(solution,b)
+{
+  auto p = Puzzle(INPUT);
+  p.solve();
+  auto sut = p.collage();
+  auto ans = seaRoughness(sut);
+  cout<<"Solution b: "<<ans<<endl;
+  EXPECT_EQ(2453, ans);
 }
