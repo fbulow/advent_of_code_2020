@@ -78,3 +78,12 @@ string sovleA(string s)
   
   return ret.str().substr(1);
 }
+
+unsigned long int solveB(string s)
+{
+  QuickCups x(s,1000000);
+  for(auto i=0;i<10000000;i++)
+    x.move();
+  x.shiftUntilFirstOneIs(1);
+  return (*next(x.begin(),1)) * (*next(x.begin(),2));
+}

@@ -101,3 +101,10 @@ TEST(QuickCup, shift_until_first_one_is)
   EXPECT_EQ("7 8 9 1 2 3 4 5 6", sut.toString());
 }
 
+TEST(solution, b)
+{
+  ASSERT_EQ(149245887792,  solveB("389125467"));
+  cout<<"Solution b: " <<solveB("186524973")<<endl;
+}
+
+
