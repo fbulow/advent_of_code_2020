@@ -13,7 +13,6 @@ using namespace std;
 class Cups;
 ostream& operator<<(ostream& cout, Cups const & c);
 
-
 char nextDown(char c)
 {
   if(c=='1') return '9';
@@ -125,3 +124,5 @@ ostream& operator<<(ostream& cout, Cups const & c)
   cout<<c.toString()<<endl;
   return cout;
 }
+
+#include"quickCups.cpp"

@@ -60,8 +60,44 @@ TEST(makeMove, example)
 
 TEST(solve, a)
 {
-  ASSERT_EQ("67384529", Cups("389125467").solveA());
-
-  cout<<"Solution a: " <<Cups("186524973").solveA()<<endl;
-  
+  auto ans = sovleA("389125467");
+  ASSERT_EQ("67384529", ans);
+  cout<<"Solution a: " <<ans<<endl;
 }
+
+TEST(numeric, size)
+{
+  ASSERT_LT(10000000, numeric_limits<I>::max());
+}
+
+TEST(QuickCup, ctor)
+{
+  QuickCups sut("12345", 7);
+  ostringstream s;
+  for(auto x:sut)
+    s<<x;
+  EXPECT_EQ("1234567", s.str());
+  EXPECT_EQ("1 2 3 4 5 6 7", sut.toString());
+}
+
+TEST(QuickCup, toString)
+{
+  QuickCups sut("389125467", 9);
+  EXPECT_EQ("3 8 9 1 2 5 4 6 7", sut.toString());
+}
+
+TEST(QuickCup, move)
+{
+  QuickCups sut("389125467", 9);
+  sut.move();
+  EXPECT_EQ("2 8 9 1 5 4 6 7 3", sut.toString());
+}
+
+TEST(QuickCup, shift_until_first_one_is)
+{
+  QuickCups sut("123456789", 9);
+  sut.shiftUntilFirstOneIs(7);
+
+  EXPECT_EQ("7 8 9 1 2 3 4 5 6", sut.toString());
+}
+
