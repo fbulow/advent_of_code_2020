@@ -8,6 +8,7 @@
 // #include <cassert>
 #include<list>
 #include<deque>
+#include <initializer_list>
 using namespace std;
 
 struct Coord{
@@ -67,14 +68,64 @@ Coord step(Coord start, Di d)
   assert(false);
 }
 
-using Nav = deque<Di>;
-
-Coord step(Nav dir)
+template<class T=initializer_list<Di>&&>
+Coord step(T navlist)
 {
   Coord ret;
-  for(Di d:dir)
+  for(Di d:navlist)
     ret=step(ret, d);
   return ret;
+}
+
+struct Nav : vector<Di>
+{
+  Nav(string const &s)
+  {
+    reserve(s.size());
+    istringstream cin(s);
+    optional<char> prefix{};
+    char c;
+    while(not(cin>>c).eof())
+      {
+        if(prefix)
+          {
+            if(prefix.value()=='s' and c=='e')
+              push_back(Di::se);
+            else if(prefix.value()=='s' and c=='w')
+              push_back(Di::sw);
+            else if(prefix.value()=='n' and c=='e')
+              push_back(Di::ne);
+            else if(prefix.value()=='n' and c=='w')
+              push_back(Di::nw);
+            prefix={};
+          }
+        else if(c=='n' or c=='s')
+          prefix=c;
+        else if(c=='e')
+          push_back(Di::e);
+        else if (c=='w')
+          push_back(Di::w);
+      }
+  }
+};
+
+  
+unsigned int solutionA(string filename)
+{
+  ifstream cin(filename);
+  assert(cin.is_open());
+
+  map<Coord, unsigned int> hits;
+  string line;
+  while(getline(cin, line))
+      hits[step(Nav(line))]++;
+
+  return count_if(hits.begin(),
+                  hits.end(),
+                  [](auto x)
+                  {
+                    return x.second%2==1;
+                  });
 }
 
 
