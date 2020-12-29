@@ -109,38 +109,37 @@ struct Nav : vector<Di>
   }
 };
 
-struct Floor : map<Coord, bool>
+struct BlackTiles : set<Coord>
 {
-  Floor() = default;
-  Floor(string const & filename)
+  BlackTiles() = default;
+  BlackTiles(string const & filename)
   {
     ifstream cin(filename);
     assert(cin.is_open());
 
     string line;
     while(getline(cin, line))
-      {
-        auto &tile = (*this)[step(Nav(line))];
-        tile=not tile;
-      }
+        toggle(step(Nav(line)));
+  }
+
+  void toggle(Coord c)
+  {
+    if(contains(c))
+      erase(c);
+    else
+      insert(c);
   }
   
   auto countBlack() const
   {
-  return count_if(cbegin(),
-                  cend(),
-                  [](auto x)
-                  {
-                    return x.second;
-                  });
+    return size();
   }
 };
 
 unsigned int solutionA(string const &filename)
 {
-  return Floor(filename).countBlack();
+  return BlackTiles(filename).countBlack();
 }
-
 
 struct Heat:map<Coord, int>
 {
@@ -151,38 +150,37 @@ struct Heat:map<Coord, int>
       t[step(c, x)]++;
   }
 
-  Heat(Floor const &iteratable)
+  Heat(BlackTiles const &iteratable)
   {
     for(auto x: iteratable)
-      if(x.second)
-        black(x.first);
+      black(x);
   }
   
 };
 
-Floor dayPassed(Floor ret)
-{
-  Heat h(ret);
-  for(auto [coord, count] :h)
-    {
-      if( ret[coord] and ( (count == 0) or (count > 2 ) ))
-        ret[coord] = false;
-      else if ( (not ret[coord]) and (count ==  2 ) )
-        ret[coord] = true;
-    }
-  return ret;
-}
+// Floor dayPassed(Floor ret)
+// {
+//   Heat h(ret);
+//   for(auto [coord, count] :h)
+//     {
+//       if( ret[coord] and ( (count == 0) or (count > 2 ) ))
+//         ret[coord] = false;
+//       else if ( (not ret[coord]) and (count ==  2 ) )
+//         ret[coord] = true;
+//     }
+//   return ret;
+// }
 
-unsigned int solutionB(string filename)
-{
-  Floor ret(filename);
-  for(int i=1;i<100;i++)
-    {
-      ret = dayPassed(ret);
-      if(i==99)
-        cout<<i<< ret.countBlack()<<endl;
+// unsigned int solutionB(string filename)
+// {
+//   Floor ret(filename);
+//   for(int i=1;i<100;i++)
+//     {
+//       ret = dayPassed(ret);
+//       if(i==99)
+//         cout<<i<< ret.countBlack()<<endl;
 
-    }
-  cout<<"end "<< ret.countBlack()<<endl;
-  return ret.countBlack();
-}
+//     }
+//   cout<<"end "<< ret.countBlack()<<endl;
+//   return ret.countBlack();
+// }

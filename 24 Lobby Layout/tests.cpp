@@ -67,12 +67,14 @@ TEST(parseNav, complex)
 TEST(solution, a)
 {
   ASSERT_EQ(10, solutionA(EXAMPLE));
-  cout<<"Solution A: "<<solutionA(INPUT)<<endl;
+  auto ans = solutionA(INPUT);
+  EXPECT_EQ(263, ans);
+  cout<<"Solution A: "<<ans<<endl;
 }
 
 
-// TEST(solution, b)
-// {
-//   ASSERT_EQ(2208, solutionB(EXAMPLE));
-//   cout<<"Solution B: "<<solutionB(INPUT)<<endl;
-// }
+TEST(solution, b)
+{
+  ASSERT_EQ(2208, solutionB(EXAMPLE));
+  cout<<"Solution B: "<<solutionB(INPUT)<<endl;
+}
