@@ -23,3 +23,4 @@ add_subdirectory(19)
 add_subdirectory(20)
 
 add_subdirectory("23 Crab Cups")
+add_subdirectory("24 Lobby Layout")
