@@ -109,24 +109,80 @@ struct Nav : vector<Di>
   }
 };
 
-  
-unsigned int solutionA(string filename)
+struct Floor : map<Coord, bool>
 {
-  ifstream cin(filename);
-  assert(cin.is_open());
+  Floor() = default;
+  Floor(string const & filename)
+  {
+    ifstream cin(filename);
+    assert(cin.is_open());
 
-  map<Coord, unsigned int> hits;
-  string line;
-  while(getline(cin, line))
-      hits[step(Nav(line))]++;
-
-  return count_if(hits.begin(),
-                  hits.end(),
+    string line;
+    while(getline(cin, line))
+      {
+        auto &tile = (*this)[step(Nav(line))];
+        tile=not tile;
+      }
+  }
+  
+  auto countBlack() const
+  {
+  return count_if(cbegin(),
+                  cend(),
                   [](auto x)
                   {
-                    return x.second%2==1;
+                    return x.second;
                   });
+  }
+};
+
+unsigned int solutionA(string const &filename)
+{
+  return Floor(filename).countBlack();
 }
 
 
+struct Heat:map<Coord, int>
+{
+  void black(Coord c)
+  {
+    auto &t = *this;
+    for (auto x:{Di::e, Di::se, Di::sw, Di::w, Di::nw, Di::ne})
+      t[step(c, x)]++;
+  }
 
+  Heat(Floor const &iteratable)
+  {
+    for(auto x: iteratable)
+      if(x.second)
+        black(x.first);
+  }
+  
+};
+
+Floor dayPassed(Floor ret)
+{
+  Heat h(ret);
+  for(auto [coord, count] :h)
+    {
+      if( ret[coord] and ( (count == 0) or (count > 2 ) ))
+        ret[coord] = false;
+      else if ( (not ret[coord]) and (count ==  2 ) )
+        ret[coord] = true;
+    }
+  return ret;
+}
+
+unsigned int solutionB(string filename)
+{
+  Floor ret(filename);
+  for(int i=1;i<100;i++)
+    {
+      ret = dayPassed(ret);
+      if(i==99)
+        cout<<i<< ret.countBlack()<<endl;
+
+    }
+  cout<<"end "<< ret.countBlack()<<endl;
+  return ret.countBlack();
+}

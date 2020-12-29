@@ -69,3 +69,10 @@ TEST(solution, a)
   ASSERT_EQ(10, solutionA(EXAMPLE));
   cout<<"Solution A: "<<solutionA(INPUT)<<endl;
 }
+
+
+// TEST(solution, b)
+// {
+//   ASSERT_EQ(2208, solutionB(EXAMPLE));
+//   cout<<"Solution B: "<<solutionB(INPUT)<<endl;
+// }
