@@ -129,11 +129,23 @@ struct BlackTiles : set<Coord>
     else
       insert(c);
   }
+
+  bool black(Coord c) const
+  {
+    return contains(c);
+  }
+  bool white(Coord c) const
+  {
+    return not black(c);
+  }
   
   auto countBlack() const
   {
     return size();
   }
+
+  void nextDay();
+  
 };
 
 unsigned int solutionA(string const &filename)
@@ -146,6 +158,7 @@ struct Heat:map<Coord, int>
   void black(Coord c)
   {
     auto &t = *this;
+    t[c]; //To assure existence! t[c]==0 is relevant if c is black.
     for (auto x:{Di::e, Di::se, Di::sw, Di::w, Di::nw, Di::ne})
       t[step(c, x)]++;
   }
@@ -155,32 +168,26 @@ struct Heat:map<Coord, int>
     for(auto x: iteratable)
       black(x);
   }
-  
 };
 
-// Floor dayPassed(Floor ret)
-// {
-//   Heat h(ret);
-//   for(auto [coord, count] :h)
-//     {
-//       if( ret[coord] and ( (count == 0) or (count > 2 ) ))
-//         ret[coord] = false;
-//       else if ( (not ret[coord]) and (count ==  2 ) )
-//         ret[coord] = true;
-//     }
-//   return ret;
-// }
+void BlackTiles::nextDay()
+{
+  deque<Coord> toToggle;
+  for(auto [coord, count] : Heat(*this))
+    {
+      if( black(coord) and ( (count == 0) or (count > 2 ) ))
+        toToggle.push_back(coord);
+      else if (white(coord) and (count ==  2 ) )
+        toToggle.push_back(coord);
+    }
+  for(auto c:toToggle)
+    toggle(c);
+}
 
-// unsigned int solutionB(string filename)
-// {
-//   Floor ret(filename);
-//   for(int i=1;i<100;i++)
-//     {
-//       ret = dayPassed(ret);
-//       if(i==99)
-//         cout<<i<< ret.countBlack()<<endl;
-
-//     }
-//   cout<<"end "<< ret.countBlack()<<endl;
-//   return ret.countBlack();
-// }
+auto solutionB(string filename)
+{
+  BlackTiles ret(filename);
+  for(int i=0;i<100;i++)
+    ret.nextDay();
+  return ret.countBlack();
+}
