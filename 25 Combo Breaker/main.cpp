@@ -22,14 +22,12 @@ I transform( I subjectNumber,  I loopSize, I value=1)
   //    - Set the value to itself multiplied by the subject number.
   //    - Set the value to the remainder after dividing the value by 20201227.
 
-  if(loopSize==0)
-    return value;
-  else
-    {    
+  for(I i=0;i<loopSize;i++)
+    {
       value *= subjectNumber;
       value %= 20201227;
-      return transform(subjectNumber, loopSize-1, value);
     }
+  return value;
 }
 
 I getLoopSize(I publicKey, I subjectNumber = 7)
