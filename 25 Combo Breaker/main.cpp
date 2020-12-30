@@ -13,7 +13,7 @@ using namespace std;
 
 using I = unsigned long int;
 
-I transform( I subjectNumber,  I loopSize)
+I transform( I subjectNumber,  I loopSize, I value=1)
 {
   //  The handshake used by the card and the door involves an
   //  operation that transforms a subject number. To transform a
@@ -22,11 +22,31 @@ I transform( I subjectNumber,  I loopSize)
   //    - Set the value to itself multiplied by the subject number.
   //    - Set the value to the remainder after dividing the value by 20201227.
 
-  I value =1;
-  for(I i=0;i<loopSize;i++)
-    {
+  if(loopSize==0)
+    return value;
+  else
+    {    
       value *= subjectNumber;
       value %= 20201227;
+      return transform(subjectNumber, loopSize-1, value);
     }
-  return value;
+}
+
+I getLoopSize(I publicKey, I subjectNumber = 7)
+{
+  I loopSize=1;
+  auto value = transform(subjectNumber, 1, 1);
+  while(value != publicKey)
+    {
+      value = transform(subjectNumber, 1, value);
+      loopSize++;
+    }
+  return loopSize;
+}
+
+
+I solutionA(I pubDoor, I pubCard)
+{
+  auto doorKey = getLoopSize(pubDoor);
+  return transform( pubCard, doorKey);
 }

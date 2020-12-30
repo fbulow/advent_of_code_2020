@@ -40,3 +40,28 @@ TEST(example, encryption_key)
   EXPECT_EQ(14897079, 
             transform( 5764801,  11));
 }
+
+
+TEST(getLoopSize, examples)
+{
+  // For example, suppose you know that the card's public key is
+  // 5764801. With a little trial and error, you can work out that the
+  // card's loop size must be 8, because transforming the initial
+  // subject number of 7 with a loop size of 8 produces 5764801.
+  
+  EXPECT_EQ(8, getLoopSize(5764801));
+
+
+  // Then, suppose you know that the door's public key is 17807724. By
+  // the same process, you can determine that the door's loop size is
+  // 11, because transforming the initial subject number of 7 with a
+  // loop size of 11 produces 17807724.
+  EXPECT_EQ(11, getLoopSize(17807724));
+}
+
+TEST(solution, a)
+{
+  ASSERT_EQ(14897079, solutionA(5764801, 17807724));
+  cout<<"Solution A: "<<solutionA(10705932,
+                                  12301431)<<endl;
+}
