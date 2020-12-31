@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
 #include "main.cpp"
-
+#include "gmock/gmock.h"
 
 TEST(example, card)
 {
-  Game sut("example");
+  Game sut(EXAMPLE);
   {
     list<I> refOne{9, 2, 6, 3, 1};
     list<I> refTwo{5, 8, 4, 7, 10};
@@ -50,14 +50,64 @@ TEST(solve, a)
   cout<<"Solution a: "<<solutionA(INPUT)<<endl;
 }
 
-TEST(Game, hash)
+TEST(Recursive, hash)
 {
   EXPECT_NE(
-            Game(EXAMPLE).hash(),
-            Game().hash()
+            Recursive(EXAMPLE).hash(),
+            Recursive().hash()
             );
   EXPECT_EQ(
-            Game().hash(),
-            Game().hash()
+            Recursive().hash(),
+            Recursive().hash()
             );
 }
+
+TEST(Recursive, determine_by_sub_game)
+{
+// -- Round 9 (Game 1) --
+// Player 1's deck: 4, 9, 8, 5, 2
+// Player 2's deck: 3, 10, 1, 7, 6
+// Player 1 plays: 4
+// Player 2 plays: 3
+// Playing a sub-game to determine the winner...
+//
+
+  
+  auto sut = Recursive(list<I>{4, 9, 8, 5, 2},
+                       list<I>{3, 10, 1, 7, 6}).recursive();
+
+  EXPECT_TRUE(sut);
+
+// === Game 2 ===
+// 
+// -- Round 1 (Game 2) --
+// Player 1's deck: 9, 8, 5, 2
+// Player 2's deck: 10, 1, 7  
+
+  Recursive const ref(list<I>{9, 8, 5, 2},
+                      list<I>{10, 1, 7});
+  EXPECT_EQ(ref, sut.value());
+  
+}
+
+TEST(Recursive, do_not_determine_by_sub_game)
+{
+// -- Round 1 --
+// Player 1's deck: 9, 2, 6, 3, 1
+// Player 2's deck: 5, 8, 4, 7, 10
+// Player 1 plays: 9
+// Player 2 plays: 5
+// Player 1 wins the round!
+  
+  EXPECT_FALSE(Recursive(list<I>{9, 2, 6, 3, 1},
+                         list<I>{5, 8, 4, 7, 10}).recursive());
+
+}
+
+TEST(Recursive, canPlayRecursive)
+{
+  EXPECT_FALSE(Recursive::canPlayRecursive({2, 4}));
+  EXPECT_TRUE(Recursive::canPlayRecursive({2, 4, 5}));
+
+}
+

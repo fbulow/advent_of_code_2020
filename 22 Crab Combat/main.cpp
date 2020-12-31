@@ -64,14 +64,14 @@ struct Game
         getline(cin, line);
       }
   }
-  Game(initializer_list<I> &&one,
-       initializer_list<I> &&two)
+  Game(list<I> &&one,
+       list<I> &&two)
     :one(move(one))
     ,two(move(two))
   {}
 
 
-  void playRound()
+  virtual void playRound()
   {
     assert(one.front() != two.front());
     if(one.front() > two.front())
@@ -88,7 +88,7 @@ struct Game
     two.pop_front();
   }
 
-  void finnish()
+  virtual void finnish()
   {
     while((not one.empty()) and (not two.empty()))
       playRound();
@@ -102,20 +102,12 @@ struct Game
     else
       return ::score(one);
   }
-
-  auto hash() const
-  {
-    ostringstream out;
-    out<<*this;
-    std::hash<string> h;
-    return h(out.str());
-  }
   
 };
 
 ostream& operator<<(ostream& ret, Game const &g)
 {
-  ret<<"Player 1:";
+  ret<<endl<<"Player 1:";
   for(auto x:g.one)
     ret<<" "<<x;
   ret<<endl<<"Player 2:";
@@ -129,4 +121,53 @@ ostream& operator<<(ostream& ret, Game const &g)
 I solutionA(string filename)
 {
   return Game(filename).score();
+}
+
+struct Recursive: Game
+{
+
+  Recursive() = default;
+  Recursive(string filename)
+    :Game(filename)
+  {}
+  
+  Recursive(list<I> &&one,
+            list<I> &&two)
+    :Game(move(one),
+          move(two))
+  {}
+
+  size_t hash() const
+  {
+    ostringstream out;
+    out<<*this;
+    std::hash<string> h;
+    return h(out.str());
+  }
+
+  static bool canPlayRecursive(list<I> deck)
+  {
+    return deck.size() >= 1+deck.front();
+  }
+
+  
+  optional<Recursive> recursive()
+  {
+    if(canPlayRecursive(one) and canPlayRecursive(two))
+      return Recursive({next(one.begin()), next(one.begin(), 1+*one.begin())},
+                       {next(two.begin()), next(two.begin(), 1+*two.begin())});
+    else
+      return {};
+  }
+  
+  bool operator==(auto const &other) const
+  {
+    return (one==other.one) and (two==other.two);
+  }
+};
+
+ostream& operator<<(ostream& out, Recursive const & r)
+{
+  out<< (Game) r;
+  return out;
 }
