@@ -70,16 +70,25 @@ struct Game
     ,two(move(two))
   {}
 
-
-  virtual void playRound()
+  int winner() const
   {
     assert(one.front() != two.front());
-    if(one.front() > two.front())
+    return one.front() > two.front()? 1 : 2;
+  }
+  
+  virtual void playRound()
+  {
+    putBackInDeck(winner());
+  }
+
+  void putBackInDeck(int wins)
+  {
+    if(wins==1)
       {
         one.push_back(one.front());
         one.push_back(two.front());
       }
-    else //(two.front() > one.front())
+    else
       {
         two.push_back(two.front());
         two.push_back(one.front());
@@ -125,7 +134,9 @@ I solutionA(string filename)
 
 struct Recursive: Game
 {
-
+private:
+    set<size_t> knownPositions{};
+public:
   Recursive() = default;
   Recursive(string filename)
     :Game(filename)
@@ -136,7 +147,12 @@ struct Recursive: Game
     :Game(move(one),
           move(two))
   {}
-
+  
+  void addAsKnown()
+  {
+    knownPositions.insert(hash());
+  }
+  
   size_t hash() const
   {
     ostringstream out;
@@ -150,6 +166,23 @@ struct Recursive: Game
     return deck.size() >= 1+deck.front();
   }
 
+  int winner()
+  {
+    auto h = hash();
+    auto ret = [this, h](){//evaluated immediately
+      if(one.empty() and (not two.empty()))
+        return 2;
+      else if(two.empty() and (not one.empty()))
+        return 1;
+      else if(knownPositions.contains(h))
+        return 1;
+      else
+        return 0;
+    }();
+    knownPositions.insert(h);
+    return ret;
+  }
+  
   
   optional<Recursive> recursive()
   {
@@ -164,6 +197,32 @@ struct Recursive: Game
   {
     return (one==other.one) and (two==other.two);
   }
+
+  void finnish() override 
+  {
+    auto w = winner();
+    while(w==0)
+      {
+        playRound();
+        w = winner();
+      }
+  }
+
+  void playRound() override
+  {
+    putBackInDeck([this](){//evaluated immediately
+      auto subGame = recursive();
+      if (subGame)
+        {
+          subGame.value().finnish();
+          return subGame.value().winner();
+        }
+      else
+        {
+          return Game::winner();
+        }
+    }());
+  }
 };
 
 ostream& operator<<(ostream& out, Recursive const & r)
@@ -171,3 +230,9 @@ ostream& operator<<(ostream& out, Recursive const & r)
   out<< (Game) r;
   return out;
 }
+
+I solutionB(string filename)
+{
+  return Recursive(filename).score();
+}
+

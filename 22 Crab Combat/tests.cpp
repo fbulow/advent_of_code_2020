@@ -111,3 +111,49 @@ TEST(Recursive, canPlayRecursive)
 
 }
 
+
+TEST(Recursive, winner)
+{
+  {
+    Recursive sut(list<I>{},
+                  list<I>{5, 8, 4, 7, 10});
+    EXPECT_EQ(2, sut.winner());
+  }
+  {
+    Recursive sut(list<I>{5, 8, 4, 7, 10},
+                  list<I>{});
+    EXPECT_EQ(1, sut.winner());
+  }
+  {
+    Recursive sut(list<I>{5, 8},
+                  list<I>{4, 7, 10});
+    EXPECT_EQ(0, sut.winner()); //No winner yet
+  }
+  {
+    Recursive sut(list<I>{5, 8},
+                  list<I>{4, 7, 10});
+    EXPECT_EQ(0, sut.winner()); //No winner yet
+  }
+
+  {
+
+    // Before either player deals a card, if there was a previous round
+    // in this game that had exactly the same cards in the same order
+    // in the same players' decks, the game instantly ends in a win for
+    // player 1. Previous rounds from other games are not
+    // considered. (This prevents infinite games of Recursive Combat,
+    // which everyone agrees is a bad idea.)
+    
+    Recursive sut(list<I>{5, 8},
+                  list<I>{4, 7, 10});
+    EXPECT_EQ(0, sut.winner()); //No winner yet
+    EXPECT_EQ(1, sut.winner()); //No winner yet
+  }
+}
+
+TEST(solve, b)
+{
+  ASSERT_EQ(291,
+            solutionB(EXAMPLE));
+  cout<<"Solution b: "<<solutionB(INPUT)<<endl;
+}
