@@ -105,3 +105,9 @@ TEST(solution, a)
   cout<<"Solution a: "<<solutionA(INPUT)<<endl;
 }
 
+TEST(solution, b)
+{
+  ASSERT_EQ(848, solutionA(EXAMPLE));
+  cout<<"Solution b: "<<solutionA(INPUT)<<endl;
+}
+

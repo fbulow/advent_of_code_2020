@@ -55,9 +55,11 @@ public:
 };
 
 struct Coord{
-  int x;
-  int y;
-  int z;
+  int x{0};
+  int y{0};
+  int z{0};
+  int w{0};
+
 };
 
 bool operator<(Coord const &a, Coord const &b)
@@ -68,6 +70,8 @@ bool operator<(Coord const &a, Coord const &b)
     return a.y<b.y;
   else if(a.z!=b.z)
     return a.z<b.z;
+  else if(a.w!=b.w)
+    return a.w<b.w;
   else // is equal
     return false;
 }
@@ -120,10 +124,11 @@ public:
       for(int dx=-1; dx<2; dx++)
         for(int dy=-1; dy<2; dy++)
           for(int dz=-1; dz<2; dz++)
-            if((dx==dy) and (dy==dz) and (dz==0))
+            for(int dw=-1; dw<2; dw++)
+            if((dx==dy) and (dy==dz) and (dz==dw) and (dw==0))
               heat[c].activate();
             else
-              heat[Coord{c.x+dx, c.y+dy, c.z+dz}]++;
+              heat[Coord{c.x+dx, c.y+dy, c.z+dz, c.w+dw}]++;
 
     active.clear();
 
