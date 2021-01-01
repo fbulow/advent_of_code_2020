@@ -47,7 +47,9 @@ TEST(solve, a)
 {
   ASSERT_EQ(306,
             solutionA(EXAMPLE));
-  cout<<"Solution a: "<<solutionA(INPUT)<<endl;
+  auto const ans = solutionA(INPUT);
+  EXPECT_EQ(1958, ans);
+  cout<<"Solution a: "<<ans<<endl;
 }
 
 TEST(Recursive, hash)
