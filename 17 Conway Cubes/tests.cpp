@@ -85,7 +85,7 @@ TEST(Cell, all)
 TEST(Conway, ctor)
 {
   {
-    Conway sut({
+    Conway<3> sut({
         ".#.",
         "..#",
         "###"});
@@ -93,7 +93,7 @@ TEST(Conway, ctor)
     EXPECT_EQ(5, sut.countActive());
   }
   {
-    Conway sut(EXAMPLE);
+    Conway<3> sut(EXAMPLE);
     EXPECT_EQ(5, sut.countActive());
   }
 
@@ -107,7 +107,44 @@ TEST(solution, a)
 
 TEST(solution, b)
 {
-  ASSERT_EQ(848, solutionA(EXAMPLE));
-  cout<<"Solution b: "<<solutionA(INPUT)<<endl;
+  ASSERT_EQ(848, solutionB(EXAMPLE));
+  cout<<"Solution b: "<<solutionB(INPUT)<<endl;
 }
 
+TEST(adjecent, Nthree)
+{
+  //Each cube only ever considers its neighbors: any of the 26 other
+  //cubes where any of their coordinates differ by at most 1. For
+  //example, given the cube at x=1,y=2,z=3, its neighbors include the
+  //cube at x=2,y=2,z=2, the cube at x=0,y=2,z=3, and so on.
+
+  {
+    auto a = Coord<3>({0,0,0});
+    auto b = Coord<3>({0,0,0});
+
+    ASSERT_TRUE(a==b);
+  }
+  {
+    auto a = Coord<3>({0,0,1});
+    auto b = Coord<3>({0,0,0});
+
+    ASSERT_FALSE(a==b);
+  }
+
+  
+  auto sut = adjecent(Coord<3>({0,0,0}));
+  EXPECT_EQ(sut.end(), find(sut.begin(), sut.end(), Coord<3>({0,0,0})));
+  EXPECT_EQ(26, sut.size());
+  EXPECT_TRUE(all_of(sut.begin(), sut.end(),
+                     [](auto &x)
+                     {
+                       return all_of(x.data.begin(),
+                                     x.data.end(),
+                                     [](auto q)
+                                     {
+                                       return (q==-1) or (q==0) or (q==1);
+                                     });
+                     }));
+                                     
+  
+}

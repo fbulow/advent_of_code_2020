@@ -54,32 +54,49 @@ public:
   }
 };
 
-struct Coord{
-  int x{0};
-  int y{0};
-  int z{0};
-  int w{0};
+template<int N>
+struct Coord
+{
+  array<int, N> data;
+
+  int x() const {return data[0];}
+  int y() const {return data[1];}
+  int z() const {return data[2];}
+  int w() const {return data[3];}
+
+  Coord(initializer_list<int> const &x)
+    :Coord(vector<int>(x))
+  {}
+  Coord(vector<int> x)
+  {
+    data.fill(0);
+    copy(x.begin(), x.end(), data.begin());
+  }
+
+  bool operator!=(Coord<N> const &other) const
+  {
+    return data!=other.data;
+  }
+  bool operator==(Coord<N> const &other) const
+  {
+    return data==other.data;
+  }
+  bool operator<(Coord<N> const &other) const
+  {
+    return data<other.data;
+  }
 
 };
 
-bool operator<(Coord const &a, Coord const &b)
-{
-  if(a.x!=b.x)
-    return a.x<b.x;
-  else if(a.y!=b.y)
-    return a.y<b.y;
-  else if(a.z!=b.z)
-    return a.z<b.z;
-  else if(a.w!=b.w)
-    return a.w<b.w;
-  else // is equal
-    return false;
-}
 
 
+
+
+template<int N>
 class Conway
 {
-  set<Coord> active;
+  using CoordN = Coord<N>;
+  set<CoordN> active;
   //  map<Coord, Cell> heatMap;
 public:
   Conway(initializer_list<string> input)
@@ -107,7 +124,7 @@ public:
         auto y = s.find('#');
         while(y!=string::npos)
           {
-            active.emplace(Coord{row, (int) y, 0});
+            active.emplace(CoordN{row, (int) y});
             y = s.find('#', y+1);
           }
         
@@ -119,16 +136,14 @@ public:
   }
   void step()
   {
-    map<Coord, Cell> heat;
-    for(Coord const &c : active)
-      for(int dx=-1; dx<2; dx++)
-        for(int dy=-1; dy<2; dy++)
-          for(int dz=-1; dz<2; dz++)
-            for(int dw=-1; dw<2; dw++)
-            if((dx==dy) and (dy==dz) and (dz==dw) and (dw==0))
-              heat[c].activate();
-            else
-              heat[Coord{c.x+dx, c.y+dy, c.z+dz, c.w+dw}]++;
+    map<CoordN, Cell> heat;
+    
+    for(CoordN const &c : active)
+      {
+        heat[c].activate();
+        for(auto d: adjecent(c))
+          heat[d]++;
+      }
 
     active.clear();
 
@@ -144,7 +159,7 @@ public:
 unsigned int solutionA(string filename)
 {
 
-  Conway sut(filename);
+  Conway<3> sut(filename);
   sut.step();
   sut.step();
   sut.step();
@@ -153,4 +168,63 @@ unsigned int solutionA(string filename)
   sut.step();
   
   return sut.countActive();
+}
+
+unsigned int solutionB(string filename)
+{
+
+  Conway<4> sut(filename);
+  sut.step();
+  sut.step();
+  sut.step();
+  sut.step();
+  sut.step();
+  sut.step();
+  
+  return sut.countActive();
+}
+
+void adjRec(auto retInsert, auto it, auto const& end)
+{
+  if(next(it)==end)
+    {
+      (*it)-=1;
+      retInsert();
+      (*it)+=2;
+      retInsert();
+      (*it)-=1;
+      retInsert();
+    }
+  else
+    {
+      (*it)-=1;
+      adjRec(retInsert, next(it), end);
+      (*it)+=2;
+      adjRec(retInsert, next(it), end);
+      (*it)-=1;
+      adjRec(retInsert, next(it), end);
+    }
+}
+
+template<int N>
+vector<Coord<N>> adjecent(Coord<N> const &c)
+{
+    
+  vector<Coord<N>> ret;
+  if constexpr (N==3)
+     ret.reserve(27);
+
+  Coord<N> tmp(c);
+
+  auto retInsert = [&ret, &c, &tmp]()
+  {
+    if(tmp!=c)
+      ret.push_back(tmp);
+  };
+  
+  auto &d=tmp.data;
+
+  adjRec(retInsert, d.begin(), d.end());
+  
+  return ret;
 }
