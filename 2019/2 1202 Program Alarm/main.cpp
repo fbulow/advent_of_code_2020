@@ -19,8 +19,8 @@ using I = long int;
 class IntCode
 {
   friend ostream& operator<<(ostream &out, IntCode const &ic);
-  int position;
-  vector<I> data;
+  int instructionPointer;
+  vector<I> memory;
 
 public:
   IntCode(string const &s, I pos=0)
@@ -28,48 +28,48 @@ public:
   {}
   
   IntCode(istream &&in, I pos=0)
-    :position(pos)
+    :instructionPointer(pos)
   {
     I i;
     in>>i;
-    data.push_back(i);
+    memory.push_back(i);
     char c;
     in>>c>>i;
     while(not in.eof())
       {
-        data.push_back(i);
+        memory.push_back(i);
         assert(c==',');
         in>>c>>i;
       }
-    data.push_back(i);
+    memory.push_back(i);
   }
 
   I& operator[](int i)
   {
-    return data[i];
+    return memory[i];
   }
   
   bool operator==(IntCode const &other)const
   {
-    return (data==other.data) and (position==other.position);
+    return (memory==other.memory) and (instructionPointer==other.instructionPointer);
   }
   
-  I first() const {return data[0];}
-  I last() const {return *data.rbegin();}
+  I first() const {return memory[0];}
+  I last() const {return *memory.rbegin();}
   bool step()
   {
-    auto code = data[position];
+    auto code = memory[instructionPointer];
     if(code==99)
       return false;
     else if(code==1)
       {
-        data[data[position+3]] = data[data[position+1]] + data[data[position+2]];
-        position += 4;
+        memory[memory[instructionPointer+3]] = memory[memory[instructionPointer+1]] + memory[memory[instructionPointer+2]];
+        instructionPointer += 4;
       }
     else if(code==2)
       {
-        data[data[position+3]] = data[data[position+1]] * data[data[position+2]];
-        position += 4;
+        memory[memory[instructionPointer+3]] = memory[memory[instructionPointer+1]] * memory[memory[instructionPointer+2]];
+        instructionPointer += 4;
       }
     else
       assert(false);
@@ -80,8 +80,8 @@ public:
 
 ostream& operator<<(ostream &out, IntCode const &ic)
 {
-  out<<ic.data[0];
-  for_each(next(ic.data.begin()), ic.data.end(),
+  out<<ic.memory[0];
+  for_each(next(ic.memory.begin()), ic.memory.end(),
            [&out](I i){
              out<<","<<i;
            });
