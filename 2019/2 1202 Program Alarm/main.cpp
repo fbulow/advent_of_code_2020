@@ -98,3 +98,23 @@ I solutionA(string filename)
     {}
   return s.first();
 }
+
+
+I run(IntCode ic, I noun, I verb)
+{
+  ic[1]=noun;
+  ic[2]=verb;
+  while(ic.step())
+    {}
+  return ic.first();
+}
+
+I solutionB(string filename)
+{
+  IntCode const ic((ifstream(filename)));
+  for(auto noun=0;noun<=99;noun++)
+    for(auto verb=0;verb<=99;verb++)
+      if (run(ic, noun, verb ) == 19690720)
+        return 100*noun+verb;
+  assert(false);
+}

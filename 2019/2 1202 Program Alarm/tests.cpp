@@ -35,3 +35,8 @@ TEST(solution, a)
 {
   EXPECT_EQ(3224742, solutionA(INPUT));
 }
+
+TEST(solution, b)
+{
+  EXPECT_EQ(7960, solutionB(INPUT));
+}
