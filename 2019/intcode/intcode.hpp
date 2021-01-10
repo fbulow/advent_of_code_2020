@@ -41,6 +41,8 @@ public:
         return memory[memory[instructionPointer+index]];
       case 1:
         return memory[instructionPointer+index];
+      case 2:
+        return memory[relativeBase+memory[instructionPointer+index]];
       default:
         assert(false);
       }
@@ -148,6 +150,11 @@ public:
                      //the position given by the third
                      //parameter. Otherwise, it stores 0.
       x(3) = ( x(1) == x(2) ) ? 1 : 0;
+    else if (code==9) //Opcode 9 adjusts the relative base by the
+                      //value of its only parameter. The relative base
+                      //increases (or decreases, if the value is
+                      //negative) by the value of the parameter.
+      relativeBase += x(1);
     else
       assert(false);
 
