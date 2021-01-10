@@ -11,6 +11,7 @@
 #include<deque>
 #include <initializer_list>
 #include <functional>
+#include <algorithm>
 #include <boost/algorithm/string.hpp> 
 #include <boost/algorithm/string/join.hpp>
 #include <sstream>
@@ -24,6 +25,7 @@ ostream& operator<<(ostream &out, IntCode const &ic);
 unsigned int mode(I index, I command);
 unsigned int opcode(I command);
 
+
 class IntCode
 {
   friend ostream& operator<<(ostream &out, IntCode const &ic);
@@ -31,6 +33,19 @@ class IntCode
   map<I, I> memory;
   
 public:
+  I& ref(I index, I command)
+  {
+    switch(mode(index,command))
+      {
+      case 0://position mode
+        return memory[memory[instructionPointer+index]];
+      case 1:
+        return memory[instructionPointer+index];
+      default:
+        assert(false);
+      }
+  }
+  
   int relativeBase{0};
   queue<I> input;
   queue<I> output;
@@ -70,34 +85,33 @@ public:
   I last(){return memory.rbegin()->second;}
   bool step()
   {
-    auto code = memory[instructionPointer];
+    auto inst = memory[instructionPointer];
+    auto code = opcode(inst);
+    I increase = 1;
+    auto x = [this, inst, &increase](I index) -> I&
+    {
+      increase = max(increase, index+1);
+      return ref(index, inst);
+    };
+      
     if(code==99)
       return false;
     else if(code==1)
-      {
-        memory[memory[instructionPointer+3]] = memory[memory[instructionPointer+1]] + memory[memory[instructionPointer+2]];
-        instructionPointer += 4;
-      }
+      x(3) = x(1) + x(2);
     else if(code==2)
-      {
-        memory[memory[instructionPointer+3]] = memory[memory[instructionPointer+1]] * memory[memory[instructionPointer+2]];
-        instructionPointer += 4;
-      }
+      x(3) = x(1) * x(2);
     else if(code==3)
       {
-        memory[memory[instructionPointer+1]]=input.front();
+        x(1)=input.front();
         input.pop();
-        instructionPointer += 2;
       }
     else if(code==4)
-      {
-        output.push(memory[memory[instructionPointer+1]]);
-        instructionPointer += 2;
-      }
+        output.push(x(1));
     else
       assert(false);
+
+    instructionPointer += increase;
     return true;
-    
   }
 };
 
