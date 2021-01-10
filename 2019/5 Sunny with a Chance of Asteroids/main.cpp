@@ -13,6 +13,7 @@
 #include <boost/algorithm/string.hpp> 
 #include <boost/algorithm/string/join.hpp>
 #include "intcode.hpp"
+
 I solutionA(string filename)
 {
   IntCode sut((ifstream(filename)));
@@ -28,4 +29,15 @@ I solutionA(string filename)
       sut.output.pop();
     }
   return ret;
+}
+
+
+I solutionB(string filename)
+{
+  IntCode sut((ifstream(filename)));
+  sut.input.push(5);
+  while(sut.step())
+    {}
+
+  return sut.output.front();
 }

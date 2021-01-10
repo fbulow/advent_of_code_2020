@@ -83,6 +83,13 @@ public:
   
   I first(){return memory[0];}
   I last(){return memory.rbegin()->second;}
+
+  void run()
+  {
+    while(step())
+      {};
+  }
+  
   bool step()
   {
     auto inst = memory[instructionPointer];
@@ -107,6 +114,40 @@ public:
       }
     else if(code==4)
         output.push(x(1));
+    else if(code==5) //Opcode 5 is jump-if-true: if the first
+                     //parameter is non-zero, it sets the instruction
+                     //pointer to the value from the second
+                     //parameter. Otherwise, it does nothing.
+      {
+        if(x(1)!=0)
+          {
+            instructionPointer=x(2);
+            return true;
+          }
+        x(2);
+      }
+    else if(code==6) //Opcode 6 is jump-if-false: if the first
+                     //parameter is zero, it sets the instruction
+                     //pointer to the value from the second
+                     //parameter. Otherwise, it does nothing.
+      {
+        if(x(1)==0)
+          {
+            instructionPointer=x(2);
+            return true;
+          }
+        x(2);
+      }
+    else if(code==7) //Opcode 7 is less than: if the first parameter
+                     //is less than the second parameter, it stores 1
+                     //in the position given by the third
+                     //parameter. Otherwise, it stores 0.
+      x(3) = ( x(1) < x(2) ) ? 1 : 0;
+    else if(code==8) //Opcode 8 is equals: if the first parameter is
+                     //equal to the second parameter, it stores 1 in
+                     //the position given by the third
+                     //parameter. Otherwise, it stores 0.
+      x(3) = ( x(1) == x(2) ) ? 1 : 0;
     else
       assert(false);
 
