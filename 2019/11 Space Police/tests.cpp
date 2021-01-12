@@ -10,3 +10,9 @@ TEST(solution, a)
   cout<<"Solution a: "<<ans<<endl;
   
 }
+
+
+TEST(solution, b)
+{
+  solutionB(ifstream(INPUT));
+}

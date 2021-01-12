@@ -25,6 +25,21 @@ struct Hull
   {
     return data[c];
   }
+  Color color(Co const &c) const
+  {
+    auto it = find_if(data.begin(), data.end(),
+                      [c](auto &x)
+                      {
+                        return x.first==c;
+                      });
+    if(it==data.end())
+      return 0;
+    else
+      return it->second;
+  }
+
+
+  
   void paint(Co const&c, Color color)
   {
     data[c] = color;
@@ -36,6 +51,26 @@ struct Hull
   }
   
 };
+
+ostream& operator<<(ostream& out, Hull const& h)
+{
+  auto top     = min_element(h.data.begin(), h.data.end());
+  auto bottom = max_element(h.data.begin(), h.data.end());
+
+  for(int row = top->first.row; row <= bottom->first.row; row++)
+    {
+      for(int column = top->first.column; column <= bottom->first.column; column++)
+        {
+          if(h.color({row, column}) == 0)
+            cout<<" ";
+          else
+            cout<<"*";
+        }
+      cout<<endl;
+    }
+  return out;
+}
+
 
 struct Robot
 {
@@ -86,3 +121,14 @@ auto solutionA(T &&x)
     {}
   return r.hull.countVisited();
 }
+
+template<class T>
+auto solutionB(T &&x)
+{
+  Robot r(forward<T>(x));
+  r.hull.paint(r.pos, 1);
+  while(r.step())
+    {}
+  cout<<endl<<endl<<r.hull<<endl<<endl;
+}
+
