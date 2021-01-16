@@ -28,16 +28,37 @@ TEST(Jupiter, updateVelocity)
   EXPECT_EQ(2,  sut.moons[0].pos[0]);
   EXPECT_EQ(-1, sut.moons[0].pos[1]);
   EXPECT_EQ(1,  sut.moons[0].pos[2]);
-  
-
-
 }
 
-// TEST(solution, a)
-// {
-//   auto ans = solutionA(ifstream(INPUT));
-//   //  EXPECT_EQ(2016, ans);
-//   cout<<"Solution a: "<<ans<<endl;
+TEST(Moon, energy)
+{
+  Jupiter sut(EXAMPLE);
+  sut.step(10);
   
-// }
+  EXPECT_EQ(36,
+            sut.moons[0].energy());
+  EXPECT_EQ(45,
+            sut.moons[1].energy());
+  EXPECT_EQ(80,
+            sut.moons[2].energy());
+  EXPECT_EQ(18,
+            sut.moons[3].energy());
+
+  EXPECT_EQ(179, sut.energy());
+}
+
+TEST(solution, a)
+{
+  auto ans = solutionA(INPUT);
+  cout<<"Solution a: "<<ans<<endl;
+  
+}
+
+
+TEST(solution, b)
+{
+  auto ans = solutionB(Jupiter(INPUT));
+  EXPECT_EQ(402951477454512, ans);
+  cout<<"Solution b: "<<ans<<endl;
+}
 
