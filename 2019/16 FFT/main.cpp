@@ -39,7 +39,9 @@ vector<int> signal(string_view s)
   return ret;
 }
 
-vector<int>  phase(vector<int> const &signal, vector<int> pattern)
+vector<int>  phase(vector<int> const &signal,
+                   vector<int> pattern,
+                   unsigned int iterations=1)
 {
   vector<int> ret;
   ret.resize(signal.size());
@@ -58,11 +60,24 @@ vector<int>  phase(vector<int> const &signal, vector<int> pattern)
                                          })
                               );
     }
-  return ret;
+  if(iterations==0)
+    return signal;
+  else
+    return phase(ret, pattern, iterations-1);
 }
 
-vector<int>  phase(string_view const &signal, vector<int> pattern)
-{return phase(::signal(signal), pattern);}
+vector<int>  phase(string_view const &signal,
+                   vector<int> pattern,
+                   unsigned int iterations=1)
+{return phase(::signal(signal), pattern, iterations);}
 
+vector<int> solutionA(string input)
+{
+  auto ret = phase(input,
+                   vector<int>{0, 1, 0, -1},
+                   100);
 
+  return {ret.begin(),
+    next(ret.begin(), 8)};
+}
 

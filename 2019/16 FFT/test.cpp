@@ -1,6 +1,9 @@
 #include <gtest/gtest.h>
 #include "main.cpp"
 #include "gmock/gmock.h"
+#include <iterator>
+#include <iostream>
+#include <fstream>
 
 TEST(keep_one_digit, all)
 {
@@ -40,7 +43,7 @@ TEST(example, verify_first_line)
   ASSERT_EQ(0, sut());
 }
 
-TEST(phase, example)
+TEST(example, phase)
 {
   ASSERT_EQ(signal("48226158"), 
             phase("12345678", vector<int>{0, 1, 0, -1}));
@@ -48,3 +51,26 @@ TEST(phase, example)
   ASSERT_EQ(signal("34040438"), 
             phase("48226158", vector<int>{0, 1, 0, -1}));
 }
+
+TEST(examples, phases)
+{
+
+  ASSERT_EQ(signal("24176176"),
+            solutionA("80871224585914546619083218645595"));
+
+  ASSERT_EQ(signal("73745418"),
+            solutionA("19617804207202209144916044189917"));
+
+  
+}
+
+TEST(solution, A)
+{
+  ifstream in(INPUT);
+  string data;
+  in>>data;
+  ASSERT_EQ(signal("17978331"),
+            solutionA(data));
+  
+}
+

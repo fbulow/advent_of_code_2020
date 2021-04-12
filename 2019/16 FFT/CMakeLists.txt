@@ -17,4 +17,7 @@ target_link_libraries(
   GTest::GTest
   GTest::Main)
 
-
+target_compile_options(${PROJECT_NAME}
+  PUBLIC
+    -DINPUT="${CMAKE_CURRENT_SOURCE_DIR}/input"
+  )
