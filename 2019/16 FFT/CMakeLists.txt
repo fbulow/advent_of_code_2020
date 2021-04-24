@@ -10,6 +10,7 @@ Find_package(GTest)
 
 add_executable(${PROJECT_NAME}
   test.cpp
+  summation.cpp
   )
 
 target_link_libraries(

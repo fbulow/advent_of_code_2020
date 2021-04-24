@@ -4,7 +4,7 @@
 #include <iterator>
 #include <iostream>
 #include <fstream>
-
+#include "summation.hpp" 
 TEST(keep_one_digit, all)
 {
   EXPECT_EQ(0, keep_one_digit(0));
@@ -74,3 +74,23 @@ TEST(solution, A)
   
 }
 
+TEST(summation, size)
+{
+  {
+    Summation sut({0});
+    EXPECT_EQ(2, sut.size(1)); // First zero length
+  }
+  {
+    Summation sut({0,0});
+    EXPECT_EQ(3, sut.size(1)); // First zero length
+  }
+  {
+    Summation sut({0,0});
+    EXPECT_EQ(2, sut.size(2)); // First zero length
+  }
+  {
+    Summation sut({0,0,0});
+    EXPECT_EQ(2, sut.size(2)); // First zero length
+  }
+
+}
