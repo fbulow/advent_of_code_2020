@@ -94,3 +94,58 @@ TEST(summation, size)
   }
 
 }
+
+TEST(summation, segment_zero_stride_one)
+{
+  {
+    Summation sut({0});
+    EXPECT_EQ(0, sut(0,1)); //Empty
+  }
+
+  {
+    Summation sut({1});
+    EXPECT_EQ(0, sut(0,1)); //Empty
+  }
+
+  {
+    Summation sut({1, 20});
+    EXPECT_EQ(0, sut(0,1)); //Empty
+  }
+}
+
+TEST(summation, segment_one)
+{
+  {
+    Summation sut({1});
+    EXPECT_EQ(1, sut(1,1)); //The one.
+  }
+  {
+    Summation sut({1, 20});
+    EXPECT_EQ(1, sut(1,1)); //The one.
+  }
+}
+
+TEST(summation, sum_stride_one_element_two)
+{
+    Summation sut({1, 20});
+    EXPECT_EQ(20, sut(2,1));
+}
+
+TEST(summation, sum_stride_two_first_element_empty_list)
+{
+    Summation sut({1, 20});
+    EXPECT_EQ(1, sut(0,2));
+}
+
+TEST(summation, sum_stride_two_second_segment_cropped)
+{
+    Summation sut({1, 20});
+    EXPECT_EQ(20, sut(1,2));
+}
+
+TEST(summation, sum_stride_two)
+{
+  Summation sut({1, 20, 300});
+  EXPECT_EQ(320, sut(1,2));
+}
+
