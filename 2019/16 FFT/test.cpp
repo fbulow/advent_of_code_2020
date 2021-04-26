@@ -44,6 +44,14 @@ TEST(example, verify_first_line)
   ASSERT_EQ(0, sut());
 }
 
+TEST(example, last_sum)
+{
+  Summation sut(signal("12345678"));
+
+  ASSERT_EQ(2, sut.size(8));
+  ASSERT_EQ(8, sut(1, 8));
+}
+
 TEST(example, phase)
 {
   ASSERT_EQ(signal("48226158"), 

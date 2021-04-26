@@ -44,8 +44,10 @@ int Summation::operator()(unsigned int segment, unsigned int stride)
       if(0==start)
         return integral[stride-1];
       else if (start == (integral.size()-1))
-        return integral[1]-integral[0];
-
+        {
+          auto x = integral.end();
+          return *next(x, -1)-*next(x, -2);
+        }
       auto const end   = start + stride;
 
       if(end >= integral.size())

@@ -1,6 +1,9 @@
-#include<vector>
-#include<array>
-#include <numeric> 
+#include <vector>
+#include <array>
+#include <numeric>
+#include "cycle.hpp"
+#include "summation.hpp"
+
 using namespace std;
 
 
@@ -46,20 +49,14 @@ vector<int>  phase(vector<int> const &signal,
 {
   vector<int> ret;
   ret.resize(signal.size());
+  Summation sum(signal);
   for(unsigned int i = 0; i < ret.size() ;i++)
     {
-      ret[i] = keep_one_digit(
-                              accumulate(signal.begin(),
-                                         signal.end(),
-                                         0,
-                                         [ p = Pattern (pattern, i+1)]
-                                         (auto left,
-                                          auto right)
-                                         mutable
-                                         {
-                                           return left+p()*right;
-                                         })
-                              );
+      ret[i] = 0;
+      auto stride = i+1;
+      for(unsigned int segment=0;segment<sum.size(stride);segment++)
+        ret[i]+=cycle(segment)*sum(segment,stride);
+      ret[i]=keep_one_digit(ret[i]);
     }
   if(iterations==0)
     return signal;
