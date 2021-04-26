@@ -54,7 +54,7 @@ vector<int>  phase(vector<int> const &signal,
     {
       ret[i] = 0;
       auto stride = i+1;
-      for(unsigned int segment=0;segment<sum.size(stride);segment++)
+      for(unsigned int segment=1;segment<sum.size(stride);segment+=2)
         ret[i]+=cycle(segment)*sum(segment,stride);
       ret[i]=keep_one_digit(ret[i]);
     }

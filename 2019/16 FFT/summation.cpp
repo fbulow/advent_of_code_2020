@@ -29,7 +29,8 @@ unsigned int segmentStart(unsigned int segment, unsigned int stride)
 
 int Summation::operator()(unsigned int segment, unsigned int stride)
 {
-  assert(segment<size(stride));
+  if (segment>=size(stride))
+    return 0;
 
   if(0==segment)
     {
