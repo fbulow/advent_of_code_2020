@@ -12,6 +12,7 @@ add_executable(${PROJECT_NAME}
   test.cpp
   summation.cpp
   cycle.cpp
+  offset.cpp
   )
 
 target_link_libraries(

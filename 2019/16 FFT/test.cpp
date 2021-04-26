@@ -5,7 +5,8 @@
 #include <iostream>
 #include <fstream>
 #include "summation.hpp"
-#include "cycle.hpp" 
+#include "cycle.hpp"
+#include "offset.hpp" 
 TEST(keep_one_digit, all)
 {
   EXPECT_EQ(0, keep_one_digit(0));
@@ -188,4 +189,23 @@ TEST(cycle, all)
   EXPECT_EQ(1 , cycle(1+4));
   EXPECT_EQ(0 , cycle(2+4));
   EXPECT_EQ(-1, cycle(3+4));
+}
+
+/*
+The first seven digits of your initial input signal also represent the
+message offset. The message offset is the location of the eight-digit
+message in the final output list. Specifically, the message offset
+indicates the number of digits to skip before reading the eight-digit
+message. For example, if the first seven digits of your initial input
+signal were 1234567, the eight-digit message would be the eight digits
+after skipping 1,234,567 digits of the final output list. Or, if the
+message offset were 7 and your final output list were
+98765432109876543210, the eight-digit message would be 21098765. (Of
+course, your real message offset will be a seven-digit number, not a
+one-digit number like 7.)  */
+
+TEST(offset, simple)
+{
+  ASSERT_EQ(1234567,
+            offset(signal("12345678")));
 }
