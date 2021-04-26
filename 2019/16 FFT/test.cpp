@@ -162,3 +162,9 @@ TEST(summation, sum_stride_two)
   EXPECT_EQ(320, sut(1,2));
 }
 
+TEST(summation, sum_stride_two_middle)
+{
+  Summation sut({1, 20, 300, 400});
+  EXPECT_EQ(320, sut(1,2));
+}
+

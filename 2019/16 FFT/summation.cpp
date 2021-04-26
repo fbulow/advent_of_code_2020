@@ -45,11 +45,12 @@ int Summation::operator()(unsigned int segment, unsigned int stride)
         return integral[stride-1];
       else if (start == (integral.size()-1))
         return integral[1]-integral[0];
+
       auto const end   = start + stride;
+
       if(end >= integral.size())
         return integral.back() - integral[start - 1];
-
-
-      assert(false);
+      else
+        return integral[end-1]-integral[start-1];
     }
 }
