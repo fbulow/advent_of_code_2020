@@ -4,7 +4,8 @@
 #include <iterator>
 #include <iostream>
 #include <fstream>
-#include "summation.hpp" 
+#include "summation.hpp"
+#include "cycle.hpp" 
 TEST(keep_one_digit, all)
 {
   EXPECT_EQ(0, keep_one_digit(0));
@@ -168,3 +169,15 @@ TEST(summation, sum_stride_two_middle)
   EXPECT_EQ(320, sut(1,2));
 }
 
+TEST(cycle, all)
+{
+  EXPECT_EQ(0 , cycle(0));
+  EXPECT_EQ(1 , cycle(1));
+  EXPECT_EQ(0 , cycle(2));
+  EXPECT_EQ(-1, cycle(3));
+
+  EXPECT_EQ(0 , cycle(0+4));
+  EXPECT_EQ(1 , cycle(1+4));
+  EXPECT_EQ(0 , cycle(2+4));
+  EXPECT_EQ(-1, cycle(3+4));
+}

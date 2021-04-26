@@ -12,6 +12,7 @@ int keep_one_digit(int sum)
     return sum%10;
 }
 
+
 class Pattern
 {
   vector<int> pattern;
