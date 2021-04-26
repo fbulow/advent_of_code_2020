@@ -214,5 +214,5 @@ TEST(offset, simple)
 
 TEST(message, get)
 {
-  ASSERT_EQ( 21098765, get_message( 7, signal("98765432109876543210")) );
+  ASSERT_EQ( 21098765, get_message( signal("98765432109876543210"), 7 ));
 }
