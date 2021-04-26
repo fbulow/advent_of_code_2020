@@ -6,5 +6,5 @@ unsigned int offset(vector<int> const & signal)
   return accumulate(signal.begin(),
                     next(signal.begin(), 7),
                     (unsigned int) 0,
-                    [](auto a, auto b){return a+b;});
+                    [](auto a, auto b){return 10*a+b;});
 }

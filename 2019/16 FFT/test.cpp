@@ -7,6 +7,8 @@
 #include "summation.hpp"
 #include "cycle.hpp"
 #include "offset.hpp" 
+#include "get_message.hpp" 
+
 TEST(keep_one_digit, all)
 {
   EXPECT_EQ(0, keep_one_digit(0));
@@ -208,4 +210,9 @@ TEST(offset, simple)
 {
   ASSERT_EQ(1234567,
             offset(signal("12345678")));
+}
+
+TEST(message, get)
+{
+  ASSERT_EQ( 21098765, get_message( 7, signal("98765432109876543210")) );
 }

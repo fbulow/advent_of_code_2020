@@ -13,6 +13,7 @@ add_executable(${PROJECT_NAME}
   summation.cpp
   cycle.cpp
   offset.cpp
+  get_message.cpp
   )
 
 target_link_libraries(
