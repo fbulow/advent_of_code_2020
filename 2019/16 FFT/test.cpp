@@ -143,6 +143,19 @@ TEST(summation, sum_stride_two_second_segment_cropped)
     EXPECT_EQ(20, sut(1,2));
 }
 
+TEST(segmentStart, one)
+{
+  EXPECT_EQ(0, segmentStart(1, 1));
+  EXPECT_EQ(1, segmentStart(2, 1));
+  EXPECT_EQ(2, segmentStart(3, 1));
+
+  EXPECT_EQ(1, segmentStart(1, 2));
+  EXPECT_EQ(3, segmentStart(2, 2));
+  EXPECT_EQ(5, segmentStart(3, 2));
+
+  
+}
+
 TEST(summation, sum_stride_two)
 {
   Summation sut({1, 20, 300});

@@ -11,3 +11,6 @@ public:
 
   int operator()(unsigned int segment, unsigned int stride);
 };
+
+unsigned int segmentStart(unsigned int segment, unsigned int stride);
+

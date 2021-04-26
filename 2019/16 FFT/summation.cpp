@@ -16,7 +16,17 @@ unsigned int Summation::size(unsigned int stride)
   auto rest = (integral.size()-(stride-1));
   return 1+rest/stride + (rest%stride>0?1:0);
 }
-  
+unsigned int segmentStart(unsigned int segment, unsigned int stride)
+{
+  assert(segment>0); //fist one has no start.
+  if(stride==1)
+    return segment-1;
+  else
+    return stride*segment-1;//stride*(segment-1) + (stride-1);
+}
+
+
+
 int Summation::operator()(unsigned int segment, unsigned int stride)
 {
   assert(segment<size(stride));
@@ -28,13 +38,18 @@ int Summation::operator()(unsigned int segment, unsigned int stride)
       else
         return integral[stride-2];
     }
-  else if (1==segment and stride==1)
-    {
-      return integral[0];
-    }
-  else if ( stride==1 )
-    return integral[segment-1]-integral[segment-2];
   else
-    return integral[segment]-integral[segment-1];
-  assert(false);
+    {
+      auto const start = segmentStart(segment, stride);
+      if(0==start)
+        return integral[stride-1];
+      else if (start == (integral.size()-1))
+        return integral[1]-integral[0];
+      auto const end   = start + stride;
+      if(end >= integral.size())
+        return integral.back() - integral[start - 1];
+
+
+      assert(false);
+    }
 }
