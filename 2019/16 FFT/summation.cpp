@@ -3,8 +3,8 @@
 #include <numeric>
 #include <algorithm> 
 
-Summation::Summation(vector<int> signal)
-  :integral(move(signal))
+Summation::Summation(vector<int> &signal)
+  :integral(signal)
 {
   for(unsigned int i=1;i<integral.size();i++)
     integral[i]+=integral[i-1];

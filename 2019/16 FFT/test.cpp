@@ -49,7 +49,8 @@ TEST(example, verify_first_line)
 
 TEST(example, last_sum)
 {
-  Summation sut(signal("12345678"));
+  auto data =signal("12345678");
+  Summation sut(data);
 
   ASSERT_EQ(2, sut.size(8));
   ASSERT_EQ(8, sut(1, 8));
@@ -89,19 +90,23 @@ TEST(solution, A)
 TEST(summation, size)
 {
   {
-    Summation sut({0});
+    vector<int> data {0};
+    Summation sut(data);
     EXPECT_EQ(2, sut.size(1)); // First zero length
   }
   {
-    Summation sut({0,0});
+    vector<int> data {0,0};
+    Summation sut(data);
     EXPECT_EQ(3, sut.size(1)); // First zero length
   }
   {
-    Summation sut({0,0});
+    vector<int> data {0,0};
+    Summation sut(data);
     EXPECT_EQ(2, sut.size(2)); // First zero length
   }
   {
-    Summation sut({0,0,0});
+    vector<int> data {0,0,0};
+    Summation sut(data);
     EXPECT_EQ(2, sut.size(2)); // First zero length
   }
 
@@ -110,17 +115,20 @@ TEST(summation, size)
 TEST(summation, segment_zero_stride_one)
 {
   {
-    Summation sut({0});
+    vector<int> data {0};
+    Summation sut(data);
     EXPECT_EQ(0, sut(0,1)); //Empty
   }
 
   {
-    Summation sut({1});
+    vector<int> data {1};
+    Summation sut(data);
     EXPECT_EQ(0, sut(0,1)); //Empty
   }
 
   {
-    Summation sut({1, 20});
+    vector<int> data {1, 20};
+    Summation sut(data);
     EXPECT_EQ(0, sut(0,1)); //Empty
   }
 }
@@ -128,31 +136,36 @@ TEST(summation, segment_zero_stride_one)
 TEST(summation, segment_one)
 {
   {
-    Summation sut({1});
+    vector<int> data {1};
+    Summation sut(data);
     EXPECT_EQ(1, sut(1,1)); //The one.
   }
   {
-    Summation sut({1, 20});
+    vector<int> data {1, 20};
+    Summation sut(data);
     EXPECT_EQ(1, sut(1,1)); //The one.
   }
 }
 
 TEST(summation, sum_stride_one_element_two)
 {
-    Summation sut({1, 20});
-    EXPECT_EQ(20, sut(2,1));
+  vector<int> data {1, 20};
+  Summation sut(data);
+  EXPECT_EQ(20, sut(2,1));
 }
 
 TEST(summation, sum_stride_two_first_element_empty_list)
 {
-    Summation sut({1, 20});
-    EXPECT_EQ(1, sut(0,2));
+  vector<int> data = {1, 20};
+  Summation sut(data);
+  EXPECT_EQ(1, sut(0,2));
 }
 
 TEST(summation, sum_stride_two_second_segment_cropped)
 {
-    Summation sut({1, 20});
-    EXPECT_EQ(20, sut(1,2));
+  vector<int> data={1, 20};
+  Summation sut(data);
+  EXPECT_EQ(20, sut(1,2));
 }
 
 TEST(segmentStart, one)
@@ -170,13 +183,15 @@ TEST(segmentStart, one)
 
 TEST(summation, sum_stride_two)
 {
-  Summation sut({1, 20, 300});
+  vector<int> data {1, 20, 300};
+  Summation sut(data);
   EXPECT_EQ(320, sut(1,2));
 }
 
 TEST(summation, sum_stride_two_middle)
 {
-  Summation sut({1, 20, 300, 400});
+  vector<int> data {1, 20, 300, 400};
+  Summation sut(data);
   EXPECT_EQ(320, sut(1,2));
 }
 
