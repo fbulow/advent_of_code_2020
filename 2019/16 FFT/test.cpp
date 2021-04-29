@@ -236,21 +236,23 @@ TEST(get_message, single_argument)
 {
   auto const s = signal("00000072109876543210");
   ASSERT_EQ(7,        offset(s));
-  ASSERT_EQ(21098765, get_message(s));
+  ASSERT_EQ(21098765, get_message(s, offset(s)));
 }
 
 auto solutionB(string input)
 {
-  string very_long;
-  very_long.reserve(1000*input.size() + 1 );
-  for(auto i=0;i<10000;i++)
-    very_long+=input;
+  return get_message(
+                     [input]{
+                       string very_long;
+                       very_long.reserve(1000*input.size() + 1 );
+                       for(auto i=0;i<10000;i++)
+                         very_long+=input;
   
-  auto ret = phase(very_long,
-                   vector<int>{0, 1, 0, -1},
-                   100);
-
-  return get_message(ret);
+                       return phase(very_long,
+                                    vector<int>{0, 1, 0, -1},
+                                    100);
+                     }(),
+                     offset(signal(input)));
 }
 
 
@@ -259,7 +261,10 @@ TEST(solution, B)
   ifstream in(INPUT);
   string data;
   in>>data;
-  ASSERT_EQ(0,
-            solutionB(data));
+  auto b = solutionB(data);
+  ASSERT_NE(27999102, b); //Grabbed offset _after_ doing the 100 phases...
+            
+  ASSERT_EQ(19422575,
+            b);
   
 }

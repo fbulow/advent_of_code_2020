@@ -10,7 +10,7 @@ Summation::Summation(vector<int> &signal)
     integral[i]+=integral[i-1];
 }
 
-unsigned int Summation::size(unsigned int stride)
+unsigned int Summation::size(unsigned int stride) const
 {
   assert(stride>0);
   auto rest = (integral.size()-(stride-1));
@@ -27,7 +27,7 @@ unsigned int segmentStart(unsigned int segment, unsigned int stride)
 
 
 
-int Summation::operator()(unsigned int segment, unsigned int stride)
+int Summation::operator()(unsigned int segment, unsigned int stride) const
 {
   if (segment>=size(stride))
     return 0;

@@ -3,7 +3,7 @@
 #include <numeric>
 #include "cycle.hpp"
 #include "summation.hpp"
-
+#include <iostream> 
 using namespace std;
 
 
@@ -43,12 +43,11 @@ vector<int> signal(string_view s)
   return ret;
 }
 
-void phase(vector<int> &signal,
+void phase(Summation const &sum,
            vector<int> pattern,
            vector<int> &ret
            )
 {
-  Summation sum(signal);
   for(unsigned int i = 0; i < ret.size() ;i++)
     {
       ret[i] = 0;
@@ -57,6 +56,7 @@ void phase(vector<int> &signal,
         ret[i]+=cycle(segment)*sum(segment,stride);
       ret[i]=keep_one_digit(ret[i]);
     }
+  cout<<endl;
 }
 
 vector<int>  phase(vector<int> signal,
@@ -68,7 +68,8 @@ vector<int>  phase(vector<int> signal,
 
   while(iterations-->0)
     {
-      phase(signal, pattern, ret);
+      cout<<iterations;
+      phase({signal}, pattern, ret);
       swap(signal,ret);
     }
   return signal;
