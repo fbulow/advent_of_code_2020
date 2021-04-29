@@ -43,12 +43,11 @@ vector<int> signal(string_view s)
   return ret;
 }
 
-vector<int>  phase(vector<int> const &signal,
-                   vector<int> pattern,
-                   unsigned int iterations=1)
+void phase(vector<int> &signal,
+           vector<int> pattern,
+           vector<int> &ret
+           )
 {
-  vector<int> ret;
-  ret.resize(signal.size());
   Summation sum(signal);
   for(unsigned int i = 0; i < ret.size() ;i++)
     {
@@ -58,10 +57,21 @@ vector<int>  phase(vector<int> const &signal,
         ret[i]+=cycle(segment)*sum(segment,stride);
       ret[i]=keep_one_digit(ret[i]);
     }
-  if(iterations==0)
-    return signal;
-  else
-    return phase(ret, pattern, iterations-1);
+}
+
+vector<int>  phase(vector<int> signal,
+                   vector<int> pattern,
+                   unsigned int iterations=1)
+{
+  vector<int> ret;
+  ret.resize(signal.size());
+
+  while(iterations-->0)
+    {
+      phase(signal, pattern, ret);
+      swap(signal,ret);
+    }
+  return signal;
 }
 
 vector<int>  phase(string_view const &signal,
