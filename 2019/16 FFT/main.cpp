@@ -3,7 +3,9 @@
 #include <numeric>
 #include "cycle.hpp"
 #include "summation.hpp"
-#include <iostream> 
+#include <iostream>
+#include <algorithm>
+#include <execution> 
 using namespace std;
 
 
@@ -49,13 +51,18 @@ void phase(Summation const &sum,
            )
 {
   for(unsigned int i = 0; i < ret.size() ;i++)
-    {
-      ret[i] = 0;
-      auto stride = i+1;
-      for(unsigned int segment=1;segment<sum.size(stride);segment+=2)
-        ret[i]+=cycle(segment)*sum(segment,stride);
-      ret[i]=keep_one_digit(ret[i]);
-    }
+    ret[i]=i;
+  for_each(std::execution::par,
+           ret.begin(),
+           ret.end(),
+           [sum](auto &&ret)
+           {
+             auto stride = ret+1;
+             ret = 0;
+             for(unsigned int segment=1;segment<sum.size(stride);segment+=2)
+               ret+=cycle(segment)*sum(segment,stride);
+             ret=keep_one_digit(ret);
+           });
   cout<<endl;
 }
 
