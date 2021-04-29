@@ -8,4 +8,4 @@ add_subdirectory(intcode)
 add_subdirectory("12 The N-Body Problem")
 add_subdirectory("13 Care Package")
 add_subdirectory("16 FFT")
-
+add_subdirectory("18 Many-Worlds Interpretation")
