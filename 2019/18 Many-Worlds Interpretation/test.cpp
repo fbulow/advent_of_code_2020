@@ -17,7 +17,7 @@
 
 #include"vault.hpp"
 
-TEST(Vault, initial)
+TEST(Vault, example_initial)
 {
   Vault sut({
       "#########"
@@ -28,13 +28,67 @@ TEST(Vault, initial)
             sut.destinations().size());
   ASSERT_EQ('a',
             sut.destinations()[0].name);
-
 }
+
+
 
 
 // #########
 // #b.....@#
 // #########
+
+TEST(Vault, no_snabela_false)
+{
+  Vault sut({
+      "#########"
+      "#b.....@#"
+      "#########"
+    });
+  ASSERT_FALSE(sut.no_snabela());
+}
+
+TEST(Vault, no_snabela_true)
+{
+  Vault sut({
+      "#########"
+      "#b.....##"
+      "#########"
+    });
+  ASSERT_TRUE(sut.no_snabela());
+}
+
+
+TEST(Vault, example_initial_second_move)
+{
+  Vault sut({
+      "#########"
+      "#b.....@#"
+      "#########"
+    });
+  ASSERT_EQ(1,
+            sut.destinations().size());
+  ASSERT_EQ('b',
+            sut.destinations()[0].name);
+
+
+}
+TEST(Vault, a_step)
+{
+  Vault sut({
+      "#########",
+      "#b.....@#",
+      "#########"
+    });
+
+  sut.step();
+  ASSERT_TRUE(sut==
+              Vault({
+                  "#########",
+                  "#b....@##",
+                  "#########"
+                }));
+}
+
 
 // Then, you can move 6 steps to collect the only other key, b:
 
