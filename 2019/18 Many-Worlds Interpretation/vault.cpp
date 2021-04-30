@@ -21,3 +21,15 @@ TEST(isLock, all_cases)
   ASSERT_FALSE(isLock('.'));
 }
 
+TEST(isKey, all_cases)
+{
+  ASSERT_TRUE(isKey('a'));
+  ASSERT_FALSE(isKey('A'));
+  ASSERT_TRUE(isKey('b'));
+  ASSERT_FALSE(isKey('B'));
+  ASSERT_FALSE(isKey('#'));
+  ASSERT_FALSE(isKey('@'));
+  ASSERT_FALSE(isKey('+'));
+  ASSERT_FALSE(isKey('.'));
+}
+
