@@ -4,6 +4,7 @@
 #include <string>
 #include <cassert>
 #include <iostream>
+#include <set>
 
 using namespace std;
 
@@ -11,6 +12,18 @@ struct Destination
 {
   char name;
 };
+
+inline bool isKey(char c)
+{
+  return (c>='a') and (c<='z');
+}
+
+inline bool isLock(char c)
+{
+  return (c>='A') and (c<='Z');
+}
+
+
 
 class Vault{
   vector<string> map;
@@ -62,13 +75,19 @@ public:
     return true;
   }
   
-  void step()
+  set<char> step()
   {
+    set<char> ret;
     auto act =
-      [](char &c)
+      [&ret](char &c)
       {
         if(c=='.')
           c='+';
+        else if(isKey(c))
+          {
+            ret.insert(c);
+            c='#';
+          }
       };
     
     for(int i=0;i<map.size();i++)
@@ -86,6 +105,7 @@ public:
       for(int j=0;j<map[i].size();j++)
         if(get(i,j)=='+')
           get(i,j)='@';
+    return ret;
   }
 };
 

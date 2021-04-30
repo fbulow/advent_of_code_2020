@@ -72,6 +72,7 @@ TEST(Vault, example_initial_second_move)
 
 
 }
+
 TEST(Vault, a_step)
 {
   Vault sut({
@@ -87,6 +88,17 @@ TEST(Vault, a_step)
                   "#b....@##",
                   "#########"
                 }));
+}
+
+TEST(Vault, a_step_find)
+{
+  auto sut = Vault({
+      "#########",
+      "#b@.#####",
+      "#########"
+    }).step();
+
+  ASSERT_TRUE(find(sut.begin(), sut.end(), 'b')!=sut.end());
 }
 
 
