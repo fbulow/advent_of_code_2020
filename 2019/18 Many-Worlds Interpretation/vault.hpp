@@ -107,6 +107,13 @@ public:
           get(i,j)='@';
     return ret;
   }
+
 };
 
+set<Destination> options(Vault v);
+
+
 ostream& operator<<(ostream& out, Vault const &v);
+bool operator<(Destination const & lhs, Destination const &rhs);
+
+bool operator==(Destination const & lhs, Destination const &rhs);

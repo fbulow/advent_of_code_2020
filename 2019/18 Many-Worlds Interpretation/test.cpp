@@ -145,6 +145,20 @@ TEST(Vault, a_step_find)
 
 // Now, you have a choice between keys d and e. While key e is closer, collecting it now would be slower in the long run than collecting key d first, so that's the best choice:
 
+TEST(two, options)
+{
+  Vault sut({
+      "########################",
+      "#f.D.E.e.............@.#",
+      "######################.#",
+      "#d.....................#",
+      "########################"});
+
+  set<Destination> ans{{'e'}, {'d'}};
+  ASSERT_EQ(ans,
+            options(sut));
+}
+
 // ########################
 // #f...E.e...............#
 // ######################.#
