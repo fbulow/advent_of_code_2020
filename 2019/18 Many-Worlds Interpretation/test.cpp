@@ -34,8 +34,8 @@ TEST(Vault, example_initial)
 TEST(Vault, example_initial_options)
 {
   auto sut = options( Vault({
-        "#########"
-        "#b.A.@.a#"
+        "#########",
+        "#b.A.@.a#",
         "#########"
       }) );
   ASSERT_EQ('a',
