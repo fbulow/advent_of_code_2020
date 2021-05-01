@@ -38,6 +38,47 @@ public:
                   [N = this->map[0].size()](auto &x){return x.size()==N;}));
 
   }
+
+  Vault(Vault const &other, char c)
+    :Vault(other.map)
+  {
+    auto start =  [&]{
+      for(auto &row: map)
+        {
+          auto it = find(row.begin(), row.end(), '@');
+          if(it !=row.end())
+            return it;
+        }
+      assert(("Start not found", false));
+    }();
+    *start = '.';
+
+    auto key =  [&]{
+      for(auto &row: map)
+        {
+          auto it = find(row.begin(), row.end(), c);
+          if(it !=row.end())
+            return it;
+        }
+      assert(("Key not found", false));
+    }();
+    *key = '@';
+
+    char door = c-'a'+'A';
+    auto doorTile =  [&]{
+      for(auto &row: map)
+        {
+          auto it = find(row.begin(), row.end(), door);
+          if(it !=row.end())
+            return it;
+        }
+      assert(("Door not found", false));
+    }();
+    *doorTile = '.';
+
+  }
+
+  
   vector<Destination> destinations() const
   {return {Destination{'a'}};}
 

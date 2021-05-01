@@ -45,6 +45,22 @@ TEST(Vault, example_initial_options)
 }
 
 
+TEST(Vault, example_initial_apply_key)
+{
+  Vault sut(Vault({
+        "#########",
+        "#b.A.@.a#",
+        "#########"
+      }), 'a');
+
+  cout<<sut;
+  ASSERT_TRUE(sut==
+              Vault({
+                  "#########",
+                  "#b.....@#",
+                  "#########"
+                }));
+}
 
 
 // #########
