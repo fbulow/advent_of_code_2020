@@ -50,17 +50,18 @@ public:
           if(it !=row.end())
             {
               *it=with;
-              return;
+              return true;
             }
         }
-      assert(("Char to replace was not found", false));
+      return false;
     };
 
     char door = c-'a'+'A';
-    replace('@',  '.');
-    replace(c,    '@');
-    if(door!='F')
-      replace(door, '.');
+    bool must_pass =
+      replace('@',  '.') and
+      replace(c,    '@') ;
+    assert(must_pass);
+    replace(door, '.');//May fail.
   }
 
   

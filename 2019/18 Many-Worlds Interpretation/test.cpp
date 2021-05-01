@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "gmock/gmock.h"
-
+#include <fstream> 
 // As you approach Neptune, a planetary security system detects you and activates a giant tractor beam on Triton! You have no choice but to land.
 
 // A scan of the local area reveals only one interesting feature: a massive underground vault. You generate a map of the tunnels (your puzzle input). The tunnels are too narrow to move diagonally.
@@ -232,6 +232,24 @@ TEST(two, options)
 //     Shortest paths are 136 steps;
 //     one is: a, f, b, j, g, n, h, d, l, o, e, p, c, i, k, m
 
+TEST(larger, another)
+{
+  ASSERT_EQ(136, minimal_steps(
+                              Vault({
+                                  "#################",
+                                  "#i.G..c...e..H.p#",
+                                  "########.########",
+                                  "#j.A..b...f..D.o#",
+                                  "########@########",
+                                  "#k.E..a...g..B.n#",
+                                  "########.########",
+                                  "#l.F..d...h..C.m#",
+                                  "#################"
+})));
+
+}
+
+
 //     ########################
 //     #@..............ac.GI.b#
 //     ###d#e#f################
@@ -242,3 +260,15 @@ TEST(two, options)
 //     Shortest paths are 81 steps; one is: a, c, f, i, d, g, b, e, h
 
 // How many steps is the shortest path that collects all of the keys?
+
+
+TEST(solution, a)
+{
+  ASSERT_EQ(0,
+            minimal_steps(Vault([]{
+              vector<string> data;
+              ifstream in(INPUT);
+              for(string row; getline(in, row);)
+                data.push_back(row);
+              return data;}())));
+}
