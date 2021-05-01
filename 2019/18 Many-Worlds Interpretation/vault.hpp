@@ -42,40 +42,25 @@ public:
   Vault(Vault const &other, char c)
     :Vault(other.map)
   {
-    auto start =  [&]{
-      for(auto &row: map)
-        {
-          auto it = find(row.begin(), row.end(), '@');
-          if(it !=row.end())
-            return it;
-        }
-      assert(("Start not found", false));
-    }();
-    *start = '.';
+    assert(isKey(c));
 
-    auto key =  [&]{
+    auto replace = [&](char what, char with){
       for(auto &row: map)
         {
-          auto it = find(row.begin(), row.end(), c);
+          auto it = find(row.begin(), row.end(), what);
           if(it !=row.end())
-            return it;
+            {
+              *it=with;
+              return;
+            }
         }
-      assert(("Key not found", false));
-    }();
-    *key = '@';
+      assert(("Char to replace was not found", false));
+    };
 
     char door = c-'a'+'A';
-    auto doorTile =  [&]{
-      for(auto &row: map)
-        {
-          auto it = find(row.begin(), row.end(), door);
-          if(it !=row.end())
-            return it;
-        }
-      assert(("Door not found", false));
-    }();
-    *doorTile = '.';
-
+    replace('@',  '.');
+    replace(c,    '@');
+    replace(door, '.');
   }
 
   
