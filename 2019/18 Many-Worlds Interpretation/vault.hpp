@@ -11,6 +11,7 @@ using namespace std;
 struct Destination
 {
   char name;
+  unsigned int steps;
 };
 
 inline bool isKey(char c)

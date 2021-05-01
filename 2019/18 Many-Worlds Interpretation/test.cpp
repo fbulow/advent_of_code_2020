@@ -31,6 +31,20 @@ TEST(Vault, example_initial)
 }
 
 
+TEST(Vault, example_initial_options)
+{
+  auto sut = options( Vault({
+        "#########"
+        "#b.A.@.a#"
+        "#########"
+      }) );
+  ASSERT_EQ('a',
+            sut.begin()->name);
+  ASSERT_EQ(2,
+            sut.begin()->steps);
+}
+
+
 
 
 // #########

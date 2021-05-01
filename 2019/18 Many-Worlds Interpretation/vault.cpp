@@ -46,10 +46,12 @@ bool operator==(Destination const & lhs, Destination const &rhs)
 set<Destination> options(Vault v)
 {
   set<Destination> ret;
+  unsigned int steps{1};
   while(not v.no_snabela())
     {
       for(auto x:v.step())
-        ret.insert({x});
+        ret.insert({x,steps});
+      steps++;
     }
   return ret;
 }
