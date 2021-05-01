@@ -53,7 +53,6 @@ TEST(Vault, example_initial_apply_key)
         "#########"
       }), 'a');
 
-  cout<<sut;
   ASSERT_TRUE(sut==
               Vault({
                   "#########",
@@ -148,6 +147,19 @@ TEST(Vault, a_step_find)
 // ######################.#
 // #d.....................#
 // ########################
+
+TEST(larger, example)
+{
+  ASSERT_EQ(86, minimal_steps(
+                              Vault({
+                                  "########################",
+                                  "#f.D.E.e.C.b.A.@.a.B.c.#",
+                                  "######################.#",
+                                  "#d.....................#",
+                                  "########################"})));
+
+}
+
 
 // The only reasonable move is to take key a and unlock door A:
 

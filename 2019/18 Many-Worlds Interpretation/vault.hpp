@@ -43,7 +43,6 @@ public:
     :Vault(other.map)
   {
     assert(isKey(c));
-
     auto replace = [&](char what, char with){
       for(auto &row: map)
         {
@@ -60,7 +59,8 @@ public:
     char door = c-'a'+'A';
     replace('@',  '.');
     replace(c,    '@');
-    replace(door, '.');
+    if(door!='F')
+      replace(door, '.');
   }
 
   
@@ -144,3 +144,5 @@ ostream& operator<<(ostream& out, Vault const &v);
 bool operator<(Destination const & lhs, Destination const &rhs);
 
 bool operator==(Destination const & lhs, Destination const &rhs);
+
+unsigned int minimal_steps(Vault const&v, int steps =0);

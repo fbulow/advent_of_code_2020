@@ -55,3 +55,23 @@ set<Destination> options(Vault v)
     }
   return ret;
 }
+
+unsigned int minimal_steps(Vault const&v, int consumed_steps)
+{
+  auto opt=options(v);
+  if(opt.empty())
+    return consumed_steps;
+  
+  vector<unsigned int> steps;
+  steps.resize(opt.size());
+  transform(opt.begin(),
+            opt.end(),
+            steps.begin(),
+            [v](Destination d)
+            {
+              return minimal_steps({v, d.name}, d.steps);
+            });
+  return consumed_steps + *min_element(steps.begin(),
+                                       steps.end());
+
+}
