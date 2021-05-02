@@ -11,6 +11,7 @@ Find_package(GTest)
 add_executable(${PROJECT_NAME}
   test.cpp
   vault.cpp
+  distance_table.cpp
   )
 
 target_link_libraries(
