@@ -27,7 +27,7 @@ TEST(Vault, example_initial)
   ASSERT_EQ(1,
             sut.destinations().size());
   ASSERT_EQ('a',
-            sut.destinations()[0].name);
+            sut.destinations().begin()->name);
 }
 
 
@@ -97,7 +97,7 @@ TEST(Vault, example_initial_second_move)
   ASSERT_EQ(1,
             sut.destinations().size());
   ASSERT_EQ('b',
-            sut.destinations()[0].name);
+            sut.destinations().begin()->name);
 
 
 }

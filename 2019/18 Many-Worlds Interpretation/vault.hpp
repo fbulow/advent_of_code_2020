@@ -24,49 +24,19 @@ inline bool isLock(char c)
   return (c>='A') and (c<='Z');
 }
 
-
+class Vault;
+set<Destination> options(Vault v);
 
 class Vault{
   vector<string> map;
   friend ostream& operator<<(ostream& out, Vault const &v);
 public:
-  Vault(vector<string> map)
-    :map{move(map)}
-  {
-    assert(all_of(next(this->map.begin()),
-                  this->map.end(),
-                  [N = this->map[0].size()](auto &x){return x.size()==N;}));
-
-  }
-
-  Vault(Vault const &other, char c)
-    :Vault(other.map)
-  {
-    assert(isKey(c));
-    auto replace = [&](char what, char with){
-      for(auto &row: map)
-        {
-          auto it = find(row.begin(), row.end(), what);
-          if(it !=row.end())
-            {
-              *it=with;
-              return true;
-            }
-        }
-      return false;
-    };
-
-    char door = c-'a'+'A';
-    bool must_pass =
-      replace('@',  '.') and
-      replace(c,    '@') ;
-    assert(must_pass);
-    replace(door, '.');//May fail.
-  }
+  Vault(vector<string> map);
+  Vault(Vault const &other, char c);
 
   
-  vector<Destination> destinations() const
-  {return {Destination{'a'}};}
+  set<Destination> destinations() const
+  {return options(*this);}
 
   bool no_snabela()
   {
@@ -138,7 +108,6 @@ public:
 
 };
 
-set<Destination> options(Vault v);
 
 
 ostream& operator<<(ostream& out, Vault const &v);
