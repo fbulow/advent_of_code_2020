@@ -42,18 +42,12 @@ void DistanceTable::remove(char c)
   for(auto b = n.begin(); b!= n.end(); advance(b,1))
     for(auto c = next(b); c!= n.end(); advance(c,1))
       add_distance(get<char>(*b), get<char>(*c), get<Steps>(*b)+get<Steps>(*c));
-  
-  // static vector<Distance> = data;
-  // data.resize(0);
-  // auto beg=data.begin();
-  // while(beg!=data.end());
-  // auto ret = find_if(beg, data.end(),
-  //                    [from, to](Distance const &d)
-  //                    {
-  //                      return ( (d.from == min(from,to)) and 
-  //                               (d.to == max(from,to)) );
-  //                    });
-  
+
+  erase_if(data,
+           [c](Distance const &d)
+           {
+             return (d.from == c) or ( d.to == c );
+           });
 }
 
 
@@ -127,9 +121,12 @@ TEST(DistanceTable, remove_destination)
 
   sut.add_distance('a', 'b', 10);
   sut.add_distance('a', 'c', 5);
+
   sut.remove('a');
 
   EXPECT_EQ(15, sut.get_distance('b', 'c'));
+  EXPECT_EQ(0, sut.get_distance('a', 'b'));
+  EXPECT_EQ(0, sut.get_distance('a', 'c'));
 }
 
 
