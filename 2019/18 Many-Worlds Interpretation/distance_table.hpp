@@ -25,6 +25,8 @@ private:
   forward_list<Distance> data;
 public:
   void add_distance(char from, char to, Steps distance);
+  void add_distance(Distance d);
+  
   Steps get_distance( char from, char to );
   void remove(char c);
 

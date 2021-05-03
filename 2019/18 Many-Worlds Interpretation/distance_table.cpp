@@ -1,6 +1,6 @@
 #include "distance_table.hpp"
 #include <gtest/gtest.h>
-
+#include <iterator>
 
 using Steps = DistanceTable::Steps;
 
@@ -38,6 +38,10 @@ TEST(Nodes, get_two)
 
 void DistanceTable::remove(char c)
 {
+  auto n = get_nodes(c);
+  for(auto b = n.begin(); b!= n.end(); advance(b,1))
+    for(auto c = next(b); c!= n.end(); advance(c,1))
+      add_distance(get<char>(*b), get<char>(*c), get<Steps>(*b)+get<Steps>(*c));
   
   // static vector<Distance> = data;
   // data.resize(0);
@@ -53,9 +57,37 @@ void DistanceTable::remove(char c)
 }
 
 
+void DistanceTable::add_distance(Distance d)
+{
+  auto it = find_if(data.begin(),
+                    data.end(),
+                    [d](Distance &x){
+                      return (d.from==x.from) and (d.to==x.to);
+                    });
+  if(it == data.end())
+    data.emplace_front(move(d));
+  else
+    it->steps = min(it->steps, d.steps);
+}
 void DistanceTable::add_distance(char from, char to, Steps distance)
 {
-  data.push_front({from, to, distance});
+  add_distance({ from, to, distance });
+}
+
+TEST(add_distance, keep_the_shortest)
+{
+  {
+    DistanceTable sut;
+    sut.add_distance('a', 'b', 1);
+    sut.add_distance('a', 'b', 2);
+    EXPECT_EQ(1, sut.get_distance('a','b'));
+  }
+  {
+    DistanceTable sut;
+    sut.add_distance('a', 'b', 2);
+    sut.add_distance('a', 'b', 1);
+    EXPECT_EQ(1, sut.get_distance('a','b'));
+  }
 }
 
 Steps DistanceTable :: get_distance( char from, char to )
