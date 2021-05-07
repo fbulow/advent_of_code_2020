@@ -30,6 +30,17 @@ TEST(Vault, example_initial)
             sut.destinations().begin()->name);
 }
 
+TEST(Vault, example_initial_start_at_b)
+{
+  Vault sut({
+      "#########"
+      "#b.A.@.a#"
+      "#########"
+    });
+  ASSERT_EQ(0,
+            sut.destinations('b').size());
+}
+
 
 TEST(Vault, example_initial_options)
 {

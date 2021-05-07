@@ -43,13 +43,13 @@ bool operator==(Destination const & lhs, Destination const &rhs)
   return lhs.name == rhs.name;
 }
 
-set<Destination> destinations(Vault v)
+set<Destination> destinations(Vault v, char start_at)
 {
   set<Destination> ret;
   unsigned int steps{1};
-  while(not v.no_snabela())
+  while(not v.no_snabela(start_at))
     {
-      for(auto x:v.step())
+      for(auto x:v.step(start_at))
         ret.insert({x,steps});
       steps++;
     }
@@ -58,7 +58,7 @@ set<Destination> destinations(Vault v)
 
 unsigned int minimal_steps(Vault const&v, int consumed_steps)
 {
-  auto opt=destinations(v);
+  auto opt=destinations(v, '@');
   if(opt.empty())
     return consumed_steps;
   

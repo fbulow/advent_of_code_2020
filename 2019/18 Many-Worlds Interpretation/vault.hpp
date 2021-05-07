@@ -14,9 +14,12 @@ struct Destination
   unsigned int steps;
 };
 
-inline bool isKey(char c)
+inline bool isKey(char c, char start_at='@')
 {
-  return (c>='a') and (c<='z');
+  if(start_at==c)
+    return false;
+  else
+    return (c>='a') and (c<='z');
 }
 
 inline bool isLock(char c)
@@ -25,7 +28,7 @@ inline bool isLock(char c)
 }
 
 class Vault;
-set<Destination> destinations(Vault v);
+set<Destination> destinations(Vault v, char start_at='@');
 
 class Vault{
   vector<string> map;
@@ -35,16 +38,16 @@ public:
   Vault(Vault const &other, char c);
 
   
-  set<Destination> destinations() const
-  {return ::destinations(*this);}
+  set<Destination> destinations(char start_at='@') const
+  {return ::destinations(*this, start_at);}
 
-  bool no_snabela()
+  bool no_snabela(char start_at='@')
   {
     return none_of(map.begin(),
                   map.end(),
-                  [](auto const & x)
+                  [start_at](auto const & x)
                   {
-                    return x.find("@")!=std::string::npos;
+                    return x.find(start_at)!=std::string::npos;
                   });
   }
 
@@ -73,11 +76,11 @@ public:
     return true;
   }
   
-  set<char> step()
+  set<char> step(char start_at='@')
   {
     set<char> ret;
     auto act =
-      [&ret](char &c)
+      [&ret, start_at](char &c)
       {
         if(c=='.')
           c='+';
@@ -90,7 +93,7 @@ public:
     
     for(int i=0;i<map.size();i++)
       for(int j=0;j<map[i].size();j++)
-        if(get(i,j)=='@')
+        if(get(i,j)==start_at)
           {
             get(i,j)='#';
             act(get(i-1,j));
@@ -102,7 +105,7 @@ public:
     for(int i=0;i<map.size();i++)
       for(int j=0;j<map[i].size();j++)
         if(get(i,j)=='+')
-          get(i,j)='@';
+          get(i,j)=start_at;
     return ret;
   }
 
