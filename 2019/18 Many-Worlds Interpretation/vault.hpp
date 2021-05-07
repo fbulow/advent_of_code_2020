@@ -5,7 +5,7 @@
 #include <cassert>
 #include <iostream>
 #include <set>
-
+//#include "distance_table.hpp" 
 using namespace std;
 
 struct Destination
@@ -25,7 +25,7 @@ inline bool isLock(char c)
 }
 
 class Vault;
-set<Destination> options(Vault v);
+set<Destination> destinations(Vault v);
 
 class Vault{
   vector<string> map;
@@ -36,7 +36,7 @@ public:
 
   
   set<Destination> destinations() const
-  {return options(*this);}
+  {return ::destinations(*this);}
 
   bool no_snabela()
   {

@@ -43,7 +43,7 @@ bool operator==(Destination const & lhs, Destination const &rhs)
   return lhs.name == rhs.name;
 }
 
-set<Destination> options(Vault v)
+set<Destination> destinations(Vault v)
 {
   set<Destination> ret;
   unsigned int steps{1};
@@ -58,7 +58,7 @@ set<Destination> options(Vault v)
 
 unsigned int minimal_steps(Vault const&v, int consumed_steps)
 {
-  auto opt=options(v);
+  auto opt=destinations(v);
   if(opt.empty())
     return consumed_steps;
   

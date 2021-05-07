@@ -33,7 +33,7 @@ TEST(Vault, example_initial)
 
 TEST(Vault, example_initial_options)
 {
-  auto sut = options( Vault({
+  auto sut = destinations( Vault({
         "#########",
         "#b.A.@.a#",
         "#########"
@@ -198,7 +198,7 @@ TEST(two, options)
 
   set<Destination> ans{{'e'}, {'d'}};
   ASSERT_EQ(ans,
-            options(sut));
+            destinations(sut));
 }
 
 // ########################
