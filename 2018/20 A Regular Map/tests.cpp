@@ -13,18 +13,18 @@ TEST(minSteps, one)
 }
 
 
-TEST(char_type, isBegining)
+TEST(char_type, isBeginning)
 {
-  EXPECT_TRUE(isBegining('^'));
-  EXPECT_TRUE(isBegining('('));
+  EXPECT_TRUE(isBeginning('^'));
+  EXPECT_TRUE(isBeginning('('));
 
-  EXPECT_FALSE(isBegining(')'));
-  EXPECT_FALSE(isBegining('$'));
+  EXPECT_FALSE(isBeginning(')'));
+  EXPECT_FALSE(isBeginning('$'));
 
-  EXPECT_FALSE(isBegining('N'));
-  EXPECT_FALSE(isBegining('S'));
-  EXPECT_FALSE(isBegining('E'));
-  EXPECT_FALSE(isBegining('W'));
+  EXPECT_FALSE(isBeginning('N'));
+  EXPECT_FALSE(isBeginning('S'));
+  EXPECT_FALSE(isBeginning('E'));
+  EXPECT_FALSE(isBeginning('W'));
 }
 
 

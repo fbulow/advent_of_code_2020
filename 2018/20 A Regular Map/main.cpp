@@ -2,7 +2,7 @@
 #include<algorithm>
 using namespace std;
 
-bool isBegining(char c)
+bool isBeginning(char c)
 {
   switch(c)
     {
@@ -33,7 +33,7 @@ bool isBranched(string_view s)
 
 bool isMove(char c)
 {
-  return not ( isBegining(c) or isEnd(c)) ;
+  return not ( isBeginning(c) or isEnd(c)) ;
 }
 
 unsigned int minSteps(string_view s)
