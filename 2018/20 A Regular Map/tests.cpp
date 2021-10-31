@@ -67,8 +67,10 @@ TEST(isBranched, all)
   EXPECT_TRUE(isBranched("|"));
 }
 
-
 TEST(minSteps, branches)
 {
   EXPECT_EQ(0, minSteps("N|"));
+  EXPECT_EQ(0, minSteps("|S"));
+  EXPECT_EQ(1, minSteps("N|S"));
+  EXPECT_EQ(1, minSteps("N|SEE"));
 }
