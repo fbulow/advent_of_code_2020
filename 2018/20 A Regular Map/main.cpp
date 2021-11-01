@@ -1,5 +1,7 @@
 #include<string_view>
 #include<algorithm>
+#include<functional>
+
 using namespace std;
 
 bool isBeginning(char c)
@@ -36,36 +38,39 @@ bool isMove(char c)
   return not ( isBeginning(c) or isEnd(c)) ;
 }
 
-template<class T>
-unsigned int minSteps(T & begin, T  & end, unsigned int count)
+
+unsigned int minSteps(function<char ()> next, unsigned int count)
 {
-  char head = *begin;
-  begin++;
-  switch (head)
+  switch (next())
     {
     case '^':
-      return minSteps(begin, end, count);
+      return minSteps(next, 0);
     case '$' :
     case ')' :
       return count;
     case '(':
-      return count + minSteps(begin, end, 0);
+      return count + minSteps(next, 0);
     case '|':
-      return min(count, minSteps(begin, end, 0));
+      return min(count, minSteps(next, 0));
     case 'E':
     case 'W':
     case 'S':
     case 'N':
-      return minSteps(begin, end, count+1);
+      return minSteps(next, count+1);
     }
   assert(false);
 }
 
-
 unsigned int minSteps(string s)
 {
-  auto a = s.begin();
-  auto b = s.end();
-  return minSteps(a,b, 0);
+  istringstream in(s);
+  auto next = [&in]()
+  {
+    char ret;
+    in>>ret;
+    return ret;
+  };
+  return minSteps(next,0);
 }
 
+  

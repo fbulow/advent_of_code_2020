@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "main.cpp"
-
+#include <fstream>
+#include <sstream>
 
 TEST(minSteps, empty)
 {
@@ -73,4 +74,24 @@ TEST(minSteps, branches)
   EXPECT_EQ(0, minSteps("^|S$"));
   EXPECT_EQ(1, minSteps("^N|S$"));
   EXPECT_EQ(1, minSteps("^N|SEE$"));
+}
+
+TEST(minSteps, fcn_as_argument)
+{
+  auto fcn = []()
+  {
+    static int i=0;
+    switch(i++)
+      {
+      case 0:
+        return '^';
+      case 1:
+        return 'N';
+      case 2:
+        return '$';
+      }
+    return '\n';
+  };
+  
+  EXPECT_EQ(1, minSteps(fcn,0));
 }
