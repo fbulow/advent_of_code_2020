@@ -41,17 +41,20 @@ bool isMove(char c)
 
 unsigned int minSteps(function<char ()> next, unsigned int count=0)
 {
-  switch (next())
+  auto const n = next();
+  switch (n)
     {
     case '^':
       return minSteps(next);
     case '$' :
+    case '|':
     case ')' :
       return count;
     case '(':
-      return count + minSteps(next);
-    case '|':
-      return min(count, minSteps(next));
+      return minSteps(next,
+                      count+
+                      max( minSteps(next),
+                           minSteps(next) ));
     case 'E':
     case 'W':
     case 'S':
