@@ -9,7 +9,7 @@ TEST(minSteps, empty)
 
 TEST(minSteps, one)
 {
-  ASSERT_EQ(1, minSteps("$N^"));
+  ASSERT_EQ(1, minSteps("^N$"));
 }
 
 
@@ -58,7 +58,7 @@ TEST(char_type, isMove)
 
 TEST(minSteps, one_paren)
 {
-  ASSERT_EQ(1, minSteps("$(N)^"));
+  ASSERT_EQ(1, minSteps("^(N)$"));
 }
 
 TEST(isBranched, all)
@@ -69,8 +69,8 @@ TEST(isBranched, all)
 
 TEST(minSteps, branches)
 {
-  EXPECT_EQ(0, minSteps("N|"));
-  EXPECT_EQ(0, minSteps("|S"));
-  EXPECT_EQ(1, minSteps("N|S"));
-  EXPECT_EQ(1, minSteps("N|SEE"));
+  EXPECT_EQ(0, minSteps("^N|$"));
+  EXPECT_EQ(0, minSteps("^|S$"));
+  EXPECT_EQ(1, minSteps("^N|S$"));
+  EXPECT_EQ(1, minSteps("^N|SEE$"));
 }

@@ -36,13 +36,36 @@ bool isMove(char c)
   return not ( isBeginning(c) or isEnd(c)) ;
 }
 
-unsigned int minSteps(string_view s)
+template<class T>
+unsigned int minSteps(T & begin, T  & end, unsigned int count)
 {
-  auto branch = find(s.begin(), s.end(), '|');
-  
-  if(branch == s.end())
-    return count_if(s.begin(), s.end(), isMove);
-  else
-    return min(minSteps({s.begin(), branch}),
-               minSteps({next(branch), s.end()}));
+  char head = *begin;
+  begin++;
+  switch (head)
+    {
+    case '^':
+      return minSteps(begin, end, count);
+    case '$' :
+    case ')' :
+      return count;
+    case '(':
+      return count + minSteps(begin, end, 0);
+    case '|':
+      return min(count, minSteps(begin, end, 0));
+    case 'E':
+    case 'W':
+    case 'S':
+    case 'N':
+      return minSteps(begin, end, count+1);
+    }
+  assert(false);
 }
+
+
+unsigned int minSteps(string s)
+{
+  auto a = s.begin();
+  auto b = s.end();
+  return minSteps(a,b, 0);
+}
+
