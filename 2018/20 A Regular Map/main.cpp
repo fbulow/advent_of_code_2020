@@ -4,39 +4,6 @@
 
 using namespace std;
 
-bool isBeginning(char c)
-{
-  switch(c)
-    {
-    case '(':
-    case '^':
-      return true;
-    default:
-      return false;
-    }
-}
-
-bool isEnd(char c)
-{
-  switch(c)
-    {
-    case ')':
-    case '$':
-      return true;
-    default:
-      return false;
-    }
-}
-
-bool isBranched(string_view s)
-{
-  return s.end() != find(s.begin(), s.end(), '|');
-}
-
-bool isMove(char c)
-{
-  return not ( isBeginning(c) or isEnd(c)) ;
-}
 
 
 unsigned int minSteps(function<char ()> next, unsigned int count=0)
