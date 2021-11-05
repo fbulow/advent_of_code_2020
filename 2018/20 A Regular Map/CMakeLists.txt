@@ -12,6 +12,7 @@ Find_package(GTest)
 add_executable(${PROJECT_NAME}
   tests.cpp
   position.cpp
+  doors.cpp
   )
 
 target_compile_options(${PROJECT_NAME}

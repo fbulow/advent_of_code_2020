@@ -17,6 +17,7 @@ struct Position{
     else
       return r;
   }
+  bool operator==(Position const & other) const = default;
     
   void operator=(Position const & other);
 };
