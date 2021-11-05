@@ -11,7 +11,7 @@ class Doors
 {
   list<array<Position, 2>> data;
 public:
-  void add(Position a, Position b)
+  void push(Position a, Position b)
   {
     assert(not (a==b));
     for(auto x:data)
