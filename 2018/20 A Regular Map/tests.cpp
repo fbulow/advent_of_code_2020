@@ -3,6 +3,9 @@
 #include <fstream>
 #include <sstream>
 #include "doors.hpp"
+#include "trail.hpp"
+#include "transverse.hpp"
+
 TEST(minSteps, empty)
 {
   ASSERT_EQ(0, minSteps("$^"));
@@ -93,6 +96,12 @@ TEST(doors, get_multiple)
   EXPECT_EQ(2, sut.pop(a).size());//Popped here...
 }
 
+TEST(doors, start_empty)
+{
+  Doors sut;
+  ASSERT_EQ(0, sut.pop(Position{0,0}).size());
+}
+
 TEST(doors, push_single_multiple_times)
 {
   Doors sut;
@@ -104,7 +113,25 @@ TEST(doors, push_single_multiple_times)
   EXPECT_EQ(1, sut.pop(a).size());
 }
 
+TEST(trail, one_move)
+{
+  Trail sut;
+  sut.step('N');
+  EXPECT_EQ(1, sut.d.pop(Position{0,0}).size());
+}
 
+TEST(transverse_ignore_branching, plain_sequence)
+{
+  istringstream in("^N(W$S");
+  ostringstream out;
+  transverse_ignore_branching(in,
+            [&out](char c)
+            {
+              out.put(c);
+            });
+  ASSERT_EQ("NW", out.str());
+}
+/*
 
 TEST(examples, all)
 {
@@ -123,5 +150,6 @@ TEST(examples, substr)
   EXPECT_EQ(10, minSteps("^(WNSE|)EE(SWEN|)$"));
   //EXPECT_EQ(6, minSteps("^EE(SWEN|)$"));
   //  EXPECT_EQ(6, minSteps("^(WNSE|)EE$"));
-                          
+                           
 }
+*/
