@@ -5,6 +5,7 @@
 #include "doors.hpp"
 #include "trail.hpp"
 #include "transverse.hpp"
+#include "max_distance.hpp"
 
 TEST(minSteps, empty)
 {
@@ -131,14 +132,46 @@ TEST(transverse_ignore_branching, plain_sequence)
             });
   ASSERT_EQ("NW", out.str());
 }
-/*
+
+TEST(max_distance, zero)
+{
+  Doors sut;
+  EXPECT_EQ(Distance(0), 
+            max_distance(sut));
+}
+
+TEST(max_distance, one)
+{
+  Doors sut;
+  Position p{0,0};
+  sut.push(p, p.step('N'));
+  EXPECT_EQ(Distance{1}, 
+            max_distance(sut));
+}
+
+Distance solutionA(istream& in)
+{
+  Trail t;
+  transverse_ignore_branching(in,
+                              [&t](char c)
+                              {
+                                t.step(c);
+                              });
+  return max_distance(t.d);
+}
+
+Distance solutionA(std::string s)
+{
+  istringstream in(s);
+  return solutionA(in);
+}
 
 TEST(examples, all)
 {
     // In the first example (^WNE$), this would be the north-east corner 3 doors away.
-  EXPECT_EQ(3, minSteps("^WNE$"));
+  EXPECT_EQ(3, value_of(solutionA("^WNE$")));
     // In the second example (^ENWWW(NEEE|SSE(EE|N))$), this would be the south-east corner 10 doors away.
-  EXPECT_EQ(10, minSteps("^ENWWW(NEEE|SSE(EE|N))$"));
+  EXPECT_EQ(10, value_of(solutionA("^ENWWW(NEEE|SSE(EE|N))$")));
   // In the third example (^ENNWSWW(NEWS|)SSSEEN(WNSE|)EE(SWEN|)NNN$), this would be the north-east corner 18 doors away.
 
   //EXPECT_EQ(18, minSteps("^ENNWSWW(NEWS|)SSSEEN(WNSE|)EE(SWEN|)NNN$"));
@@ -152,4 +185,4 @@ TEST(examples, substr)
   //  EXPECT_EQ(6, minSteps("^(WNSE|)EE$"));
                            
 }
-*/
+

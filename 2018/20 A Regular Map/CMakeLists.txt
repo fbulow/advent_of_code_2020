@@ -13,6 +13,7 @@ add_executable(${PROJECT_NAME}
   tests.cpp
   position.cpp
   doors.cpp
+  max_distance.cpp
   )
 
 target_compile_options(${PROJECT_NAME}
