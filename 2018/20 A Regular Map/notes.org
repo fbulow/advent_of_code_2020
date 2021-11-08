@@ -1,0 +1,2 @@
+1. Transverse and record doors.
+2. Flood fill   

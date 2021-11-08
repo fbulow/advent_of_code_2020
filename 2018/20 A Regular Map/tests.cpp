@@ -116,9 +116,9 @@ TEST(doors, push_single_multiple_times)
 
 TEST(trail, one_move)
 {
-  Trail sut;
-  sut.step('N');
-  EXPECT_EQ(1, sut.d->pop(Position{0,0}).size());
+  Doors sut;
+  Trail(sut).step('N');
+  EXPECT_EQ(1, sut.pop(Position{0,0}).size());
 }
 
 TEST(transverse_ignore_branching, plain_sequence)
@@ -151,10 +151,10 @@ TEST(max_distance, one)
 
 Distance solutionA(istream& in)
 {
-  Trail t;
+  Doors d;
   transverse_ignore_branching(in,
-                              t);
-  return max_distance(*t.d);
+                              Trail(d));
+  return max_distance(d);
 }
 
 TEST(Doors, as_text)
