@@ -157,6 +157,14 @@ Distance solutionA(istream& in)
   return max_distance(*t.d);
 }
 
+TEST(Doors, as_text)
+{
+
+  cout<<Doors("^WNE$")<<endl;
+  
+}
+
+
 Distance solutionA(std::string s)
 {
   istringstream in(s);
@@ -168,6 +176,10 @@ bool operator==(unsigned int lhs, Distance d)
   return lhs==value_of(d);
 }
 
+
+
+
+/*
 TEST(examples, all)
 {
   // In the first example (^WNE$), this would be the north-east corner 3 doors away.
@@ -218,3 +230,4 @@ TEST(examples, all)
   EXPECT_EQ(31, solutionA("^WSSEESWWWNW(S|NENNEEEENN(ESSSSW(NWSW|SSEN)|WSWWN(E|WWS(E|SS))))$"));
 }
 
+*/

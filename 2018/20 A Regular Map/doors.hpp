@@ -4,26 +4,16 @@
 #include<vector>
 #include<cassert>
 #include "position.hpp"
-
+#include <iostream>
 using namespace std;
 
 class Door{
   Position a;
   Position b;
 public:
-  Door(Position const & a, Position const &b)
-    :a(min(a,b))
-    ,b(max(a,b))
-  {
-    assert(a!=b);
-  }
+  Door(Position const & a, Position const &b);
+  bool has(Position const &p) const;
 
-  bool has(Position const &p) const
-  {
-    return (a==p) or (b==p);
-  }
-    
-  
   auto operator<=>(Door const & other) const
   {
     auto r = a <=> other.a;
@@ -33,22 +23,21 @@ public:
       return r;
   }
   bool operator==(Door const &other) const = default;
-  Position other(Position const &p) const 
-  {
-    if(a==p)
-      return b;
-    else
-      {
-        assert (b==p);
-        return a;
-      }
-  }
+  Position other(Position const &p) const ;
 };
 
 class Doors
 {
   list<Door> data;
+  friend ostream& operator<<(ostream& out, Doors const &d);
+
 public:
+  Doors()=default;
+  Doors(string s)
+  {
+    
+  }
+  
   void push(Door d)
   {
     for(auto x:data)
@@ -81,3 +70,5 @@ public:
   }
     
 };
+
+ostream& operator<<(ostream& out, Doors const &d);
