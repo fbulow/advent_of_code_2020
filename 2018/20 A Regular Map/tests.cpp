@@ -118,7 +118,7 @@ TEST(trail, one_move)
 {
   Trail sut;
   sut.step('N');
-  EXPECT_EQ(1, sut.d.pop(Position{0,0}).size());
+  EXPECT_EQ(1, sut.d->pop(Position{0,0}).size());
 }
 
 TEST(transverse_ignore_branching, plain_sequence)
@@ -153,11 +153,8 @@ Distance solutionA(istream& in)
 {
   Trail t;
   transverse_ignore_branching(in,
-                              [&t](char c)
-                              {
-                                t.step(c);
-                              });
-  return max_distance(t.d);
+                              t);
+  return max_distance(*t.d);
 }
 
 Distance solutionA(std::string s)
@@ -166,23 +163,58 @@ Distance solutionA(std::string s)
   return solutionA(in);
 }
 
-TEST(examples, all)
+bool operator==(unsigned int lhs, Distance d)
 {
-    // In the first example (^WNE$), this would be the north-east corner 3 doors away.
-  EXPECT_EQ(3, value_of(solutionA("^WNE$")));
-    // In the second example (^ENWWW(NEEE|SSE(EE|N))$), this would be the south-east corner 10 doors away.
-  EXPECT_EQ(10, value_of(solutionA("^ENWWW(NEEE|SSE(EE|N))$")));
-  // In the third example (^ENNWSWW(NEWS|)SSSEEN(WNSE|)EE(SWEN|)NNN$), this would be the north-east corner 18 doors away.
-
-  //EXPECT_EQ(18, minSteps("^ENNWSWW(NEWS|)SSSEEN(WNSE|)EE(SWEN|)NNN$"));
-
+  return lhs==value_of(d);
 }
 
-TEST(examples, substr)
+TEST(examples, all)
 {
-  EXPECT_EQ(10, minSteps("^(WNSE|)EE(SWEN|)$"));
-  //EXPECT_EQ(6, minSteps("^EE(SWEN|)$"));
-  //  EXPECT_EQ(6, minSteps("^(WNSE|)EE$"));
-                           
+  // In the first example (^WNE$), this would be the north-east corner 3 doors away.
+  EXPECT_EQ(3, solutionA("^WNE$"));
+
+  // In the second example (^ENWWW(NEEE|SSE(EE|N))$), this would be the south-east corner 10 doors away.
+  EXPECT_EQ(10, solutionA("^ENWWW(NEEE|SSE(EE|N))$"));
+
+  // In the third example (^ENNWSWW(NEWS|)SSSEEN(WNSE|)EE(SWEN|)NNN$), this would be the north-east corner 18 doors away.
+  EXPECT_EQ(18, solutionA("^ENNWSWW(NEWS|)SSSEEN(WNSE|)EE(SWEN|)NNN$"));
+
+  // Regex: ^ESSWWN(E|NNENN(EESS(WNSE|)SSS|WWWSSSSE(SW|NNNE)))$
+  // Furthest room requires passing 23 doors
+
+  // #############
+  // #.|.|.|.|.|.#
+  // #-#####-###-#
+  // #.#.|.#.#.#.#
+  // #-#-###-#-#-#
+  // #.#.#.|.#.|.#
+  // #-#-#-#####-#
+  // #.#.#.#X|.#.#
+  // #-#-#-###-#-#
+  // #.|.#.|.#.#.#
+  // ###-#-###-#-#
+  // #.|.#.|.|.#.#
+  // #############
+  EXPECT_EQ(23, solutionA("^ESSWWN(E|NNENN(EESS(WNSE|)SSS|WWWSSSSE(SW|NNNE)))$"));
+
+  // Regex: ^WSSEESWWWNW(S|NENNEEEENN(ESSSSW(NWSW|SSEN)|WSWWN(E|WWS(E|SS))))$
+  // Furthest room requires passing 31 doors
+
+  // ###############
+  // #.|.|.|.#.|.|.#
+  // #-###-###-#-#-#
+  // #.|.#.|.|.#.#.#
+  // #-#########-#-#
+  // #.#.|.|.|.|.#.#
+  // #-#-#########-#
+  // #.#.#.|X#.|.#.#
+  // ###-#-###-#-#-#
+  // #.|.#.#.|.#.|.#
+  // #-###-#####-###
+  // #.|.#.|.|.#.#.#
+  // #-#-#####-#-#-#
+  // #.#.|.|.|.#.|.#
+  // ###############
+  EXPECT_EQ(31, solutionA("^WSSEESWWWNW(S|NENNEEEENN(ESSSSW(NWSW|SSEN)|WSWWN(E|WWS(E|SS))))$"));
 }
 
