@@ -5,6 +5,9 @@
 #include<cassert>
 #include "position.hpp"
 #include <iostream>
+#include <sstream>
+#include "trail.hpp"
+
 using namespace std;
 
 class Door{
@@ -33,10 +36,8 @@ class Doors
 
 public:
   Doors()=default;
-  Doors(string s)
-  {
-    
-  }
+  Doors(istream &in);
+  Doors(string s);
   
   void push(Door d)
   {

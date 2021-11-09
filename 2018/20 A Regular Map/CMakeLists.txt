@@ -14,6 +14,7 @@ add_executable(${PROJECT_NAME}
   position.cpp
   doors.cpp
   max_distance.cpp
+  trail.cpp
   )
 
 target_compile_options(${PROJECT_NAME}

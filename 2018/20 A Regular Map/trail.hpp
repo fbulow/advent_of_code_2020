@@ -5,17 +5,13 @@
 
 using namespace std;
 
+class Doors;
+
 struct Trail 
 {
-  Trail(Doors &d)
-    :p(0,0)
-    ,d(d)
-  {}
+  Trail(Doors &d);
   
-  Trail(Trail &other)
-    :p(other.p)
-    ,d(other.d)
-  {}
+  Trail(Trail &other);
     
   Position p;
   Doors &d;
@@ -24,9 +20,5 @@ struct Trail
   {
     operator()(dir);
   }
-  void operator()(char dir)
-  {
-    d.push(p, p.step(dir));
-    p=p.step(dir);
-  }
+  void operator()(char dir);
 };
