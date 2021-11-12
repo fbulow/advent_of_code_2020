@@ -6,6 +6,14 @@
 #include "trail.hpp"
 #include "transverse.hpp"
 #include "max_distance.hpp"
+#include "screen_to_pos.hpp"
+
+TEST(doors, print)
+{
+  Doors sut;
+  sut.push(Door({0,0}, {0,1}));
+  cout<< sut <<endl;
+}
 
 TEST(minSteps, empty)
 {
@@ -164,6 +172,13 @@ TEST(Doors, as_text)
   
 }
 
+TEST(Doors, min)
+{
+  Doors sut;
+  sut<<Door{Position{0,0}, Position{2,7}};
+  EXPECT_EQ(Position{0,0}, sut.topLeft());
+  
+}
 
 Distance solutionA(std::string s)
 {

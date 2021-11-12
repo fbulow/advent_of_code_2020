@@ -13,10 +13,11 @@ using namespace std;
 class Door{
   Position a;
   Position b;
+  friend class Doors;
 public:
   Door(Position const & a, Position const &b);
   bool has(Position const &p) const;
-
+  
   auto operator<=>(Door const & other) const
   {
     auto r = a <=> other.a;
@@ -48,6 +49,11 @@ public:
       }
     data.push_back(d);
   }
+  void operator<<(Door p)
+  {
+    push(p);
+  }
+
   void push(Position a, Position b)
   {
     push(Door(a,b));
