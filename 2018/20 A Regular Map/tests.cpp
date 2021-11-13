@@ -204,6 +204,19 @@ TEST(Textmap, print_string_ctor)
   ASSERT_EQ(map, out.str());
 }
 
+TEST(Textmap, doors_from_map)
+{
+    Doors sut;
+    Textmap t(
+             "#####\n"
+                "#.|.#\n"
+                "#-###\n"
+                "#.|X#\n"
+                "#####\n");
+    t.write_to(sut);
+    ASSERT_TRUE(sut.adjacent({0,1}).contains({0,0}));
+}
+
 
 Distance solutionA(std::string s)
 {

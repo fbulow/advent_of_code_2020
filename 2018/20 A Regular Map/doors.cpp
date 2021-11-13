@@ -104,3 +104,4 @@ Doors::Doors(string s)
   transverse_ignore_branching(in,
                               Trail(*this));
 }
+

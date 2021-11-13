@@ -4,8 +4,8 @@
 using namespace std;
 
 struct Position{
-  unsigned int row;
-  unsigned int col;
+  int row;
+  int col;
 
   Position step(char direction) const;
 

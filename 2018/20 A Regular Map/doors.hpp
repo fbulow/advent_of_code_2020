@@ -3,11 +3,12 @@
 #include<list>
 #include<vector>
 #include<cassert>
+#include<set>
 #include "position.hpp"
 #include <iostream>
 #include <sstream>
 #include "trail.hpp"
-
+#include "textmap.hpp"
 using namespace std;
 
 class Door{
@@ -39,7 +40,7 @@ public:
   Doors()=default;
   Doors(istream &in);
   Doors(string s);
-
+  Doors(Textmap const &t);
   void push(Door d)
   {
     for(auto x:data)
@@ -58,7 +59,19 @@ public:
   {
     push(Door(a,b));
   }
-  
+
+  set<Position> adjacent(Position const &p)
+  {
+    set<Position> ret;
+      for_each(data.begin(),
+               data.end(),
+               [&ret, &p](auto const &x) {
+                   if (x.has(p))
+                       ret.insert(x.other(p));
+               }
+               );
+      return ret;
+  }
   vector<Position> pop(Position c)
   {
     vector<Position> ret;
