@@ -39,7 +39,7 @@ public:
   Doors()=default;
   Doors(istream &in);
   Doors(string s);
-  
+
   void push(Door d)
   {
     for(auto x:data)

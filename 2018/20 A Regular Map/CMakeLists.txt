@@ -15,7 +15,7 @@ add_executable(${PROJECT_NAME}
   doors.cpp
   max_distance.cpp
   trail.cpp
-  screen_to_pos.cpp
+  textmap.cpp
   )
 
 target_compile_options(${PROJECT_NAME}

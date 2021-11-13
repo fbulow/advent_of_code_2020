@@ -6,7 +6,7 @@
 #include "trail.hpp"
 #include "transverse.hpp"
 #include "max_distance.hpp"
-#include "screen_to_pos.hpp"
+#include "textmap.hpp"
 
 TEST(doors, print)
 {
@@ -172,13 +172,38 @@ TEST(Doors, as_text)
   
 }
 
-TEST(Doors, min)
+TEST(Textmap, print)
 {
-  Doors sut;
-  sut<<Door{Position{0,0}, Position{2,7}};
-  EXPECT_EQ(Position{0,0}, sut.topLeft());
-  
+  string const map("#####\n"
+                   "#.|.#\n"
+                   "#-###\n"
+                   "#.|X#\n"
+                   "#####\n");
+
+  istringstream in(map);
+  Textmap sut(in);
+
+  ostringstream out;
+  out<<sut;
+
+  ASSERT_EQ(map, out.str());
 }
+
+TEST(Textmap, print_string_ctor)
+{
+  string map("#####\n"
+             "#.|.#\n"
+             "#-###\n"
+             "#.|X#\n"
+             "#####\n");
+  Textmap sut(map);
+
+  ostringstream out;
+  out<<sut;
+
+  ASSERT_EQ(map, out.str());
+}
+
 
 Distance solutionA(std::string s)
 {
