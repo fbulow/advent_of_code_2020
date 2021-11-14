@@ -15,7 +15,7 @@ public:
   Textmap(istream &in);
   friend ostream& operator<<(ostream& out, Textmap const &x);
   char operator()(size_t row, size_t column) const;
-    void write_to(Doors &d);
+    void write_to(Doors &d) const;
 };
 
 

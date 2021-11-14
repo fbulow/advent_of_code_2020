@@ -109,3 +109,7 @@ Position Doors::start_at() const
 {
     return position;
 }
+Doors::Doors(Textmap const &t)
+{
+    t.write_to(*this);
+}

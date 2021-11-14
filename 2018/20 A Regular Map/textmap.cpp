@@ -28,6 +28,7 @@ void Textmap::init(istream &in)
           row.push_back(c);
       c = in.get();
     }
+  assert(not data.empty());
 }
 
 ostream& operator<<(ostream& out, Textmap const &x)
@@ -45,7 +46,7 @@ char Textmap::operator()(size_t row, size_t column) const {
     return data[row][column];
 }
 
-void Textmap::write_to(Doors &d) {
+void Textmap::write_to(Doors &d) const {
     assert(not data.empty());
     for(size_t row=0;row<data.size();row++)
         for(size_t col=0;col<data[0].size();col++)

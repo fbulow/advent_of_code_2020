@@ -206,23 +206,45 @@ TEST(Textmap, print_string_ctor)
 
 TEST(Textmap, doors_from_map)
 {
-    Doors sut;
-    Textmap t(
+    Doors sut(
+    Textmap (
              "#####\n"
                 "#.|.#\n"
                 "#-###\n"
                 "#.|X#\n"
-                "#####\n");
-    t.write_to(sut);
+                "#####\n"));
+    //t.write_to(sut);
     EXPECT_TRUE(sut.adjacent({0,1}).contains({0,0}));
     EXPECT_TRUE(sut.adjacent({0,0}).contains({1,0}));
     EXPECT_TRUE(sut.adjacent({1,0}).contains({1,1}));
     EXPECT_FALSE(sut.adjacent({0,1}).contains({1,1}));
 
     EXPECT_EQ(sut.start_at(), Position(1,1));
-    EXPECT_EQ(max_distance(sut), 3);
+    EXPECT_EQ(max_distance(sut), Distance (3));
 }
 
+TEST(textmap, large_test)
+{
+    Doors sut(Textmap(
+            "###############\n"
+            "#.|.|.|.#.|.|.#\n"
+            "#-###-###-#-#-#\n"
+            "#.|.#.|.|.#.#.#\n"
+            "#-#########-#-#\n"
+            "#.#.|.|.|.|.#.#\n"
+            "#-#-#########-#\n"
+            "#.#.#.|X#.|.#.#\n"
+            "###-#-###-#-#-#\n"
+            "#.|.#.#.|.#.|.#\n"
+            "#-###-#####-###\n"
+            "#.|.#.|.|.#.#.#\n"
+            "#-#-#####-#-#-#\n"
+            "#.#.|.|.|.#.|.#\n"
+            "###############\n"
+    ));
+    ASSERT_EQ(31, max_distance(sut));
+
+}
 
 Distance solutionA(std::string s)
 {

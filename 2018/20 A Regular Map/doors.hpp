@@ -36,7 +36,7 @@ class Doors
 {
   list<Door> data;
   friend ostream& operator<<(ostream& out, Doors const &d);
-  friend void Textmap::write_to(Doors &d);
+  friend void Textmap::write_to(Doors &d) const;
     Position position{0,0};
 public:
   Doors()=default;
