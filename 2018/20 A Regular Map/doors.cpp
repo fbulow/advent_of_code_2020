@@ -105,3 +105,7 @@ Doors::Doors(string s)
                               Trail(*this));
 }
 
+Position Doors::start_at() const
+{
+    return position;
+}

@@ -65,5 +65,7 @@ void Textmap::write_to(Doors &d) {
                     d.push({r,c-1}, {r,c});
                     break;
                 }
+                case'X':
+                    d.position={row/2, col/2};
             }
 }

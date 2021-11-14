@@ -45,8 +45,8 @@ Distance max_distance(Visited v,
 
 Distance max_distance(Doors const &d)
 {
-  return max_distance(Visited({Position{0,0}}),
-                      CurrentPos{{Position{0,0}}},
+  return max_distance(Visited({}),
+                      CurrentPos{{d.start_at()}},
                       Doors(d),
                       Distance(0));
 }

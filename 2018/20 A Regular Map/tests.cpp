@@ -214,7 +214,13 @@ TEST(Textmap, doors_from_map)
                 "#.|X#\n"
                 "#####\n");
     t.write_to(sut);
-    ASSERT_TRUE(sut.adjacent({0,1}).contains({0,0}));
+    EXPECT_TRUE(sut.adjacent({0,1}).contains({0,0}));
+    EXPECT_TRUE(sut.adjacent({0,0}).contains({1,0}));
+    EXPECT_TRUE(sut.adjacent({1,0}).contains({1,1}));
+    EXPECT_FALSE(sut.adjacent({0,1}).contains({1,1}));
+
+    EXPECT_EQ(sut.start_at(), Position(1,1));
+    EXPECT_EQ(max_distance(sut), 3);
 }
 
 

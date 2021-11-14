@@ -31,16 +31,21 @@ public:
   Position other(Position const &p) const ;
 };
 
+class Textmap;
 class Doors
 {
   list<Door> data;
   friend ostream& operator<<(ostream& out, Doors const &d);
-
+  friend void Textmap::write_to(Doors &d);
+    Position position{0,0};
 public:
   Doors()=default;
   Doors(istream &in);
   Doors(string s);
   Doors(Textmap const &t);
+
+  Position start_at() const;
+
   void push(Door d)
   {
     for(auto x:data)
