@@ -22,3 +22,9 @@ void Position::operator=(Position const & other)
   row = other.row;
   col = other.col;
 }
+
+ostream& operator<<(ostream& out, Position const &p)
+  {
+    out<<"Pos{"<<p.row<<","<<p.col<<"}";
+    return out;
+  }
