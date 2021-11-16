@@ -16,6 +16,7 @@ add_executable(${PROJECT_NAME}
   max_distance.cpp
   trail.cpp
   textmap.cpp
+  multi_head_transverse.cpp
   )
 
 target_compile_options(${PROJECT_NAME}

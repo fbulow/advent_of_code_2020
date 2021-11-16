@@ -70,3 +70,44 @@ void Textmap::write_to(Doors &d) const {
                     d.position={row/2, col/2};
             }
 }
+
+int operator<=>(RegMap::Caret left, RegMap::Caret right)
+{
+	if (left<right)
+		return -1;
+	else if(left==right)
+		return 0;
+	else
+		return 1;
+}
+struct PosMap{
+	RegMap::Caret c;
+	RegMap &rm;
+	Position pos;
+
+	bool operator<(PosMap const &other)
+	{
+		switch (c <=> other.c)
+		{
+		case 1:
+			return true;
+		case -1:
+			return false;
+		case 0:
+			switch (pos <=> other.pos)
+			{
+			case 1:
+				return true;
+			case -1:
+				return false;
+			case 0:
+				return false;
+			}
+		}
+	}
+};
+
+Doors::Doors(RegMap const &r)
+{
+
+}

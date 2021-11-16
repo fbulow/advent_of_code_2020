@@ -7,6 +7,7 @@
 #include "transverse.hpp"
 #include "max_distance.hpp"
 #include "textmap.hpp"
+#include "multi_head_transverse.hpp"
 
 TEST(doors, print)
 {
@@ -243,7 +244,13 @@ TEST(textmap, large_test)
             "###############\n"
     ));
     ASSERT_EQ(31, max_distance(sut));
+}
 
+TEST(Doors, from_RegMap){
+  auto const s("^WNE$");
+  ASSERT_EQ(
+            Doors(s),
+            multi_head_transverse(s));
 }
 
 Distance solutionA(std::string s)
@@ -311,4 +318,4 @@ TEST(examples, all)
   EXPECT_EQ(31, solutionA("^WSSEESWWWNW(S|NENNEEEENN(ESSSSW(NWSW|SSEN)|WSWWN(E|WWS(E|SS))))$"));
 }
 
-*/
+/* EVELYN */

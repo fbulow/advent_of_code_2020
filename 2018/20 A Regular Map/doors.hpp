@@ -9,7 +9,18 @@
 #include <sstream>
 #include "trail.hpp"
 #include "textmap.hpp"
+#include "strong_type.hpp"
+
 using namespace std;
+
+class RegMap:private string{
+public:
+	RegMap(string const &s)
+	:string{s}
+	{}
+
+	using Caret = strong::type<size_t, class _Caret, strong::arithmetic, strong::equality>;
+};
 
 class Door{
   Position a;
@@ -19,15 +30,8 @@ public:
   Door(Position const & a, Position const &b);
   bool has(Position const &p) const;
   
-  auto operator<=>(Door const & other) const
-  {
-    auto r = a <=> other.a;
-    if (r==0)
-      return b <=> other.b;
-    else
-      return r;
-  }
-  bool operator==(Door const &other) const = default;
+  auto operator<=>(Door const & other) const = default;
+  constexpr bool operator==(const Door& other) const {return (a==other.a)and(b==other.b);}
   Position other(Position const &p) const ;
 };
 
@@ -43,7 +47,19 @@ public:
   Doors(istream &in);
   Doors(string s);
   Doors(Textmap const &t);
+  Doors(RegMap const &r);
 
+  bool operator==(Doors const &other) const
+  {
+    if (position!=other.position)
+      return false;
+    else if(data.size()!= other.data.size())
+      return false;
+    else
+      return true;
+  }
+  
+  
   Position start_at() const;
 
   void push(Door d)
