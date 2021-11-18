@@ -7,12 +7,14 @@
 #include "fast_forward.hpp"
 using namespace std;
 
-
-void step(auto it, auto end, Position const & p, auto &log)
+void step(auto it, auto end, Position const & p, auto &log, auto &already_visited)
 {
-  auto stp = [end, log](auto it, Position const & p)
+  if(already_visited({distance(it, end), p}))
+    return;
+  
+  auto stp = [end, log, &already_visited](auto it, Position const & p)
   {
-    return step(it, end, p, log);
+    return step(it, end, p, log, already_visited);
   };
   
   switch(*it)
@@ -46,6 +48,9 @@ void step(auto it, auto end, Position const & p, auto &log)
     }
 }
 
+
+using PointAndMap = tuple<long int, Position>;
+
 Doors multi_head_transverse(string const &s)
 {
   Doors ret;
@@ -53,7 +58,19 @@ Doors multi_head_transverse(string const &s)
        {
          ret.push(a,b);
        };
+  set<PointAndMap> v;
+  auto already_visited = [&v](PointAndMap const & pam)
+  {
+    if (v.contains(pam))
+      return true;
+    else
+      {
+        v.insert(pam);
+        return false;
+      }
+  };
+  
   step(s.begin(), s.end(), {0,0},
-       act);
+       act, already_visited);
   return ret;
 }
