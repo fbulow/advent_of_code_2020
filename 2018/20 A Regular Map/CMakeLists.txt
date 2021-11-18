@@ -17,6 +17,7 @@ add_executable(${PROJECT_NAME}
   trail.cpp
   textmap.cpp
   multi_head_transverse.cpp
+  fast_forward.cpp
   )
 
 target_compile_options(${PROJECT_NAME}
@@ -28,4 +29,5 @@ target_compile_options(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
   GTest::GTest
-  GTest::Main)
+  #GTest::Main
+  )

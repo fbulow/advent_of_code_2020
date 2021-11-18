@@ -158,13 +158,6 @@ TEST(max_distance, one)
             max_distance(sut));
 }
 
-Distance solutionA(istream& in)
-{
-  Doors d;
-  transverse_ignore_branching(in,
-                              Trail(d));
-  return max_distance(d);
-}
 
 TEST(Doors, as_text)
 {
@@ -255,9 +248,16 @@ TEST(Doors, from_RegMap){
 
 Distance solutionA(std::string s)
 {
-  istringstream in(s);
-  return solutionA(in);
+  return max_distance(multi_head_transverse(s));
 }
+Distance solutionA(istream& in)
+{
+  string s;
+  in>>s;
+  return solutionA(s);
+}
+
+
 
 bool operator==(unsigned int lhs, Distance d)
 {
@@ -267,17 +267,17 @@ bool operator==(unsigned int lhs, Distance d)
 
 
 
-/*
-TEST(examples, all)
+
+TEST(examples_all, passing)
 {
   // In the first example (^WNE$), this would be the north-east corner 3 doors away.
   EXPECT_EQ(3, solutionA("^WNE$"));
 
   // In the second example (^ENWWW(NEEE|SSE(EE|N))$), this would be the south-east corner 10 doors away.
-  EXPECT_EQ(10, solutionA("^ENWWW(NEEE|SSE(EE|N))$"));
+  EXPECT_EQ(10, solutionA("^ENWWW(NEEE|SSE(EE|N))$").value_of());
 
   // In the third example (^ENNWSWW(NEWS|)SSSEEN(WNSE|)EE(SWEN|)NNN$), this would be the north-east corner 18 doors away.
-  EXPECT_EQ(18, solutionA("^ENNWSWW(NEWS|)SSSEEN(WNSE|)EE(SWEN|)NNN$"));
+  EXPECT_EQ(18, solutionA("^ENNWSWW(NEWS|)SSSEEN(WNSE|)EE(SWEN|)NNN$").value_of());
 
   // Regex: ^ESSWWN(E|NNENN(EESS(WNSE|)SSS|WWWSSSSE(SW|NNNE)))$
   // Furthest room requires passing 23 doors
@@ -295,7 +295,7 @@ TEST(examples, all)
   // ###-#-###-#-#
   // #.|.#.|.|.#.#
   // #############
-  EXPECT_EQ(23, solutionA("^ESSWWN(E|NNENN(EESS(WNSE|)SSS|WWWSSSSE(SW|NNNE)))$"));
+  EXPECT_EQ(23, solutionA("^ESSWWN(E|NNENN(EESS(WNSE|)SSS|WWWSSSSE(SW|NNNE)))$").value_of());
 
   // Regex: ^WSSEESWWWNW(S|NENNEEEENN(ESSSSW(NWSW|SSEN)|WSWWN(E|WWS(E|SS))))$
   // Furthest room requires passing 31 doors
@@ -315,7 +315,18 @@ TEST(examples, all)
   // #-#-#####-#-#-#
   // #.#.|.|.|.#.|.#
   // ###############
-  EXPECT_EQ(31, solutionA("^WSSEESWWWNW(S|NENNEEEENN(ESSSSW(NWSW|SSEN)|WSWWN(E|WWS(E|SS))))$"));
+  EXPECT_EQ(31, solutionA("^WSSEESWWWNW(S|NENNEEEENN(ESSSSW(NWSW|SSEN)|WSWWN(E|WWS(E|SS))))$").value_of());
 }
 
-/* EVELYN */
+
+int main(int narg, char** argv)
+{
+  testing::InitGoogleTest();
+  if(RUN_ALL_TESTS())
+    return -1;
+  else
+    {
+      cout<<"solutionA: " <<solutionA(cin).value_of()<<endl;
+      return 0;
+    }
+}
