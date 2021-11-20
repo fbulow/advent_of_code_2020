@@ -1,12 +1,21 @@
 #include <gtest/gtest.h>
 #include <iostream>
+#include "operations.hh"
 
 using namespace std;
 
-template<class T=void>
+
 auto solutionA(istream &in)
 {
-  return "Solution A not implemented";
+  unsigned int count{0};
+  InputParser ip(in);
+  while(in.good())
+    {
+      if(ip.possible()>2)
+        count++;
+      in>>ip;
+    }
+  return count;
 }
 
 int main(int narg, char** argv)
@@ -16,6 +25,7 @@ int main(int narg, char** argv)
     return -1;
   else
     {
+      cout<<"Attepmting to read input from standard input."<<endl;
       cout<<"solutionA: " <<solutionA(cin)<<endl;
       return 0;
     }

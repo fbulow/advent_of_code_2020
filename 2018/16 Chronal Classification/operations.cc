@@ -1,6 +1,7 @@
+#include "operations.hh"
 #include <gtest/gtest.h>
-#include <array>
-#include <iostream>
+#include <cassert>
+
 using namespace std;
 class Instruction 
 {
@@ -12,159 +13,151 @@ class Instruction
   {}
 };
 
-class Registers{
-  array<int, 4> data;
-public:
-  template<class ... ARG>
-  Registers(ARG...arg)
-    :data{arg...}
-  {}
-  bool operator==(Registers const& other) const
-  {
-    if(data.size()!=other.data.size())
+int& Registers::operator[](size_t x)
+{
+  assert(x<data.size());
+  return data[x];
+}
+  
+bool Registers::operator==(Registers const& other) const
+{
+  if(data.size()!=other.data.size())
+    return false;
+  for(size_t i =0; i< data.size();i++)
+    if(data[i]!=other.data[i])
       return false;
-    for(size_t i =0; i< data.size();i++)
-      if(data[i]!=other.data[i])
-        return false;
-    return true;
-  }
-  Registers& operator<<(Instruction const & i)
-  {
-    return *this;
-  }
-  friend ostream& operator<<(ostream &out, Registers const & r);
+  return true;
+}
+
 
 
 // Addition:
 
 //     addr (add register) stores into register C the result of adding register A and register B.
-  Registers& addr(int a, int b, int c)
-  {
-    data[c]=data[a]+data[b];
-    return *this;
-  }
+Registers& Registers::addr(int a, int b, int c)
+{
+  data[c]=data[a]+data[b];
+  return *this;
+}
   
 //     addi (add immediate) stores into register C the result of adding register A and value B.
-  Registers& addi(int a, int b, int c)
-  {
-    data[c]=data[a]+b;
-    return *this;
-  }
+Registers& Registers::addi(int a, int b, int c)
+{
+  data[c]=data[a]+b;
+  return *this;
+}
 
 // Multiplication:
 
 //     mulr (multiply register) stores into register C the result of multiplying register A and register B.
-  Registers& mulr(int a, int b, int c)
-  {
-    data[c]=data[a]*data[b];
-    return *this;
-  }
+Registers& Registers::mulr(int a, int b, int c)
+{
+  data[c]=data[a]*data[b];
+  return *this;
+}
   
 //     muli (multiply immediate) stores into register C the result of multiplying register A and value B.
-  Registers& muli(int a, int b, int c)
-  {
-    data[c]=data[a]*b;
-    return *this;
-  }
+Registers& Registers::muli(int a, int b, int c)
+{
+  data[c]=data[a]*b;
+  return *this;
+}
 
 // Bitwise AND:
 
 //     banr (bitwise AND register) stores into register C the result of the bitwise AND of register A and register B.
-  Registers& banr(int a, int b, int c)
-  {
-    data[c]=data[a]&data[b];
-    return *this;
-  }
+Registers& Registers::banr(int a, int b, int c)
+{
+  data[c]=data[a]&data[b];
+  return *this;
+}
 
   
 //     bani (bitwise AND immediate) stores into register C the result of the bitwise AND of register A and value B.
-  Registers& bani(int a, int b, int c)
-  {
-    data[c]=data[a]&b;
-    return *this;
-  }
+Registers& Registers::bani(int a, int b, int c)
+{
+  data[c]=data[a]&b;
+  return *this;
+}
 
   
 // Bitwise OR:
 
 //     borr (bitwise OR register) stores into register C the result of the bitwise OR of register A and register B.
-  Registers& borr(int a, int b, int c)
-  {
-    data[c]=data[a]|data[b];
-    return *this;
-  }
+Registers& Registers::borr(int a, int b, int c)
+{
+  data[c]=data[a]|data[b];
+  return *this;
+}
 
 //     bori (bitwise OR immediate) stores into register C the result of the bitwise OR of register A and value B.
-  Registers& bori(int a, int b, int c)
-  {
-    data[c]=data[a]|b;
-    return *this;
-  }
+Registers& Registers::bori(int a, int b, int c)
+{
+  data[c]=data[a]|b;
+  return *this;
+}
 
 // Assignment:
 
 //     setr (set register) copies the contents of register A into register C. (Input B is ignored.)
-  Registers& setr(int a, int b, int c)
-  {
-    data[c]=data[a];
-    return *this;
-  }
+Registers& Registers::setr(int a, int b, int c)
+{
+  data[c]=data[a];
+  return *this;
+}
 //     seti (set immediate) stores value A into register C. (Input B is ignored.)
-  Registers& seti(int a, int b, int c)
-  {
-    data[c]=a;
-    return *this;
-  }
+Registers& Registers::seti(int a, int b, int c)
+{
+  data[c]=a;
+  return *this;
+}
 
 
 // Greater-than testing:
 
 //     gtir (greater-than immediate/register) sets register C to 1 if value A is greater than register B. Otherwise, register C is set to 0.
-  Registers& gtir(int a, int b, int c)
-  {
-    data[c] = a>data[b] ? 1: 0;
-    return *this;
-  }
+Registers& Registers::gtir(int a, int b, int c)
+{
+  data[c] = a>data[b] ? 1: 0;
+  return *this;
+}
   
 //     gtri (greater-than register/immediate) sets register C to 1 if register A is greater than value B. Otherwise, register C is set to 0.
-  Registers& gtri(int a, int b, int c)
-  {
-    data[c] = data[a]>b ? 1: 0;
-    return *this;
-  }
+Registers& Registers::gtri(int a, int b, int c)
+{
+  data[c] = data[a]>b ? 1: 0;
+  return *this;
+}
 
 //     gtrr (greater-than register/register) sets register C to 1 if register A is greater than register B. Otherwise, register C is set to 0.
-  Registers& gtrr(int a, int b, int c)
-  {
-    data[c] = data[a]>data[b] ? 1: 0;
-    return *this;
-  }
+Registers& Registers::gtrr(int a, int b, int c)
+{
+  data[c] = data[a]>data[b] ? 1: 0;
+  return *this;
+}
 
 // Equality testing:
 
 //     eqir (equal immediate/register) sets register C to 1 if value A is equal to register B. Otherwise, register C is set to 0.
-  Registers& eqir(int a, int b, int c)
-  {
-    data[c] = a==data[b] ? 1: 0;
-    return *this;
-  }
+Registers& Registers::eqir(int a, int b, int c)
+{
+  data[c] = a==data[b] ? 1: 0;
+  return *this;
+}
   
 //     eqri (equal register/immediate) sets register C to 1 if register A is equal to value B. Otherwise, register C is set to 0.
-  Registers& eqri(int a, int b, int c)
-  {
-    data[c] = data[a]==b ? 1: 0;
-    return *this;
-  }
+Registers& Registers::eqri(int a, int b, int c)
+{
+  data[c] = data[a]==b ? 1: 0;
+  return *this;
+}
 
 //     eqrr (equal register/register) sets register C to 1 if register A is equal to register B. Otherwise, register C is set to 0.
-  Registers& eqrr(int a, int b, int c)
-  {
-    data[c] = data[a]==data[b] ? 1: 0;
-    return *this;
-  }
-  
-  
-};
+Registers& Registers::eqrr(int a, int b, int c)
+{
+  data[c] = data[a]==data[b] ? 1: 0;
+  return *this;
+}
 
 unsigned int possible(Registers const & input,                      
                       int a, int b, int c,
@@ -233,3 +226,112 @@ TEST(registers, example)
                         
   
 }
+
+struct InputParser;
+istream& operator>>(istream&, InputParser&);
+
+InputParser::InputParser(istream& in)
+{
+  in>>*this;
+}
+
+unsigned int InputParser::possible() const
+{
+  return ::possible(before, a,b,c, after);
+}
+
+
+istream& operator>>(istream& in, InputParser &x)
+{
+  int optcode;
+  string word;
+  char c;
+  in>> word;
+  if(in.eof())
+    return in;
+  if(not in.good()) return in;
+  assert(word == "Before:");
+  assert(in.get() == ' ');
+  assert(in.get() == '[');
+  in
+    >> x.before[0]
+    >> c ;
+  assert(c==',');
+  in>>x.before[1]>> c;
+
+  assert(c==',');
+  in>>x.before[2] >> c;
+  
+  assert(c==',');
+  in>>x.before[3]>>c;
+  assert(c==']');
+  
+  in>>optcode >>x.a >> x.b >> x.c;
+
+  in>> word >>c;
+  assert(word == "After:");
+  assert(c == '[');
+  in
+    >> x.after[0]
+    >> c ;
+  assert(c==',');
+  in>>x.after[1]>> c;
+
+  assert(c==',');
+  in>>x.after[2] >> c;
+  
+  assert(c==',');
+  in>>x.after[3]>>c;
+  assert(c==']');
+
+  
+  return in;
+}
+
+TEST(InputParser, example)
+{
+  istringstream in(
+                   "Before: [1, 2, 3, 4]\n"
+                   "5 6 7 8\n"
+                   "After:  [9, 10, 11, 12]\n"
+                   "\n"
+                   "Before: [2, 0, 0, 1]\n"
+                   "15 3 1 3\n"
+                   "After:  [2, 0, 0, 1]\n"
+                   );
+
+  InputParser sut(in);
+  EXPECT_EQ(Registers(1, 2, 3, 4),
+            sut.before);
+
+  EXPECT_EQ(6,
+            sut.a);
+  EXPECT_EQ(7,
+            sut.b);
+  EXPECT_EQ(8,
+            sut.c);
+
+  EXPECT_EQ(Registers(9, 10, 11, 12),
+            sut.after);
+
+  in>>sut;
+
+  EXPECT_EQ(Registers(2, 0, 0, 1),
+            sut.before);
+
+  EXPECT_EQ(3,
+            sut.a);
+  EXPECT_EQ(1,
+            sut.b);
+  EXPECT_EQ(3,
+            sut.c);
+
+  EXPECT_EQ(Registers(2, 0, 0, 1),
+            sut.after);
+
+  EXPECT_FALSE(in.eof());
+  in>> sut;
+  EXPECT_TRUE(in.eof());
+
+}
+  
