@@ -27,6 +27,7 @@ int main(int narg, char** argv)
     {
       cout<<"Attepmting to read input from standard input."<<endl;
       cout<<"solutionA: " <<solutionA(cin)<<endl;
+      cout<<"solutionA: " <<solutionB(cin)<<endl;
       return 0;
     }
 }
