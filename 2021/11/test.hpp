@@ -74,7 +74,7 @@ TEST(assing, valid)
               "3000000004\n");
   auto sut = input(in);
   EXPECT_EQ(2, sut(Row(0),Col(9)));
-  sut(Row(0),Row(9))=8;
+  sut(Row(0),Col(9))=8;
   EXPECT_EQ(8, sut(Row(0),Col(9)));
 }
 
