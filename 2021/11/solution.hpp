@@ -9,17 +9,15 @@
 #include"strong_type.hpp"
 using namespace std;
 
-using Row = strong::type<int, struct Row_,
-                         strong::arithmetic,
-                         strong::ordered,
-                         strong::incrementable,
-                         strong::equality>;
+template<class base_>
+using base = strong::type<int, base_,
+                          strong::arithmetic,
+                          strong::ordered,
+                          strong::incrementable,
+                          strong::equality>;
 
-using Col = strong::type<int, struct Row_,
-                         strong::arithmetic,
-                         strong::ordered,
-                         strong::incrementable,
-                         strong::equality>;
+using Row = base<struct Row_>;
+using Col = base<struct Col_>;
 
 class OctoProxy{
   int* parent{NULL};
