@@ -1,22 +1,56 @@
-#include <variant>
+#include <list>
+#include<iostream>
 #include<sstream>
 #include <gtest/gtest.h>
 #include <memory>
 #include "strong_type.hpp"
+#include<iostream>
+#include<fstream>
+#include<functional>
+#include<numeric>
+#include<algorithm>
+#include<optional>
+#include<cassert>
+#include<memory>
+#include"strong_type.hpp"
+#include<set>
+#include<map>
+
 using namespace std;
 
 #include "input.hpp"
 #include "test.hpp"
 #include "solution.hpp"
 
+using Data = vector<string>;
+
 auto solution_a(Data const &in)
 {
-  return "";
+  return magnitude(addAll(in));
+}
+auto magnadd(string const &a, string const &b)
+{
+  SnailFishNumber A(a);
+  A+=SnailFishNumber(b);
+  A.reduce();
+  return magnitude(A);
+}
+  
+auto maxSum(string const &a, string const &b)
+{
+  return max(magnadd(a,b),
+             magnadd(b,a));
+  
 }
 
 auto solution_b(Data in)
 {
-  return "";
+  long int best=0;
+  for(auto &a:in)
+    for(auto &b:in)
+      if(a!=b)
+        best = max(best, maxSum(a,b));
+  return best;
 }
 
 
