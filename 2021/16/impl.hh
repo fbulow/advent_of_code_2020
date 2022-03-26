@@ -10,14 +10,14 @@
 #include<vector>
 
 using namespace std;
-
+using Uint = unsigned long long int;
 struct Hex:string{
 };
 
 struct Bin:string{
   Bin(Hex const &h);
   Bin(string const &h);
-  operator uint () const;
+  operator Uint () const;
   // {
   //   return accumulate(cbegin(), cend(), uint(0),
   //                     [](uint sum, uint nxt) ->uint
@@ -65,17 +65,17 @@ using Iterator = string::const_iterator;
 
 Iterator nextPacket(Iterator pos, Iterator begin, Iterator end);
 
-unsigned int evalN(size_t n, Iterator begin);
+Uint evalN(size_t n, Iterator begin);
 
-unsigned int solutionA(Bin data);
+Uint solutionA(Bin data);
 
-unsigned int eval(Iterator pos, Iterator end);
+Uint eval(Iterator pos, Iterator end);
 
 template<class T>
-unsigned int eval(T const &x)
+Uint eval(T const &x)
 {
   return eval(x.cbegin(), x.cend());
 }
 
-uint readNumberN(size_t N, Iterator &pos);
-unsigned int evalNext(Iterator& pos);
+Uint readNumberN(size_t N, Iterator &pos);
+Uint evalNext(Iterator& pos);

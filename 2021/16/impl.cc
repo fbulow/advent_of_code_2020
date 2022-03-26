@@ -8,10 +8,10 @@ using namespace std;
 Bin::Bin(string const &h)
   :string(h)
 {}
-Bin::operator uint  () const
+Bin::operator Uint  () const
 {
-  return accumulate(cbegin(), cend(), uint(0),
-                    [](uint sum, uint nxt) ->uint
+  return accumulate(cbegin(), cend(), Uint(0),
+                    [](Uint sum, Uint nxt) ->Uint
                     {
                       return 2*sum+( (nxt=='0')?0:1 );
                     });
@@ -85,7 +85,7 @@ Bin Litteral::value() const
 Iterator nextPacket(Iterator pos, Iterator begin, Iterator end)
 {
   advance(pos,3); //past version
-  uint typeId = Bin(string{pos, next(pos,3)});
+  Uint typeId = Bin(string{pos, next(pos,3)});
   advance(pos,3); //past type id
   
   if(typeId == 4)
@@ -106,14 +106,14 @@ Iterator nextPacket(Iterator pos, Iterator begin, Iterator end)
   return pos;
 }
 
-unsigned int evalN(size_t n, Iterator begin)
+Uint evalN(size_t n, Iterator begin)
 {
   return Bin{string(begin, next(begin, n))};
 }
 
-unsigned int solutionA(Bin data)
+Uint solutionA(Bin data)
 {
-  unsigned int ret{0};
+  Uint ret{0};
   auto pos = data.cbegin();
   auto b = data.cbegin();
   auto e = data.cend();
@@ -126,38 +126,39 @@ unsigned int solutionA(Bin data)
   return ret;
 }
 
-uint readNumberN(size_t N, Iterator &pos)
+Uint readNumberN(size_t N, Iterator &pos)
 {
   auto begin = pos;
   advance(pos,N);
   return Bin(string(begin, pos));
 }
 
-unsigned int evalNext(Iterator& pos)//, Iterator end)
+Uint evalNext(Iterator& pos)//, Iterator end)
 {
   advance(pos,3); //skip version
   auto typeId = readNumberN(3, pos);
   if(typeId == 4)
     {
-        unsigned int ret{0};
+        Uint ret{0};
         while(1 == readNumberN(1, pos))
           {
-            ret*=uint(Bin("10000"));
+            ret*=Uint(Bin("10000"));
             ret+=readNumberN(4,pos);
           }
-        ret*=uint(Bin("10000"));
+        ret*=Uint(Bin("10000"));
         ret+=readNumberN(4,pos);
         return ret;
     }
   else
     {
-      vector<unsigned int> arg;
+      vector<Uint> arg;
       auto lengthTypeId = readNumberN(1,pos);
       if (lengthTypeId == 0)
         {
           Iterator subend = next(pos, readNumberN(15,pos));
           while(pos<subend)
             arg.push_back(evalNext(pos));
+          assert(pos==subend);
         }
       else // lengthTypeId == 1
         {
