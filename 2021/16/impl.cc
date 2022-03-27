@@ -83,20 +83,6 @@ Uint evalN(size_t n, Iterator begin)
   return Bin{string(begin, next(begin, n))};
 }
 
-Uint solutionA(Bin data)
-{
-  Uint ret{0};
-  auto pos = data.cbegin();
-  auto b = data.cbegin();
-  auto e = data.cend();
-
-  while(distance(pos, e)>3)
-    {
-      ret+=evalN(3,pos);
-      pos = nextPacket(pos);
-    }
-  return ret;
-}
 
 Uint readNumberN(size_t N, Iterator &pos)
 {
@@ -191,4 +177,45 @@ Uint evalNext(Iterator& pos)//, Iterator end)
         }
       return aggregate(typeId, arg);
     }
+}
+
+Uint Parser::get(unsigned int N)
+{
+  auto beg = pos;
+  advance(pos,N);
+  return accumulate(beg, pos, Uint(0),
+                    [](Uint sum, auto x)
+                    {return 2*sum+((x=='1')?1:0);});
+}
+
+Iterator Parser::getPos() const
+{
+  return pos;
+}
+
+Uint solutionA(Bin data)
+{
+  Parser p(move(data));
+  Uint ret{0};
+  
+  while(p.remaining()>3)
+    {
+      ret+=p.get(3);
+      Uint typeId = p.get(3);
+      if(typeId == 4)
+        {
+          while(1==p.get(1))
+            p.get(4);
+          p.get(4);
+        }
+      else
+        {
+          auto lengtTypeId = p.get(1);
+          if(lengtTypeId == 0)
+            p.get(15);
+          else
+            p.get(11);
+        }
+    }
+  return ret;
 }

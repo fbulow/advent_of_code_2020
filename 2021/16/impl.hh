@@ -40,3 +40,24 @@ Uint eval(T const &x)
 
 Uint readNumberN(size_t N, Iterator &pos);
 Uint evalNext(Iterator& pos);
+
+class Parser
+{
+  Bin data;
+  Iterator pos;
+public:
+  Parser(Bin &&b)
+    :data(move(b))
+    ,pos{data.cbegin()}
+  {}
+  Uint get(unsigned int N);
+
+  Iterator getPos() const;
+  size_t remaining() const
+  {
+    if(pos>data.cend())
+      return 0;
+    else
+      return distance(pos, data.cend());
+  }
+};

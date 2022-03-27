@@ -136,3 +136,15 @@ TEST(eval, literal_example)
   EXPECT_EQ("110100101111111000101",
             string(sut.cbegin(), pos));
 }
+
+TEST(Parser, get)
+{
+  Parser sut({"110100101111111000101"});
+  EXPECT_EQ(6, sut.get(3));
+  EXPECT_EQ(1, sut.get(1));
+  EXPECT_EQ(0, sut.get(1));
+
+  auto p = sut.getPos();
+  sut.get(10);
+  EXPECT_EQ(10, distance(p,sut.getPos()));
+}
