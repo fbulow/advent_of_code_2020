@@ -41,36 +41,6 @@ TEST(nextPackage, litteral_package)
             string(b, nextPacket(b,b,e)));
 }
 
-
-TEST(Operator_example, subPackages)
-{
-  Operator sut{
-    // VVVTTTILLLLLLLLLLLLLLLAAAAAAAAAAABBBBBBBBBBBBBBBB
-  Bin("0011100000000000011011AAAAAAAAAAABBBBBBBBBBBBBBBB")};
-  //   00111000000000000110111101000101001010010001001000000000
-  EXPECT_EQ("AAAAAAAAAAABBBBBBBBBBBBBBBB",
-            string(sut.subPackages()));
-}
-
-TEST(Operator_example, bitLength)
-{
-  Operator sut{
-    // VVVTTTILLLLLLLLLLLLLLLAAAAAAAAAAABBBBBBBBBBBBBBBB
-  Bin("0011100LLLLLLLLLLLLLLLAAAAAAAAAAABBBBBBBBBBBBBBBB")};
-  //   00111000000000000110111101000101001010010001001000000000
-  EXPECT_EQ("LLLLLLLLLLLLLLL",
-            string(sut.bitLength()));
-}
-
-TEST(Operator_example, lengthTYpe)
-{
-  Operator sut{
-    // VVVTTTILLLLLLLLLLLLLLLAAAAAAAAAAABBBBBBBBBBBBBBBB
-  Bin("001110ILLLLLLLLLLLLLLLAAAAAAAAAAABBBBBBBBBBBBBBBB")};
-  //   00111000000000000110111101000101001010010001001000000000
-  EXPECT_EQ('I', sut.lengtType());
-}
-
 TEST(hex_to_bin, example)
 {
   {
@@ -81,26 +51,6 @@ TEST(hex_to_bin, example)
     Bin sut("110100101111111000101000");
     EXPECT_EQ("110100101111111000101000", sut);
   }
-}
-
-TEST(value, letters)
-{
-//                110100101111111000101000
-  Litteral sut{Bin("1101001AAAA1BBBB0CCCC")};
-  EXPECT_EQ("AAAABBBBCCCC", string(sut.value()));  
-}
-
-TEST(value, example)
-{
-  ASSERT_EQ(2021, Bin("011111100101"));
-
-  Litteral sut{Bin("110100101111111000101000")};
-  EXPECT_EQ(6, sut.version());
-  EXPECT_EQ(4, sut.typeId());
-
-  
-  EXPECT_EQ("011111100101", string(sut.value()));
-  EXPECT_EQ(2021, uint(sut.value()));
 }
 
 TEST(solution_a, examples)

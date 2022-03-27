@@ -54,34 +54,6 @@ string expand(string const & in)
   return ret;
 }
 
-Bin Packet::version() const
-{
-  auto it = data.cbegin();
-  return Bin(string{it, next(it,3)});
-}
-
-Bin Packet::typeId() const
-{
-  auto it = next(data.cbegin(), 3);
-  return Bin(string{it, next(it,3)});
-}
-
-
-Bin Litteral::value() const
-{
-  Bin ret("");
-  auto it = next(data.cbegin(), 6);
-  while((*it)=='1')
-    {
-      advance(it, 1);
-      ret+=string(it, next(it,4));
-      advance(it, 4);
-    }
-  advance(it, 1);
-  ret+=string(it, next(it,4));
-  return ret;
-}
-
 Iterator nextPacket(Iterator pos, Iterator begin, Iterator end)
 {
   advance(pos,3); //past version
