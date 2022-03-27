@@ -9,8 +9,12 @@ TEST(solution, b)
   in>>data;
 
   Bin sut(Hex{move(data)});
+  
   auto pos = sut.cbegin();
-  EXPECT_LT(1241967936, evalNext(pos));
+  Uint const ans = evalNext(pos);
+  ASSERT_LT(1241967936, ans);
+  ASSERT_GT(Uint(18446744071782855412), ans);
+  cout<<ans<<endl;
 
 }
 

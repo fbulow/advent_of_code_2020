@@ -18,13 +18,6 @@ struct Bin:string{
   Bin(Hex const &h);
   Bin(string const &h);
   operator Uint () const;
-  // {
-  //   return accumulate(cbegin(), cend(), uint(0),
-  //                     [](uint sum, uint nxt) ->uint
-  //                     {
-  //                       return 2*sum+( (nxt=='0')?0:1 );
-  //                     });
-  // }
 };
 
 string expand(string const & in);

@@ -133,6 +133,51 @@ Uint readNumberN(size_t N, Iterator &pos)
   return Bin(string(begin, pos));
 }
 
+
+Uint aggregate(Uint typeId, vector<Uint> const &arg)
+{
+  switch(typeId)
+    {
+    case 0:
+      assert(arg.size()>0);
+      return accumulate(arg.cbegin(), arg.cend(), 0);
+    case 1:
+      assert(arg.size()>0);
+      return accumulate(arg.cbegin(), arg.cend(), 1,
+                        [](Uint a, Uint b) ->Uint
+                        {return a*b;});
+    case 2:
+      assert(arg.size()>0);
+      return *min_element(arg.cbegin(), arg.cend());
+    case 3:
+      return *max_element(arg.cbegin(), arg.cend());
+
+    case 5:
+      {
+        assert(arg.size()==2);
+        return (arg[0]>arg[1])?1:0;
+      }
+    case 6:
+      {
+        assert(arg.size()==2);
+        return (arg[0]<arg[1])?1:0;
+      }
+    case 7:
+      {
+        assert(arg.size()==2);
+        return (arg[0]==arg[1])?1:0;
+      }
+          
+    default:
+      {
+        cout<<"Unknown typeId: "<<typeId<<endl;
+        assert(false);
+        return 0;
+      }
+    }
+
+}
+
 Uint evalNext(Iterator& pos)//, Iterator end)
 {
   advance(pos,3); //skip version
@@ -155,55 +200,23 @@ Uint evalNext(Iterator& pos)//, Iterator end)
       auto lengthTypeId = readNumberN(1,pos);
       if (lengthTypeId == 0)
         {
-          Iterator subend = next(pos, readNumberN(15,pos));
+          auto bitcount = readNumberN(15,pos);
+          Iterator subend = next(pos, bitcount);
           while(pos<subend)
             arg.push_back(evalNext(pos));
           assert(pos==subend);
         }
       else // lengthTypeId == 1
         {
-          auto packetCount = readNumberN(11,pos);
+          auto const tot_size = readNumberN(11,pos);
+          auto packetCount = tot_size;
           while(packetCount>0)
             {
               arg.push_back(evalNext(pos));
               packetCount--;
             }
+          assert(arg.size()==tot_size);
         }
-      switch(typeId)
-        {
-        case 0:
-          return accumulate(arg.cbegin(), arg.cend(), 0);
-        case 1:
-          return accumulate(arg.cbegin(), arg.cend(), 1,
-                            [](auto a, auto b){return a*b;});
-        case 2:
-          return accumulate(next(arg.cbegin()), arg.cend(), *arg.cbegin(),
-                            [](auto a, auto b){return (a<b)?a:b;});
-        case 3:
-          return accumulate(next(arg.cbegin()), arg.cend(), 0,
-                            [](auto a, auto b){return (a<b)?b:a;});
-        case 5:
-          {
-            assert(arg.size()==2);
-            return arg[0]>arg[1];
-          }
-        case 6:
-          {
-            assert(arg.size()==2);
-            return arg[0]<arg[1];
-          }
-        case 7:
-          {
-            assert(arg.size()==2);
-            return arg[0]==arg[1];
-          }
-          
-        default:
-          {
-            cout<<"Unknown typeId: "<<typeId<<endl;
-              assert(false);
-            return 0;
-          }
-        }
+      return aggregate(typeId, arg);
     }
 }
