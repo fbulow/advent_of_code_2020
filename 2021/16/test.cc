@@ -28,7 +28,7 @@ TEST(nextPackage, operator_type_id_zero)
   auto b = sut.cbegin();
   auto e = sut.cend();
   EXPECT_EQ("0011100000000000011011",
-            string(b, nextPacket(b,b,e)));
+            string(b, nextPacket(b)));
 }
 
 TEST(nextPackage, litteral_package)
@@ -38,7 +38,7 @@ TEST(nextPackage, litteral_package)
   auto b = sut.cbegin();
   auto e = sut.cend();
   EXPECT_EQ("110100101111111000101",
-            string(b, nextPacket(b,b,e)));
+            string(b, nextPacket(b)));
 }
 
 TEST(hex_to_bin, example)

@@ -24,7 +24,7 @@ string expand(string const & in);
 
 using Iterator = string::const_iterator;
 
-Iterator nextPacket(Iterator pos, Iterator begin, Iterator end);
+Iterator nextPacket(Iterator pos);
 
 Uint evalN(size_t n, Iterator begin);
 

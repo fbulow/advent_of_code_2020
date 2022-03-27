@@ -54,7 +54,7 @@ string expand(string const & in)
   return ret;
 }
 
-Iterator nextPacket(Iterator pos, Iterator begin, Iterator end)
+Iterator nextPacket(Iterator pos)
 {
   advance(pos,3); //past version
   Uint typeId = Bin(string{pos, next(pos,3)});
@@ -93,7 +93,7 @@ Uint solutionA(Bin data)
   while(distance(pos, e)>3)
     {
       ret+=evalN(3,pos);
-      pos = nextPacket(pos, b, e);
+      pos = nextPacket(pos);
     }
   return ret;
 }
