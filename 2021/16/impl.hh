@@ -9,8 +9,10 @@
 #include<numeric>
 #include<vector>
 
+#include"infint.hh"
+
 using namespace std;
-using Uint = unsigned long long int;
+using Uint = InfInt;
 struct Hex:string{
 };
 
@@ -53,11 +55,12 @@ public:
   Uint get(unsigned int N);
 
   Iterator getPos() const;
-  size_t remaining() const
-  {
-    if(pos>data.cend())
-      return 0;
-    else
-      return distance(pos, data.cend());
-  }
 };
+Uint aggregate(Uint typeId, vector<Uint> const &arg);
+Uint evalNextPacketB(Parser &p);
+Uint solutionB(Bin data);
+
+inline auto next(Iterator it, InfInt const & i)
+{
+  return next(it, i.toInt());
+}

@@ -94,22 +94,22 @@ Uint readNumberN(size_t N, Iterator &pos)
 
 Uint aggregate(Uint typeId, vector<Uint> const &arg)
 {
-  switch(typeId)
+  switch(typeId.toInt())
     {
     case 0:
       assert(arg.size()>0);
-      return accumulate(arg.cbegin(), arg.cend(), 0);
+      return accumulate(arg.cbegin(), arg.cend(), Uint(0));
     case 1:
       assert(arg.size()>0);
-      return accumulate(arg.cbegin(), arg.cend(), 1,
+      return accumulate(arg.cbegin(), arg.cend(), Uint(1),
                         [](Uint a, Uint b) ->Uint
                         {return a*b;});
     case 2:
       assert(arg.size()>0);
       return *min_element(arg.cbegin(), arg.cend());
     case 3:
+      assert(arg.size()>0);
       return *max_element(arg.cbegin(), arg.cend());
-
     case 5:
       {
         assert(arg.size()==2);
@@ -193,29 +193,7 @@ Iterator Parser::getPos() const
   return pos;
 }
 
-Uint solutionA(Bin data)
+bool operator==(int a, InfInt const & b)
 {
-  Parser p(move(data));
-  Uint ret{0};
-  
-  while(p.remaining()>3)
-    {
-      ret+=p.get(3);
-      Uint typeId = p.get(3);
-      if(typeId == 4)
-        {
-          while(1==p.get(1))
-            p.get(4);
-          p.get(4);
-        }
-      else
-        {
-          auto lengtTypeId = p.get(1);
-          if(lengtTypeId == 0)
-            p.get(15);
-          else
-            p.get(11);
-        }
-    }
-  return ret;
+  return a == b.toInt();
 }

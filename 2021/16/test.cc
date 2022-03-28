@@ -120,9 +120,8 @@ TEST(eval, second_example)
 
 TEST(eval, first_example)
 {
-  Bin sut(Hex{"C200B40A82"});
-  auto pos = sut.cbegin();
-  EXPECT_EQ(3, evalNext(pos));
+  //  Parser sut(Bin(Hex{"C200B40A82"}));
+  EXPECT_EQ(3, solutionB(Bin(Hex{"C200B40A82"})));
 }
 
 
