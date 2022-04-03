@@ -29,13 +29,22 @@ public:
   Key()=default;
   Key(string v);
   void invert();
-  [[nodiscard]] Key inverted() 
+  [[nodiscard]] Key inverted() const
   {
     Key ret(*this);
     ret.invert();
     return ret;
   }
-  [[nodiscard]] Key invertedInput() 
+
+  bool operator==(Key const & other) const
+  {
+    return
+      static_cast<array<bool, 512>>(*this)
+      ==
+      static_cast<array<bool, 512>>(other);
+  }
+  
+  [[nodiscard]] Key invertedInput() const
   {
     Key ret;
     size_t max = 0b111111111;
@@ -44,7 +53,7 @@ public:
         auto v=(*this)[KeyIndex(i)];
         ret.at(max^i)=v;
       }
-
+    
     return ret;
   }
 
