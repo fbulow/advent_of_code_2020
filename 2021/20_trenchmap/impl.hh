@@ -29,6 +29,26 @@ public:
   Key()=default;
   Key(string v);
   void invert();
+  [[nodiscard]] Key inverted() 
+  {
+    Key ret(*this);
+    ret.invert();
+    return ret;
+  }
+  [[nodiscard]] Key invertedInput() 
+  {
+    Key ret;
+    size_t max = 0b111111111;
+    for(size_t i=0;i<=max;i++)
+      {
+        auto v=(*this)[KeyIndex(i)];
+        ret.at(max^i)=v;
+      }
+
+    return ret;
+  }
+
+  
   bool operator[](KeyIndex idx) const
   {
     return array<bool, 512>::operator[](value_of(idx));

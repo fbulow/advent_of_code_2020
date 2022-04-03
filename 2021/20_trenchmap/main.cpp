@@ -10,9 +10,12 @@ uint solutionA(Key k, Board b)
   assert(*k.begin());
   assert(not *prev(k.end()));
 
-  k.invert();
-
-  return iteration(k, iteration(k, b)).size();
+  cout<<k
+      <<endl
+      <<k.invertedInput().invertedInput()<<endl;
+  
+  return iteration(k.invertedInput(),
+                   iteration(k.inverted(), b)).size();
 }
 
 
