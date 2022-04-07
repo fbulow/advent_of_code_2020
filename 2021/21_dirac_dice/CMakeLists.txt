@@ -14,6 +14,7 @@ add_executable(${PROJECT_NAME}
   test.cc
   dice.cc
   player.cc
+  solution_a.cc
 #  impl.cc
   )
 

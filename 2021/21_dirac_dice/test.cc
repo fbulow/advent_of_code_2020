@@ -1,6 +1,26 @@
 #include <gtest/gtest.h>
 #include "dice.hh"
 #include "player.hh"
+#include "solution_a.hh"
+
+TEST(Player, less)
+{
+  EXPECT_TRUE(Player(1,0) < Player(2,0));
+  EXPECT_TRUE(Player(1,0) < Player(1,1));
+  EXPECT_FALSE(Player(2,0) < Player(1,1));
+  EXPECT_FALSE(Player(1,2) < Player(1,1));
+  EXPECT_FALSE(Player(1,1) < Player(1,1));
+}
+
+
+TEST(solution, a)
+{
+  EXPECT_EQ(739785,
+            solutionA(4,8));
+  EXPECT_EQ(605070,
+            solutionA(8,10));
+  
+}
 
 TEST(Player, move)
 {
