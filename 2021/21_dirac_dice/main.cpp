@@ -189,14 +189,17 @@ TEST(solution, is_cache_broken)
 TEST(solution, b)
 {
   
-  auto sut = solutionB<21>(1,4);
+  auto sut = solutionB<21>(4,8);
   EXPECT_EQ(444356092776315+341960390180808,
             sut.worlds());
-  // EXPECT_EQ(444356092776315,
-  //           sut.aWin);
-  // EXPECT_EQ(341960390180808,
-  //           sut.bWin);
-    
+  EXPECT_EQ(444356092776315,
+            sut.aWin);
+  EXPECT_EQ(341960390180808,
+            sut.bWin);
+
+  auto ans = solutionB<21>(8,10);
+  cout<<"Ans b: "<<max(ans.aWin, ans.bWin)<<endl;
+  
 }
 
 
