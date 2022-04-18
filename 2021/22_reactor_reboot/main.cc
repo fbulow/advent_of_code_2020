@@ -1,62 +1,9 @@
 #include <gtest/gtest.h>
-#include<sstream>
 #include<algorithm>
 #include<fstream>
+#include"cube.hh"
+#include"instruction.hh"
 using namespace std;
-
-struct Range
-{
-  int min;
-  int max;
-};
-
-struct Cube
-{
-  Range x;
-  Range y;
-  Range z;
-};
-
-
-class Instruction
-{
-  bool turnOn_;
-public:
-  Cube cube;
-  Instruction(string s) 
-  {
-    istringstream in(s);
-    string word;
-    in>>word;
-    if(word=="on")
-      turnOn_=true;
-    else
-      {
-	turnOn_=false;
-	assert(word=="off");
-      }
-    char c;
-    in>>
-      c>>c>>
-      cube.x.min>>
-      c>>c>>
-      cube.x.max>>
-    
-      c>>c>>c>>
-      cube.y.min>>
-      c>>c>>
-      cube.y.max>>
-
-      c>>c>>c>>
-      cube.z.min>>
-      c>>c>>
-      cube.z.max
-      ;
-  }
-      
-  bool turnOn() const {return turnOn_;}
-};
-
 
 struct Space: vector<bool>
 {
