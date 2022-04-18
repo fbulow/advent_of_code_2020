@@ -13,6 +13,7 @@ add_executable(${PROJECT_NAME}
   cube.cc
   instruction.cc
   main.cc
+  range.cc
   space.cc
   square_space.cc
   )
