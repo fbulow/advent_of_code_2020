@@ -10,10 +10,11 @@ project(main)
 Find_package(GTest)
 
 add_executable(${PROJECT_NAME}
-  main.cc
-  instruction.cc
-  space.cc
   cube.cc
+  instruction.cc
+  main.cc
+  space.cc
+  square_space.cc
   )
 
 target_compile_options(${PROJECT_NAME}
