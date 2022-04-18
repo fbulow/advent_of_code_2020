@@ -8,5 +8,4 @@ struct Cube
   Range z;
 
   long size() const;
-
 };
