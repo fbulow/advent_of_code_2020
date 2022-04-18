@@ -13,6 +13,7 @@ add_executable(${PROJECT_NAME}
   main.cc
   instruction.cc
   space.cc
+  cube.cc
   )
 
 target_compile_options(${PROJECT_NAME}

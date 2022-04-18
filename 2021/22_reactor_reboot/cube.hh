@@ -6,4 +6,7 @@ struct Cube
   Range x;
   Range y;
   Range z;
+
+  long size() const;
+
 };
