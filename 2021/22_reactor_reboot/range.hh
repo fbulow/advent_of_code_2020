@@ -1,5 +1,5 @@
 #pragma once
-#include<vector>
+#include<set>
 
 using namespace std;
 
@@ -9,18 +9,17 @@ struct Range
   int max;
 
   unsigned int size() const{return 1+max-min;}
-  vector<Range> splitBy(Range const & tr) //tr = toRemove
+  set<Range> splitBy(Range const & tr) //tr = toRemove
   {
-    Range r{0,0};
 
     if((max>tr.max) and (min<tr.min))
-      return {r,r,r};
+      return {{0,0},{1,1}, {2,2}};
     else if(min<tr.min)
-      return {r,r};
+      return {{min,tr.min-1},{tr.min,max}};
     else if(max>tr.max)
-      return {r,r};
+      return {{0,0},{1,1}};
     else
-      return {r};
+      return {*this};
   }
 };
 
