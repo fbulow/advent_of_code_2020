@@ -21,15 +21,21 @@ TEST(Range, split__no_split)
     EXPECT_EQ(2, sut.size());
     EXPECT_TRUE(sut.contains(Range{1,1}));
     EXPECT_TRUE(sut.contains(Range{2,9}));
+  }
+  {
+    auto sut = Range{1,9}.splitBy(Range(0,8));
+    EXPECT_EQ(2, sut.size());
+    EXPECT_TRUE(sut.contains(Range{1,8}));
+    EXPECT_TRUE(sut.contains(Range{9,9}));
 
   }
   {
-    Range a{1,9};
-    EXPECT_EQ(2, a.splitBy(Range(0,8)).size());
-  }
-  {
-    Range a{1,9};
-    EXPECT_EQ(3, a.splitBy(Range(2,8)).size());
+    auto sut = Range{1,9}.splitBy(Range(2,8));
+    EXPECT_EQ(3, sut.size());
+    EXPECT_TRUE(sut.contains(Range{1,1}));
+    EXPECT_TRUE(sut.contains(Range{2,8}));
+    EXPECT_TRUE(sut.contains(Range{9,9}));
+    
   }
 
 }

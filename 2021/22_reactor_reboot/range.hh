@@ -13,11 +13,11 @@ struct Range
   {
 
     if((max>tr.max) and (min<tr.min))
-      return {{0,0},{1,1}, {2,2}};
+      return {{min,tr.min-1},tr, {tr.max+1,max}};
     else if(min<tr.min)
       return {{min,tr.min-1},{tr.min,max}};
     else if(max>tr.max)
-      return {{0,0},{1,1}};
+      return {{min,tr.max},{tr.max+1,max}};
     else
       return {*this};
   }
