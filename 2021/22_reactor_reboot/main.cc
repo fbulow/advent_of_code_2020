@@ -12,9 +12,3 @@
 using namespace std;
 
 
-TEST(Cube, contains)
-{
-  Cube const sut({0,2}, {0,2}, {0,2});
-  //  EXPECT_TRUE(sut.contains({1,1,1}));
-
-}

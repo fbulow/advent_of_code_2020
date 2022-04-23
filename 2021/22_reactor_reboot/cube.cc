@@ -28,3 +28,32 @@ set<Cube> Cube::splitBy(Cube const & tr) const
 	ret.insert({rx,ry,rz});
   return ret;
 }
+
+bool Cube::contains(Point const &p) const
+{
+  return
+    x.contains(p.x) and
+    y.contains(p.y) and
+    z.contains(p.z) ;
+}
+
+Point Cube::centre() const
+{return {x.centre(), y.centre(), z.centre()};}
+
+
+set<Cube> Cube::punchOut(Cube const & tr) const
+{
+  bool miss{true};
+  set<Cube> ret;
+  for(auto const x:splitBy(tr))
+    {
+      if(not tr.contains(x.centre()))
+	ret.insert(x);
+      else
+	miss=false;
+    }
+  if(miss)
+    return {*this};
+  else
+    return ret;
+}

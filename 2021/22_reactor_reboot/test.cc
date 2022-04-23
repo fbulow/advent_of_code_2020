@@ -1,5 +1,15 @@
 #include <gtest/gtest.h>
 #include "space.hh"
+#include "instruction.hh"
+#include<algorithm>
+#include<fstream>
+#include"cube.hh"
+#include"instruction.hh"
+#include"space.hh"
+#include<list>
+
+#include"square_space.hh"
+#include"cube.hh"
 
 
 TEST(Space, full_change)
@@ -157,4 +167,43 @@ TEST(Cube, splitBy)
 
     
     EXPECT_EQ(27, sut.splitBy(cut).size());
+}
+
+TEST(Cube, contains)
+{
+  Cube const sut({0,2}, {0,2}, {0,2});
+  EXPECT_TRUE(sut.contains({1,1,1}));
+  EXPECT_FALSE(sut.contains({1,1,4}));
+}
+
+TEST(Cube, punchOut)
+{
+  auto sut = Cube(
+		  {0,3},
+		  {0,3},
+		  {0,3});
+
+  auto cut = Cube(
+		  {1,1},
+		  {1,1},
+		  {1,1});
+
+    
+    EXPECT_EQ(26, sut.punchOut(cut).size());
+}
+
+TEST(Cube, punchOut_miss)
+{
+  auto sut = Cube(
+		  {0,3},
+		  {0,3},
+		  {0,3});
+
+  auto cut = Cube(
+		  {1,1},
+		  {1,1},
+		  {1001,1001});
+
+    
+    EXPECT_EQ(1, sut.punchOut(cut).size());
 }

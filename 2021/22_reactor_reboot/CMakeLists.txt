@@ -16,6 +16,7 @@ add_executable(${PROJECT_NAME}
   range.cc
   space.cc
   square_space.cc
+  test.cc
   )
 
 target_compile_options(${PROJECT_NAME}
