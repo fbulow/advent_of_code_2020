@@ -14,6 +14,14 @@ unsigned int SquareSpace::countOn() const
 
 void SquareSpace::fill(Cube c, bool val)
 {
-  if(val)
-    data.push_back(c);
+  data =
+    [this, c, val]{
+      list<Cube> nextData;
+      for(Cube const &target:data)
+	for(Cube const &fragment: target.punchOut(c))
+	  nextData.push_back(fragment);
+      if(val)
+	nextData.push_back(c);
+      return nextData;
+    }();
 }
