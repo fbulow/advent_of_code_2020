@@ -11,19 +11,10 @@
 
 using namespace std;
 
-TEST(Cube, splitBy)
+
+TEST(Cube, contains)
 {
-  auto sut = Cube(
-      {0,3},
-      {0,3},
-      {0,3});
-
-    auto cut = Cube(
-	{1,1},
-	{1,1},
-	{1,1});
-
-    
-    EXPECT_EQ(27, sut.splitBy(cut).size());
+  Cube const sut({0,2}, {0,2}, {0,2});
+  //  EXPECT_TRUE(sut.contains({1,1,1}));
 
 }

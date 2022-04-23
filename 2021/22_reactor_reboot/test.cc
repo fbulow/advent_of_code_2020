@@ -143,3 +143,18 @@ TEST(Range, split__no_split)
 
 }
 
+TEST(Cube, splitBy)
+{
+  auto sut = Cube(
+		  {0,3},
+		  {0,3},
+		  {0,3});
+
+  auto cut = Cube(
+		  {1,1},
+		  {1,1},
+		  {1,1});
+
+    
+    EXPECT_EQ(27, sut.splitBy(cut).size());
+}

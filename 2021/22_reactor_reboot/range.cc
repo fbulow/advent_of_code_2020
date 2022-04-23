@@ -9,7 +9,7 @@ bool operator<(Range const &a, Range const &b)
     return a.max<b.max;
 }
 
-set<Range> Range::splitBy(Range const & tr) 
+set<Range> Range::splitBy(Range const & tr) const
   {
 
     if((max>tr.max) and (min<tr.min))
