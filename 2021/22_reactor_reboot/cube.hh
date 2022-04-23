@@ -8,7 +8,7 @@ struct Cube
   Range y;
   Range z;
 
-  long size() const;
+  long long size() const;
   set<Cube> splitBy(Cube const & tr) const;
   set<Cube> punchOut(Cube const & tr) const;
 

@@ -1,11 +1,11 @@
 #include "square_space.hh"
 #include <numeric>
-unsigned int SquareSpace::countOn() const
+long long  SquareSpace::countOn() const
 {
   return accumulate(data.cbegin(),
 		    data.cend(),
-		    0,
-		    [](long a,
+		    (long long){0},
+		    [](long long a,
 		       Cube const &b)
 		    {
 		      return a+b.size();

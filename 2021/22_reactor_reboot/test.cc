@@ -7,6 +7,7 @@
 #include"instruction.hh"
 #include"space.hh"
 #include<list>
+#include"solution_a.hh"
 
 #include"square_space.hh"
 #include"cube.hh"
@@ -28,17 +29,6 @@ TEST(Space, full_change)
 
   sut.fill(Cube{{-50,50},{1,1},{1,2}}, true);  
   EXPECT_EQ(202, sut.countOn());
-}
-
-unsigned int solutionA(vector<Instruction> const &input)
-{
-  Space space;    
-
-  for(auto &x: input)
-    space.fill(x.cube, x.turnOn());
-  return space.countOn();
-      
-  return 39;
 }
 
 TEST(solution, A)

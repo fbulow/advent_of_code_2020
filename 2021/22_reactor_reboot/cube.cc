@@ -1,6 +1,6 @@
 #include "cube.hh"
 
-long Cube::size() const { return x.size()*y.size()*z.size();}
+long long Cube::size() const { return x.size()*y.size()*z.size();}
 
 bool operator<(Cube const &a, Cube const &b)
 {

@@ -8,7 +8,7 @@ struct SquareSpace{
 
   void fill(Cube c, bool val);
   
-  unsigned int countOn() const;
+  long long countOn() const;
     
 };
 
