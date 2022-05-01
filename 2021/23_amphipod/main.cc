@@ -293,6 +293,26 @@ TEST(board, ctor)
   
 }
 
+TEST(hallway, all)
+{
+  EXPECT_TRUE(hallway('0'));
+  EXPECT_TRUE(hallway('1'));
+  EXPECT_TRUE(hallway('2'));
+  EXPECT_TRUE(hallway('3'));
+  EXPECT_TRUE(hallway('4'));
+  EXPECT_TRUE(hallway('5'));
+  EXPECT_TRUE(hallway('6'));
+  EXPECT_FALSE(hallway('7'));
+  EXPECT_FALSE(hallway('8'));
+  EXPECT_FALSE(hallway('9'));
+  EXPECT_FALSE(hallway('a'));
+  EXPECT_FALSE(hallway('b'));
+  EXPECT_FALSE(hallway('c'));
+  EXPECT_FALSE(hallway('d'));
+  EXPECT_FALSE(hallway('e'));
+}
+
+
 TEST(board, is_done)
 {
     Board sut("#############"
@@ -365,6 +385,4 @@ TEST(board, A_can_not_move_to_seven_because_it_is_taken)
 	      "  #########  ");
     EXPECT_EQ(sut.moves('0').size(), 0);
 }
-
-
 
