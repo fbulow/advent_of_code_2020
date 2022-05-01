@@ -87,6 +87,19 @@ public:
     else
       return Status::Failed;
   }
+
+  virtual bool clearWay(Pos from, Pos to)
+  {
+    switch(from)
+      {
+      case '0':
+	  string path = "17b";
+	  return all_of(path.begin(),
+			path.end(),
+			[this](Pos p){return (*this)[p]==' ';});
+      }
+    return true;
+  }
   
   virtual Score score() const {return {};}
   virtual vector<Move> moves() const {return {};}
@@ -431,6 +444,22 @@ TEST(clearWay, way_is_clear)
 	      "  # # # # #  "
 	      "  #########  ");
 
-  EXPECT_TRUE(sut.clearWay('0', 'b' ));
+    EXPECT_TRUE(sut.clearWay('0', 'b' ));
 }
 
+TEST(clearWay, way_is_not_clear)
+{
+//#############
+//#01 2 3 4 56#
+//###7#8#9#a###
+//  #b#c#d#e#
+//  #########
+
+    Board sut("#############"
+	      "# X         #"
+	      "### # # # ###"
+	      "  # # # # #  "
+	      "  #########  ");
+
+    EXPECT_FALSE(sut.clearWay('0', 'b' ));
+}
