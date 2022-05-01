@@ -416,3 +416,21 @@ TEST(sideRooms, allCases)
   EXPECT_EQ("9d", str(sideRooms('C')));
   EXPECT_EQ("ae", str(sideRooms('D')));
 }
+
+TEST(clearWay, way_is_clear)
+{
+//#############
+//#01 2 3 4 56#
+//###7#8#9#a###
+//  #b#c#d#e#
+//  #########
+
+    Board sut("#############"
+	      "#           #"
+	      "### # # # ###"
+	      "  # # # # #  "
+	      "  #########  ");
+
+  EXPECT_TRUE(sut.clearWay('0', 'b' ));
+}
+
