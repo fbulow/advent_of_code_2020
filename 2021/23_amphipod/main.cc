@@ -14,10 +14,26 @@ using Score = unsigned int;
 
 using Move = char;
 using Pos = char;
-
+using Amphipod = char;
 bool hallway(Pos p)
 {
   return p<'7';
+}
+
+array<char, 2> sideRooms(Amphipod a)
+{
+  switch(a)
+    {
+    case 'A':
+      return {'7','b'};
+    case 'B':
+      return {'8','c'};
+    case 'C':
+      return {'9','d'};
+    case 'D':
+      return {'a','e'};
+    }
+  assert(false);
 }
 
 class Board{
@@ -386,3 +402,17 @@ TEST(board, A_can_not_move_to_seven_because_it_is_taken)
     EXPECT_EQ(sut.moves('0').size(), 0);
 }
 
+TEST(sideRooms, allCases)
+{
+  auto str = [](array<char,2> x){
+    string ret;
+    ret+=x[0];
+    ret+=x[1];
+    return ret;
+  };
+  
+  EXPECT_EQ("7b", str(sideRooms('A')));
+  EXPECT_EQ("8c", str(sideRooms('B')));
+  EXPECT_EQ("9d", str(sideRooms('C')));
+  EXPECT_EQ("ae", str(sideRooms('D')));
+}
