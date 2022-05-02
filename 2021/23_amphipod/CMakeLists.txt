@@ -11,7 +11,8 @@ Find_package(GTest)
 
 add_executable(${PROJECT_NAME}
   main.cc
-  )
+  impl.cc
+)
 
 target_compile_options(${PROJECT_NAME}
   PUBLIC
