@@ -1,6 +1,8 @@
 #include<gtest/gtest.h>
 #include<vector>
 #include<string_view>
+#include<algorithm>
+
 using namespace std;
 
 using Score = unsigned int;
@@ -63,14 +65,14 @@ public:
       return Status::Failed;
   }
 
-  virtual bool clearWay(Pos from, Pos to)
+  virtual bool clearWay(Pos from, Pos to) const
   {
     switch(from)
       {
       case '0':
 	  string path = "17b";
 	  return all_of(path.begin(),
-			path.end(),
+			next(find(path.begin(), path.end(), to)),
 			[this](Pos p){return (*this)[p]==' ';});
       }
     return true;
@@ -82,26 +84,7 @@ private:
 public:
   virtual Score score() const {return {};}
   virtual vector<Move> moves() const {return {};}
-  virtual vector<Move> moves(Pos c) const
-  {
-    auto const amphipod = get(c);
-    if(amphipod==' ')
-      return {};
-      
-    
-    if(hallway(c))
-      {
-	auto room = sideRooms(amphipod);
-	auto seven = room[0];
-	auto b = room[1];
-	if(get(b)==' ')
-	  return {b};
-	else if(get(b)==amphipod)
-	  if(get(seven)==' ')
-	    return {seven};
-	return {};
-      }
-  }
+  virtual vector<Move> moves(Pos c) const;
   
   virtual bool done() const 
   {

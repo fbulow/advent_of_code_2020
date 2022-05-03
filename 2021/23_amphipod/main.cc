@@ -4,7 +4,7 @@
 //###7#8#9#a###
 //  #b#c#d#e#
 //  #########   
-//
+//   A B C D
 // b=10, c=11, d=12, e=13
 
 
@@ -236,24 +236,23 @@ TEST(board, no_amphipod_no_move)
 
 TEST(board, A_can_move_to_b)
 {
+  Board sut("#############"
+	    "#A          #"
+	    "### # # # ###"
+	    "  # # # # #  "
+	    "  #########  ");
+  ASSERT_EQ(sut.moves('0').size(), 1);
+  EXPECT_EQ(sut.moves('0')[0], 'b');
+}
+TEST(board, C_can_move_to_d)
   {
     Board sut("#############"
-	      "#A          #"	      
-	      "### # # # ###"
-	      "  # # # # #  "		      
-	      "  #########  ");
-    EXPECT_EQ(sut.moves('0').size(), 1);
-    EXPECT_EQ(sut.moves('0')[0], 'b');
-  }
-  {
-    Board sut("#############"
-	      "#   C        #"	      
+	      "#   C       #"
 	      "### # # # ###"
 	      "  # # # # #  "		      
 	      "  #########  ");
     EXPECT_EQ(sut.moves('2').size(), 1);
     EXPECT_EQ(sut.moves('2')[0], 'd');
-  }
 }
 
 TEST(board, no_clear_way)
@@ -265,7 +264,7 @@ TEST(board, no_clear_way)
 	:Board(s)
       {}
       
-      bool clearWay(Pos from, Pos to) override
+      bool clearWay(Pos from, Pos to) const override
       {
 	return false;
       }
@@ -285,7 +284,7 @@ TEST(board, A_can_move_to_seven)
 	      "### # # # ###"
 	      "  #A# # # #  "		      
 	      "  #########  ");
-    EXPECT_EQ(sut.moves('0').size(), 1);
+    ASSERT_EQ(sut.moves('0').size(), 1);
     EXPECT_EQ(sut.moves('0')[0], '7');
 }
 
