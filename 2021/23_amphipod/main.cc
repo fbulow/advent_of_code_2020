@@ -371,6 +371,18 @@ TEST(board, A_can_not_move_to_seven_because_it_is_taken)
     EXPECT_EQ(sut.moves('0').size(), 0);
 }
 
+TEST(board, cannot_move_when_already_home)
+{
+    Board sut("#############"
+	      "#A          #"	      
+	      "### # # # ###"
+	      "  #A# # # #  "		      
+	      "  #########  ");
+    EXPECT_EQ(sut.moves('b').size(), 0);
+}
+
+
+
 TEST(sideRooms, allCases)
 {
   auto str = [](array<char,2> x){

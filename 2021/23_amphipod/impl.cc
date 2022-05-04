@@ -84,6 +84,11 @@ vector<Move> Board::moves(Pos c) const
     return movesFromHallway(c);
   else
     {
+      if(amphipodHome(c) == amphipod)
+	return {}; //case of amphipod starting in top position in the
+		   //right room with lower positon taken by other type
+		   //is not relevant to input data or example
+
       auto toHallway = [this](vector<Move> &ret, Pos c, string_view left)
       {
 	auto start = next(left.begin(), 2);
