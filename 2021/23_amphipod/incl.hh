@@ -17,34 +17,7 @@ class Board{
   array<char, 14> data;
 public:
   Board(){}
-  Board(string_view s)
-  {
-    //#############
-    //#01 2 3 4 56#
-    //###7#8#9#a###
-    //  #b#c#d#e#
-    //  #########
-    //
-    // b=10, c=11, d=12, e=13
-
-    size_t i{0};
-    data[0] = s[14];
-    data[1] = s[15];
-    data[2] = s[17];
-    data[3] = s[19];
-    data[4] = s[21];
-    data[5] = s[23];
-    data[6] = s[24];
-    data[7] = s[29];
-    data[8] = s[31];
-    data[9] = s[33];
-    data[10] = s[35]; //a
-    data[11] = s[42]; //b
-    data[12] = s[44]; //c
-    data[13] = s[46]; //d
-    data[14] = s[48]; //d
-
-  }
+  Board(string_view s);
 
   char operator[](char i) const
   {
@@ -86,22 +59,5 @@ public:
   virtual vector<Move> moves() const {return {};}
   virtual vector<Move> moves(Pos c) const;
   
-  virtual bool done() const 
-  {
-    //#############
-    //#01 2 3 4 56#
-    //###7#8#9#a###
-    //  #b#c#d#e#
-    //  #########
-    return
-      ((*this)['7']=='A') 
-      and ((*this)['b']=='A') 
-      and ((*this)['8']=='B') 
-      and ((*this)['c']=='B') 
-      and ((*this)['9']=='C') 
-      and ((*this)['d']=='C') 
-      and ((*this)['a']=='D') 
-      and ((*this)['e']=='D')
-      ;
-  }
+  virtual bool done() const ;
 };
