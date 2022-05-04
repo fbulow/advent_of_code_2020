@@ -47,7 +47,6 @@ vector<Pos> findPath(Amphipod a, Pos p)
     }
 }
 
-
 vector<Move> Board::moves(Pos c) const
 {
   auto const amphipod = get(c);

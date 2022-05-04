@@ -296,6 +296,17 @@ TEST(board, A_can_move_back_two)
   EXPECT_EQ(sut.moves('5').size(), 1);
 }
 
+TEST(board, A_can_move_anywher)
+{
+  Board sut("#############"
+	    "#           #"
+	    "### # # # ###"
+	    "  #B# # # #  "		      
+	    "  #########  ");
+  EXPECT_EQ(sut.moves('b').size(), 7);
+}
+
+
 
 TEST(board, no_clear_way)
 {
