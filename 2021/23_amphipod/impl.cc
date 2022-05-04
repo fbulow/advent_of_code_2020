@@ -21,14 +21,30 @@ array<char, 2> sideRooms(Amphipod a)
   assert(false);
 }
 
+vector<Pos> theRightPath(string_view a, string_view b, Pos p)
+{
+  if(a.end()==find(a.begin(), a.end(), p))
+    return {b.begin(), b.end()};
+  return {a.begin(), a.end()};
+}
+
 vector<Pos> findPath(Amphipod a, Pos p)
 {
   string_view s;
-  if(a == 'A')
-    s="b710";
-  else if (a=='C')
-    s="d93210";
-  return {s.begin(), s.end()};
+  switch(a)
+    {
+    case 'A':
+      return theRightPath("b710", "b723456", p);
+    case 'B':
+      return theRightPath("c8210", "c83456", p);
+    case 'C':
+      return theRightPath("d93210", "d9456", p);
+    case 'D':
+      return theRightPath("ea43210", "ea56", p);
+    default:
+      assert(false);
+      return {};
+    }
 }
 
 

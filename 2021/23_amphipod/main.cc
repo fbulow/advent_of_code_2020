@@ -255,6 +255,48 @@ TEST(board, C_can_move_to_d)
     EXPECT_EQ(sut.moves('2')[0], 'd');
 }
 
+TEST(board, A_can_move_back)
+  {
+    Board sut("#############"
+	      "#         A #"
+	      "### # # # ###"
+	      "  # # # # #  "		      
+	      "  #########  ");
+    EXPECT_EQ(sut.moves('5').size(), 1);
+    EXPECT_EQ(sut.moves('5')[0], 'b');
+}
+
+TEST(board, A_can_not_move_back)
+{
+  Board sut("#############"
+	    "#     X   A #"
+	    "### # # # ###"
+	    "  # # # # #  "		      
+	    "  #########  ");
+  EXPECT_EQ(sut.moves('5').size(), 0);
+}
+
+TEST(board, A_can_not_move_back_two)
+{
+  Board sut("#############"
+	    "#   X     A #"
+	    "### # # # ###"
+	    "  # # # # #  "		      
+	    "  #########  ");
+  EXPECT_EQ(sut.moves('5').size(), 0);
+}
+
+TEST(board, A_can_move_back_two)
+{
+  Board sut("#############"
+	    "# X       A #"
+	    "### # # # ###"
+	    "  # # # # #  "		      
+	    "  #########  ");
+  EXPECT_EQ(sut.moves('5').size(), 1);
+}
+
+
 TEST(board, no_clear_way)
 {
   {
