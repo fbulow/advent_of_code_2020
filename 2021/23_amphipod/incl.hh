@@ -14,6 +14,11 @@ using Amphipod = char;
 bool hallway(Pos p);
 array<char, 2> sideRooms(Amphipod a);
 
+struct Paths{
+  string_view left;
+  string_view right;
+};
+
 class Board{
   array<char, 14> data;
 public:
@@ -63,3 +68,4 @@ public:
   
   virtual bool done() const ;
 };
+

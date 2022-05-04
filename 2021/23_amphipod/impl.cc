@@ -28,23 +28,28 @@ vector<Pos> theRightPath(string_view a, string_view b, Pos p)
   return {a.begin(), a.end()};
 }
 
-vector<Pos> findPath(Amphipod a, Pos p)
+Paths pathsFrom(Amphipod a)
 {
-  string_view s;
   switch(a)
     {
     case 'A':
-      return theRightPath("b710", "b723456", p);
+      return {"b710", "b723456"};
     case 'B':
-      return theRightPath("c8210", "c83456", p);
+      return {"c8210", "c83456"};
     case 'C':
-      return theRightPath("d93210", "d9456", p);
+      return {"d93210", "d9456"};
     case 'D':
-      return theRightPath("ea43210", "ea56", p);
+      return {"ea43210", "ea56"};
     default:
       assert(false);
-      return {};
+      return {"",""};
     }
+}  
+
+vector<Pos> findPath(Amphipod a, Pos p)
+{
+  auto paths = pathsFrom(a);
+  return theRightPath(paths.left, paths.right, p);
 }
 
 vector<Move> Board::moves(Pos c) const
