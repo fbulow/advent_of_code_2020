@@ -52,6 +52,28 @@ vector<Pos> findPath(Amphipod a, Pos p)
   return theRightPath(paths.left, paths.right, p);
 }
 
+Amphipod amphipodHome(Pos p)
+{
+  switch(p)
+    {
+    case 'b':
+    case '7':
+      return 'A';
+    case 'c':
+    case '8':
+      return 'B';
+    case '9':
+    case 'd':
+      return 'C';
+    case 'a':
+    case 'e':
+      return 'D';
+    default:
+      assert(false);
+      return ' ';
+    }
+}
+
 vector<Move> Board::moves(Pos c) const
 {
   auto const amphipod = get(c);
@@ -77,9 +99,9 @@ vector<Move> Board::moves(Pos c) const
 
       vector<Move> ret;
       ret.reserve(7);
- 
-      toHallway(ret, c, "b710");
-      toHallway(ret, c, "b723456");
+      auto paths = pathsFrom(amphipodHome(c));
+      toHallway(ret, c, paths.left);
+      toHallway(ret, c, paths.right);
       return ret;
    }
 }
