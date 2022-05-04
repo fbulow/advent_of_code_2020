@@ -296,7 +296,7 @@ TEST(board, A_can_move_back_two)
   EXPECT_EQ(sut.moves('5').size(), 1);
 }
 
-TEST(board, A_can_move_anywher)
+TEST(board, A_can_move_anywhere)
 {
   Board sut("#############"
 	    "#           #"
@@ -306,6 +306,15 @@ TEST(board, A_can_move_anywher)
   EXPECT_EQ(sut.moves('b').size(), 7);
 }
 
+TEST(board,  can_move_left)
+{
+  Board sut("#############"
+	    "#   X       #"
+	    "### # # # ###"
+	    "  #B# # # #  "		      
+	    "  #########  ");
+  EXPECT_EQ(sut.moves('b').size(), 2);
+}
 
 
 TEST(board, no_clear_way)

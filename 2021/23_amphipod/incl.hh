@@ -2,6 +2,7 @@
 #include<vector>
 #include<string_view>
 #include<algorithm>
+#include<iterator>
 
 using namespace std;
 
@@ -58,6 +59,7 @@ public:
   virtual Score score() const {return {};}
   virtual vector<Move> moves() const {return {};}
   virtual vector<Move> moves(Pos c) const;
+  virtual vector<Move> movesFromHallway(Pos c)const;
   
   virtual bool done() const ;
 };

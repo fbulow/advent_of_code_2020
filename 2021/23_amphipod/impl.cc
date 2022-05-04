@@ -54,39 +54,67 @@ vector<Move> Board::moves(Pos c) const
     return {};
 
   if(hallway(c))
+    return movesFromHallway(c);
+  else
     {
-      auto p = [=]{
-	auto p = findPath(amphipod, c);
-	reverse(p.begin(), p.end());
-	return p;}();
-      auto start = find(p.begin(), p.end(),
-			c);
-      auto lastRoom = prev(p.end());
+      auto toHallway = [this](vector<Move> &ret, Pos c, string_view left)
+      {
+	auto start = next(left.begin(), 2);
+	copy(start,
+	     find_if(start,
+		     left.end(),
+		     [this](Pos c)
+		     {
+		       return ' '!=get(c);
+		     }),
+	     back_inserter(ret));
+      };
 
-      if(not clearWay(*start, *prev(lastRoom)))
-	return {};
+      vector<Move> ret;
+      ret.reserve(7);
+ 
+      toHallway(ret, c, "b710");
+      toHallway(ret, c, "b723456");
+      return ret;
+   }
+}
+
+
+vector<Move> Board::movesFromHallway(Pos c)const
+{
+  auto const amphipod = get(c);
+  auto p = [=]{
+    auto p = findPath(amphipod, c);
+    reverse(p.begin(), p.end());
+    return p;}();
+  auto start = find(p.begin(), p.end(),
+		    c);
+  auto lastRoom = prev(p.end());
+
+  if(not clearWay(*start, *prev(lastRoom)))
+    return {};
       
-      if ( any_of(next(start), lastRoom,
-		  [this](auto it){
-		    if( get(it)!=' ' )
-		      return true;
-		    else
-		      return false;
-		  }) )
-	return {}; // path blocked
+  if ( any_of(next(start), lastRoom,
+	      [this](auto it){
+		if( get(it)!=' ' )
+		  return true;
+		else
+		  return false;
+	      }) )
+    return {}; // path blocked
+  else
+    {
+      vector<Pos> ret;
+      if(' '==get(*lastRoom))
+	ret={*lastRoom};
+      else if(amphipod!=get(*lastRoom))
+	ret={};
       else
-	{
-	  vector<Pos> ret;
-	  if(' '==get(*lastRoom))
-	    ret={*lastRoom};
-	  else if(amphipod!=get(*lastRoom))
-	    ret={};
-	  else
-	    ret={*prev(lastRoom)};
-	  return ret;
-	}
+	ret={*prev(lastRoom)};
+      return ret;
     }
 }
+
 
 bool Board::done() const 
 {
