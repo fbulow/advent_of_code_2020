@@ -10,14 +10,14 @@
 
 
 
-Score solutionA(Board const &board, Score bestScore = 10)
+Score solutionA(Board const &board, Score score=0, Score bestScore = numeric_limits<Score>::max())
 {
   switch(board.status())
     {
     case Board::Status::Failed:
       return bestScore;
     case Board::Status::Finished:
-      return min(board.score(), bestScore);
+      return min(score, bestScore);
     }
 }
 
@@ -27,16 +27,10 @@ TEST(soution_a, return_previous_best)
   {
     Status status() const override
     {return Status::Finished;}
-    
-    Score score() const override
-    {
-      return 20;
-    }
-    
   } board;
 
   EXPECT_EQ(10, 
-	    solutionA(board, Score(10)));
+	    solutionA(board, 20, Score(10)));
     
 }
 
@@ -47,15 +41,10 @@ TEST(soution_a, return_new_score)
     Status status() const override
     {return Status::Finished;}
     
-    Score score() const override
-    {
-      return 5;
-    }
-    
   } board;
 
   EXPECT_EQ(5, 
-	    solutionA(board, Score(10)));
+	    solutionA(board, 5, Score(10)));
     
 }
 
@@ -66,15 +55,10 @@ TEST(soution_a, return_previous_best_if_failed)
     Status status() const override
     {return Status::Failed;}
     
-    Score score() const override
-    {
-      return 5;
-    }
-    
   } board;
 
   EXPECT_EQ(10, 
-	    solutionA(board, Score(10)));
+	    solutionA(board, 5, Score(10)));
     
 }
 
