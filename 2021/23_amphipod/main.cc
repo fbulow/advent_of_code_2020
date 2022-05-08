@@ -35,11 +35,6 @@ Score solutionA(Board &board,
   return bestScore;
 }  
 
-
-
-int one(Amphipod){return 1;}
-int one(Pos, Pos){return 1;}
-
 TEST(soution_a, an_iteration)
 {
   Board sut("#############"
