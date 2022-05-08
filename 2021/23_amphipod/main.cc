@@ -48,9 +48,12 @@ TEST(soution_a, an_iteration)
 	    "  #A#B#C#D#  "		      
 	    "  #########  ");
 
-  auto f =  [](auto...){return 1;};
-  auto ans = solutionA(sut, f, f);
-  EXPECT_EQ(1,
+  function<int(Amphipod)> costPerStep = [](Amphipod)->int{return 1;};
+  function<int(Pos, Pos)> steps = [](Pos, Pos)->int{return 2;};
+
+  
+  auto ans = solutionA(sut, costPerStep, steps);
+  EXPECT_EQ(2,
 	    ans);
   
 }
