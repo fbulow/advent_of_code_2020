@@ -10,27 +10,61 @@
 
 
 
-Score solutionA(Board const &board, Score score=0, Score bestScore = numeric_limits<Score>::max())
+Score solutionA(Board &board,
+		function<int(Amphipod)> costPerStep,
+		function<int(Pos, Pos)> steps,
+		Score score=0,
+		Score bestScore = numeric_limits<Score>::max())
 {
-  switch(board.status())
-    {
-    case Board::Status::Failed:
-      return bestScore;
-    case Board::Status::Finished:
-      return min(score, bestScore);
-    }
+  if(board.done())
+    return score;
+  
+  for(Pos from : {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e'})
+    for(Pos to : board.moves(from))
+      {
+	auto scoreIncr = costPerStep(board[from])*steps(from, to);
+	std::swap(board[from], board[to]);
+	auto newScore = solutionA(board,
+				  costPerStep,
+				  steps,
+				  score + scoreIncr,
+				  bestScore);
+	bestScore = min(bestScore, newScore);
+	std::swap(board[from], board[to]);
+      }
+  return bestScore;
+}  
+
+
+
+int one(Amphipod){return 1;}
+int one(Pos, Pos){return 1;}
+
+TEST(soution_a, an_iteration)
+{
+  Board sut("#############"
+	    "# A         #"	      
+	    "### #B#C#D###"
+	    "  #A#B#C#D#  "		      
+	    "  #########  ");
+
+  auto f =  [](auto...){return 1;};
+  auto ans = solutionA(sut, f, f);
+  EXPECT_EQ(1,
+	    ans);
+  
 }
 
 TEST(soution_a, return_previous_best)
 {
   struct : Board
   {
-    Status status() const override
-    {return Status::Finished;}
+    vector<Move> moves(Pos c) const override {return {};};
   } board;
 
+  auto f =  [](auto...){return 1;};
   EXPECT_EQ(10, 
-	    solutionA(board, 20, Score(10)));
+	    solutionA(board, f,f, 20, Score(10)));
     
 }
 
@@ -38,13 +72,13 @@ TEST(soution_a, return_new_score)
 {
   struct : Board
   {
-    Status status() const override
-    {return Status::Finished;}
-    
+    bool done() const override {return true;}
+    vector<Move> moves(Pos c) const override {return {};};
   } board;
+  auto f =  [](auto...){return 1;};
 
   EXPECT_EQ(5, 
-	    solutionA(board, 5, Score(10)));
+	    solutionA(board, f,f, 5, Score(10)));
     
 }
 
@@ -52,13 +86,12 @@ TEST(soution_a, return_previous_best_if_failed)
 {
   struct : Board
   {
-    Status status() const override
-    {return Status::Failed;}
-    
+    vector<Move> moves(Pos c) const override {return {};};
   } board;
 
+  auto f =  [](auto...){return 1;};
   EXPECT_EQ(10, 
-	    solutionA(board, 5, Score(10)));
+	    solutionA(board, f, f, 5, Score(10)));
     
 }
 

@@ -195,3 +195,19 @@ Board::Board(string_view s)
     data[14] = s[48]; //d
 
   }
+
+
+#define BODY					\
+  {						\
+    if((i>='0') and (i<='9'))			\
+      return data[i-'0'];			\
+    else					\
+      return data[10+(i-'a')];			\
+  }						\
+
+char& Board::operator[](char i)
+BODY
+  
+char Board::operator[](char i) const
+BODY
+

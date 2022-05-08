@@ -25,13 +25,23 @@ public:
   Board(){}
   Board(string_view s);
 
-  char operator[](char i) const
+  virtual void fromTo(Pos from, Pos to)
   {
-    if((i>='0') and (i<='9'))
-       return data[i-'0'];
-    else
-      return data[10+(i-'a')];
+    //TODO implement me
   }
+
+private:
+  char& get(char i)
+  {
+
+  }
+public:
+  
+  char operator[](char i) const;
+
+  
+  char& operator[](char i);
+
   
   enum class Status {Finished, Failed, InProgress};
   virtual Status status() const
