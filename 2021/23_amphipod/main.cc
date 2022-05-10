@@ -7,34 +7,99 @@
 //   A B C D
 // b=10, c=11, d=12, e=13
 
+int steps(Pos from, Pos to)
+{
+  string_view s=
+    "#############"
+    "#01 2 3 4 56#"
+    "###7#8#9#a###"
+    "  #b#c#d#e#  "
+    "  #########  ";
 
+  struct Co
+  {
+    int x;
+    int y;
+    int width() const {return 13;}
+    Co(int i)
+     :x(i%width())
+     ,y(i/width())
+    {}
+  };
+  
+
+  Co a(s.find(from));
+  Co b(s.find(to));
+  return abs(a.x-b.x)+abs(a.y-b.y);
+}
+
+TEST(steps, a_case)
+{
+  //#############
+  //#01 2 3 4 56#
+  //###7#8#9#a###
+  //  #b#c#d#e#
+  //  #########   
+
+    EXPECT_EQ(3, steps('0', '7'));
+    EXPECT_EQ(4, steps('3', '7'));
+  }
+
+int costPerStep(Amphipod a)
+{
+  auto i = a-'A';
+  int ret =1;
+  while(i-->0)
+    ret*=10;
+  return ret;
+}
+
+TEST(costPerStep, all_cases)
+{
+  EXPECT_EQ(costPerStep('A'), 1);
+  EXPECT_EQ(costPerStep('B'), 10);
+  EXPECT_EQ(costPerStep('C'), 100);
+  EXPECT_EQ(costPerStep('D'), 1000);
+}
 
 
 Score solutionA(Board &board,
-		function<int(Amphipod)> costPerStep,
-		function<int(Pos, Pos)> steps,
+		function<int(Amphipod)> costPerStep = costPerStep,
+		function<int(Pos, Pos)> steps = steps,
 		Score score=0,
 		Score bestScore = numeric_limits<Score>::max())
 {
+  if(score >= bestScore)
+    return bestScore;
   if(board.done())
-    return score;
+    {
+      cout<<score<<endl;
+      return score;
+    }
   
   for(Pos from : {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e'})
     for(Pos to : board.moves(from))
       {
-	auto scoreIncr = costPerStep(board[from])*steps(from, to);
+	auto s = steps(from, to);
+	auto pod = board[from];
+	auto cps = costPerStep(pod);
+	auto scoreIncr = cps*s;
 	std::swap(board[from], board[to]);
-	auto newScore = solutionA(board,
-				  costPerStep,
-				  steps,
-				  score + scoreIncr,
-				  bestScore);
-	bestScore = min(bestScore, newScore);
+	bestScore =  solutionA(board,
+			       costPerStep,
+			       steps,
+			       score + scoreIncr,
+			       bestScore);
 	std::swap(board[from], board[to]);
       }
   return bestScore;
 }  
 
+
+TEST(soution_a, actual)
+{
+
+}
 TEST(soution_a, an_iteration)
 {
   Board sut("#############"
@@ -52,6 +117,35 @@ TEST(soution_a, an_iteration)
 	    ans);
   
 }
+
+TEST(soution_a_social, an_iteration)
+{
+  Board sut("#############"
+	    "# A         #"	      
+	    "### #B#C#D###"
+	    "  #A#B#C#D#  "		      
+	    "  #########  ");
+
+  auto ans = solutionA(sut, costPerStep, steps);
+  EXPECT_EQ(2,
+	    ans);
+  
+}
+
+TEST(soution_a_social, an_two_iterations)
+{
+  Board sut("#############"     //#############          
+	    "#     A     #"	//#01 2 3 4 56#                
+	    "###B# #C#D###"	//###7#8#9#a###          
+	    "  #A#B#C#D#  "	//  #b#c#d#e#            	      
+	    "  #########  ");	//  #########            
+
+  auto ans = solutionA(sut, costPerStep, steps);
+  EXPECT_EQ(44,
+	    ans);
+  
+}
+
 
 TEST(soution_a, return_previous_best)
 {
@@ -445,4 +539,18 @@ TEST(clearWay, way_is_not_clear)
 	      "  #########  ");
 
     EXPECT_FALSE(sut.clearWay('0', 'b' ));
+}
+
+TEST(solution, a)
+{
+  Board b{
+    "#############"
+    "#           #"
+    "###D#D#B#A###"
+    "  #B#C#A#C#  "
+    "  #########  "
+  };
+  
+  EXPECT_LT(16240,
+	    solutionA(b));
 }
