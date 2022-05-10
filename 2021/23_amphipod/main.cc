@@ -543,6 +543,18 @@ TEST(clearWay, way_is_not_clear)
 
 TEST(solution, a)
 {
+  {
+    Board b{
+      "#############"
+      "#...........#"
+      "###B#C#B#D###"
+      "  #A#D#C#A#  "
+      "  #########  "};
+
+    ASSERT_EQ(12521,
+	      solutionA(b));
+  }
+  {
   Board b{
     "#############"
     "#           #"
@@ -553,4 +565,5 @@ TEST(solution, a)
   
   EXPECT_LT(16240,
 	    solutionA(b));
+}
 }

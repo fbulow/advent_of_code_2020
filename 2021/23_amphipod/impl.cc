@@ -194,6 +194,9 @@ Board::Board(string_view s)
     data[13] = s[46]; //d
     data[14] = s[48]; //d
 
+    transform(data.begin(), data.end(),
+	      data.begin(), [](auto a){if(a=='.') return ' '; else return a;});
+    
   }
 
 
