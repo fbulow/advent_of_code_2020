@@ -64,7 +64,7 @@ public:
 			next(find(path.begin(), path.end(), to)),
 			[this](Pos p){return (*this)[p]==' ';});
       }
-    return true;
+    assert(false);
   }
 private:
   Amphipod get(Pos c) const
