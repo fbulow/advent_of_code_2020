@@ -541,29 +541,29 @@ TEST(clearWay, way_is_not_clear)
     EXPECT_FALSE(sut.clearWay('0', 'b' ));
 }
 
-TEST(solution, a)
-{
-  {
-    Board b{
-      "#############"
-      "#...........#"
-      "###B#C#B#D###"
-      "  #A#D#C#A#  "
-      "  #########  "};
+// TEST(solution, a)
+// {
+//   {
+//     Board b{
+//       "#############"
+//       "#...........#"
+//       "###B#C#B#D###"
+//       "  #A#D#C#A#  "
+//       "  #########  "};
 
-    ASSERT_EQ(12521,
-	      solutionA(b));
-  }
-  {
-  Board b{
-    "#############"
-    "#           #"
-    "###D#D#B#A###"
-    "  #B#C#A#C#  "
-    "  #########  "
-  };
+//     ASSERT_EQ(12521,
+// 	      solutionA(b));
+//   }
+//   {
+//     Board b{
+//       "#############"
+//       "#           #"
+//       "###D#D#B#A###"
+//       "  #B#C#A#C#  "
+//       "  #########  "
+//     };
   
-  EXPECT_LT(16240,
-	    solutionA(b));
-}
-}
+//     EXPECT_LT(16240,
+// 	      solutionA(b));
+//   }
+// }
