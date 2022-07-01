@@ -1,0 +1,6 @@
+# Netscape HTTP Cookie File
+
+.adventofcode.com	TRUE	/	TRUE	1952632057	session	53616c7465645f5f26f6ed9e1bf15fe8da8f72266a69aefc764bd819d348145d3b5795d6ea49221a383b33a4f6c7771c
+.adventofcode.com	TRUE	/	FALSE	1638569916	_gat	1
+.adventofcode.com	TRUE	/	FALSE	1701641864	_ga	GA1.2.876778573.1606762355
+.adventofcode.com	TRUE	/	FALSE	1638656264	_gid	GA1.2.770151554.1638335057

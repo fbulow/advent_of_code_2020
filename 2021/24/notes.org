@@ -1,0 +1,14 @@
+Checked as far as
+{9, 9, 3, 3, 1, 9, 6, 3, 2, 2, 2, 4, 4, 9}}}
+
+
+inputs are w0, ... w13
+
+For passing last group
+0 <= z13 < 26
+
+z13 - 5 == w13
+
+exemple
+z13 = 6
+w13 = 1

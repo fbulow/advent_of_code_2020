@@ -10,10 +10,8 @@ project(main)
 Find_package(GTest)
 
 add_executable(${PROJECT_NAME}
-  main.cc
-  impl.cc
-  tile.cc
-)
+  main.cpp
+  )
 
 target_compile_options(${PROJECT_NAME}
   PUBLIC
@@ -24,5 +22,4 @@ target_compile_options(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
   GTest::GTest
-  GTest::Main
 )

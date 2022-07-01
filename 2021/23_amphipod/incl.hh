@@ -4,12 +4,13 @@
 #include<algorithm>
 #include<iterator>
 
+#include"amphipod.hh"
+
 using namespace std;
 
 using Score = unsigned int;
 using Move = char;
 using Pos = char;
-using Amphipod = char;
 
 bool hallway(Pos p);
 array<char, 2> sideRooms(Amphipod a);

@@ -7,7 +7,7 @@ bool hallway(Pos p)
 
 array<char, 2> sideRooms(Amphipod a)
 {
-  switch(a)
+  switch(a.get())
     {
     case 'A':
       return {'7','b'};
@@ -30,7 +30,7 @@ vector<Pos> theRightPath(string_view a, string_view b, Pos p)
 
 Paths pathsFrom(Amphipod a)
 {
-  switch(a)
+  switch(a.get())
     {
     case 'A':
       return {"b710", "b723456"};

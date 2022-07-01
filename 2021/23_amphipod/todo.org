@@ -1,0 +1,11 @@
+* Correctness
+** TODO Unstub clearWay
+*** Responsiblity?
+
+** DONE Add the example
+* Opt. speed
+** TODO Move home first.
+** TODO fail earilier
+   - minimum forecast given what's left and current score - can I
+     still beat the bestScore
+** TODO io-cache

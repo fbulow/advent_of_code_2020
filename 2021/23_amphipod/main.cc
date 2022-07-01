@@ -47,7 +47,7 @@ TEST(steps, a_case)
 
 int costPerStep(Amphipod a)
 {
-  auto i = a-'A';
+  auto i = a.get()-'A';
   int ret =1;
   while(i-->0)
     ret*=10;
