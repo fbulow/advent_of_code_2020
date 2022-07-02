@@ -1,8 +1,8 @@
 #include<gtest/gtest.h>
 
 #include"instruction.hpp"
+#include"state.hpp"
 #include<sstream>
-#include<vector>
 using namespace std;
 
 TEST(Instruction, command)
@@ -36,18 +36,6 @@ TEST(Instruction, read_add)
   EXPECT_EQ(sut.b, '2');
 }
 
-istream& operator>>(istream& in, vector<Instruction> &v)
-{
-  Instruction i;
-  while(not in.eof())
-    {
-      in>>i;
-      if(not in.fail())
-	v.push_back(i);
-    }
-  return in;
-}
-
 TEST(Instruction, read_multiple_trailing_whitespace)
 {
   stringstream in("add a 2 mul x y ");
@@ -64,4 +52,24 @@ TEST(Instruction, read_multiple_trailing_no_whitespace)
   in>>sut;
 
   EXPECT_EQ(sut.size(), 2);
+}
+
+TEST(State, ctor)
+{
+  State sut;
+  EXPECT_EQ(0, sut.w());
+  EXPECT_EQ(0, sut.x());
+  EXPECT_EQ(0, sut.y());
+  EXPECT_EQ(0, sut.z());
+}
+
+TEST(State, inp)
+{
+  State sut;
+  sut.apply({Instruction::Command::add, 'w', '5'});
+  
+  EXPECT_EQ(5, sut.w());
+  EXPECT_EQ(0, sut.x());
+  EXPECT_EQ(0, sut.y());
+  EXPECT_EQ(0, sut.z());
 }

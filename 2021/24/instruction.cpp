@@ -53,3 +53,16 @@ unsigned int Instruction::nArg(Command c)
   else
     return 2;
 }
+
+istream& operator>>(istream& in, vector<Instruction> &v)
+{
+  Instruction i;
+  while(not in.eof())
+    {
+      in>>i;
+      if(not in.fail())
+	v.push_back(i);
+    }
+  return in;
+}
+

@@ -5,13 +5,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_BUILD_TYPE Debug)
 
-project(main)
+project(main CXX)
 
 Find_package(GTest)
 
 add_executable(${PROJECT_NAME}
   main.cpp
   instruction.cpp
+  state.cpp
 )
 
 target_compile_options(${PROJECT_NAME}

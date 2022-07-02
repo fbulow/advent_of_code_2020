@@ -1,7 +1,9 @@
 #pragma once
 #include<string>
+#include<vector>
 
 using namespace std;
+
 using Arg = char;
 
 class Instruction{
@@ -18,3 +20,4 @@ public:
 
 
 istream& operator>>(istream& in, Instruction &i);
+istream& operator>>(istream& in, vector<Instruction> &v);
