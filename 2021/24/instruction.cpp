@@ -1,5 +1,9 @@
 #include "instruction.hpp"
 #include<cassert>
+#include<iostream>
+
+using namespace std;
+
 Instruction::Command Instruction::command(string const&s)
 {
   if(s=="inp")
@@ -21,15 +25,21 @@ Instruction::Command Instruction::command(string const&s)
 
 istream& operator>>(istream& in, Instruction &i)
 {
+  if(in.eof())
+    return in;
   std::string s;
   in>>s;
+  if(in.eof())
+    return in;
   i.cmd = Instruction::command( s );
   in>>s;
   assert(s.size()==1);
   i.a = *s.begin();
   if(Instruction::nArg(i.cmd)>1)
     {
+      assert(not in.eof());
       in>>s;
+      assert(s.size()==1);
       i.b = *s.begin();
     }
   

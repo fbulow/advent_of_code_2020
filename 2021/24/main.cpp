@@ -2,7 +2,7 @@
 
 #include"instruction.hpp"
 #include<sstream>
-
+#include<vector>
 using namespace std;
 
 TEST(Instruction, command)
@@ -25,6 +25,7 @@ TEST(Instruction, read_inp)
   EXPECT_EQ(sut.b, 0);
 
 }
+
 TEST(Instruction, read_add)
 {
   Instruction sut;
@@ -33,4 +34,34 @@ TEST(Instruction, read_add)
   EXPECT_EQ(sut.cmd, Instruction::Command::add);
   EXPECT_EQ(sut.a, 'a');
   EXPECT_EQ(sut.b, '2');
+}
+
+istream& operator>>(istream& in, vector<Instruction> &v)
+{
+  Instruction i;
+  while(not in.eof())
+    {
+      in>>i;
+      if(not in.fail())
+	v.push_back(i);
+    }
+  return in;
+}
+
+TEST(Instruction, read_multiple_trailing_whitespace)
+{
+  stringstream in("add a 2 mul x y ");
+  vector<Instruction> sut;
+  in>>sut;
+
+  EXPECT_EQ(sut.size(), 2);
+}
+
+TEST(Instruction, read_multiple_trailing_no_whitespace)
+{
+  stringstream in("add a 2 mul x y");
+  vector<Instruction> sut;
+  in>>sut;
+
+  EXPECT_EQ(sut.size(), 2);
 }
