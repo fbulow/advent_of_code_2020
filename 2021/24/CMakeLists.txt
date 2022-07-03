@@ -13,6 +13,7 @@ add_executable(${PROJECT_NAME}
   main.cpp
   instruction.cpp
   state.cpp
+  enums.cc
 )
 
 target_compile_options(${PROJECT_NAME}

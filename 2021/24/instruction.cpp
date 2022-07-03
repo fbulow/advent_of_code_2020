@@ -4,24 +4,6 @@
 
 using namespace std;
 
-Instruction::Command Instruction::command(string const&s)
-{
-  if(s=="inp")
-    return Command::inp;
-  else if(s=="add")
-    return Command::add;
-  else if(s=="mul")
-    return Command::mul;
-  else if(s=="eql")
-    return Command::eql;
-  else if(s=="div")
-    return Command::div;
-  else if(s=="mod")
-    return Command::mod;
-
-  assert(false);
-  return {};
-}
 
 istream& operator>>(istream& in, Instruction &i)
 {
@@ -31,7 +13,7 @@ istream& operator>>(istream& in, Instruction &i)
   in>>s;
   if(in.eof())
     return in;
-  i.cmd = Instruction::command( s );
+  i.cmd = command( s );
   in>>s;
   assert(s.size()==1);
   i.a = *s.begin();

@@ -1,6 +1,7 @@
 #pragma once
 #include<string>
 #include<vector>
+#include"enums.hh"
 
 using namespace std;
 
@@ -9,12 +10,11 @@ using Arg = char;
 class Instruction{
 
 public:
-  enum class Command {inp, add, mul, div, mod, eql} cmd;
+  Command cmd;
   Arg a{'\0'};
   Arg b{'\0'};
   
   
-  static Command command(string const&);
   static unsigned int nArg(Command c);
 };
 
