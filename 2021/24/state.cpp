@@ -1,29 +1,60 @@
 #include <cassert>
 #include "state.hpp"
 #include "instruction.hpp"
+#include <functional>
+
+namespace
+{
+  int index(Arg a)
+  {
+    assert(a>='w');
+    assert(a<='z');
+    return a-'w';
+  }
+};
 
 void State::apply(Instruction const&i)
 {
+  if(i.cmd==Command::inp)
+    {
+      inputTarget = i.a;
+      return;
+    }
+
+  auto &dest = s[index(i.a)];
+  auto a = value(i.a);
+  auto b = value(i.b);
   switch(i.cmd)
     {
     case Command::add:
-      s[i.a-'w']+=i.b-'0';
+      dest = a + b;
+      return;
+    case Command::mul:
+      dest = a * b;
+      return;
+    case Command::div:
+      dest = a / b;
+      return;
+    case Command::mod:
+      dest = a % b;
+      return;
+    case Command::eql:
+      dest = (a == b)?1:0;
       return;
     }
 }
 
-int State::value(Storage s)
+Int State::value(Arg a) const
 {
-  switch(s)
-    {
-    case Storage::w :
-      return 0;
-    case Storage::x :
-      return 1;
-    case Storage::y :
-      return 2;
-    case Storage::z :
-      return 3;
-    }
-  assert(false);
+  if((a>='1') and (a<='9'))
+    return a-'0';
+  else
+    return s[index(a)];
+}
+
+void State::input(int v)
+{
+  assert(inputRequired());
+  s[index(inputTarget)] = v;
+  inputTarget='\0';
 }
