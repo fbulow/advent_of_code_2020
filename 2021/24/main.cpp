@@ -4,6 +4,7 @@
 #include"state.hpp"
 #include<sstream>
 #include"enums.hh"
+#include<fstream>
 using namespace std;
 
 TEST(Instruction, _command)
@@ -23,9 +24,20 @@ TEST(Instruction, read_inp)
   in>> sut;
   EXPECT_EQ(sut.cmd, Command::inp);
   EXPECT_EQ(sut.a, 'w');
-  EXPECT_EQ(sut.b, 0);
+  EXPECT_EQ(0, sut.b.index());
 
 }
+
+TEST(Instruction, two_digits)
+{
+  Instruction sut;
+  stringstream in("mod x 26");
+  in>> sut;
+  EXPECT_EQ(sut.cmd, Command::mod);
+  EXPECT_EQ(sut.a, 'x');
+  EXPECT_EQ(std::get<Int>(sut.b), 26);
+}
+
 
 TEST(Instruction, read_add)
 {
@@ -34,7 +46,7 @@ TEST(Instruction, read_add)
   in>> sut;
   EXPECT_EQ(sut.cmd, Command::add);
   EXPECT_EQ(sut.a, 'a');
-  EXPECT_EQ(sut.b, '2');
+  EXPECT_EQ(std::get<Int>(sut.b), 2);
 }
 
 TEST(Instruction, read_multiple_trailing_whitespace)
@@ -150,4 +162,13 @@ TEST(State, inp)
   EXPECT_FALSE(sut.inputRequired());
   EXPECT_EQ(7, sut.w());
   
+}
+
+
+
+TEST(Solution, a)
+{
+  ifstream in(INPUT);
+  std::vector<Instruction> code;
+  in>>code;
 }

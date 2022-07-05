@@ -13,6 +13,13 @@ istream& operator>>(istream& in, Instruction &i)
   in>>s;
   if(in.eof())
     return in;
+  else if(s.empty())
+    {
+      in.setstate(std::ios::eofbit);
+      assert(in.eof());
+      return in;
+    }
+
   i.cmd = command( s );
   in>>s;
   assert(s.size()==1);
@@ -20,9 +27,22 @@ istream& operator>>(istream& in, Instruction &i)
   if(Instruction::nArg(i.cmd)>1)
     {
       assert(not in.eof());
-      in>>s;
-      assert(s.size()==1);
-      i.b = *s.begin();
+      char c = in.peek();
+      while(' ' == in.peek())
+	in>>c;
+      c = in.peek();
+      if((c>='w') and (c<='z'))
+	{
+	  in>>s;
+	  assert(s.size()==1);
+	  i.b = *s.begin();
+	}
+      else
+	{
+	  Int nxt;
+	  in>>nxt;
+	  i.b={nxt};
+	}
     }
   
   return in;

@@ -3,6 +3,8 @@
 #include "instruction.hpp"
 #include <functional>
 
+
+
 namespace
 {
   int index(Arg a)
@@ -23,7 +25,11 @@ void State::apply(Instruction const&i)
 
   auto &dest = s[index(i.a)];
   auto a = value(i.a);
-  auto b = value(i.b);
+  Int b;
+  if(std::holds_alternative<Arg>(i.b))
+    b = value(std::get<Arg>(i.b));
+  else
+    b = get<Int>(i.b);
   switch(i.cmd)
     {
     case Command::add:
@@ -44,6 +50,14 @@ void State::apply(Instruction const&i)
     }
 }
 
+
+void State::input(int v)
+{
+  assert(inputRequired());
+  s[index(inputTarget)] = v;
+  inputTarget='\0';
+}
+
 Int State::value(Arg a) const
 {
   if((a>='1') and (a<='9'))
@@ -52,9 +66,7 @@ Int State::value(Arg a) const
     return s[index(a)];
 }
 
-void State::input(int v)
+Int State::value(Int a) const
 {
-  assert(inputRequired());
-  s[index(inputTarget)] = v;
-  inputTarget='\0';
+  return a;
 }

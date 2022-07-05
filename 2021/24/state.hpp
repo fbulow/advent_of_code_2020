@@ -2,8 +2,8 @@
 #include<array>
 #include"enums.hh"
 #include<optional>
+#include"int.hh"
 
-using Int = long long int;
 
 class Instruction;
 using Arg=char;
@@ -22,6 +22,9 @@ public:
   void input(int);
   bool inputRequired() const {return inputTarget!='\0';}
 
+  std::array<Int, 4> const & data() const {return s;}
+  
 private:
   Int value(Arg) const;
-};
+  Int value(Int a) const;
+  };

@@ -2,6 +2,8 @@
 #include<string>
 #include<vector>
 #include"enums.hh"
+#include<variant>
+#include"int.hh"
 
 using namespace std;
 
@@ -12,7 +14,7 @@ class Instruction{
 public:
   Command cmd;
   Arg a{'\0'};
-  Arg b{'\0'};
+  std::variant<std::monostate,char,Int> b;
   
   
   static unsigned int nArg(Command c);
