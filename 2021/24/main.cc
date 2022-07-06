@@ -33,36 +33,49 @@ TEST(solution, a)
 using namespace std;
 using Cache = set<std::array<Int,4>>;
 
-bool solution_b(State const &s, auto cache_ptr)
+std::string solution_b(State const &s, auto cache_ptr)
 {
-  if(s.done())
-    return s.pass();
-  
-  else if (cache_ptr->contains(s.data()))
-    return false;
+  if (cache_ptr->contains(s.data()))
+    return {};
   else
     {
       for(auto i: {1,2,3,4,5,6,7,8,9})
 	{
-	  if(solution_b(s.inp(i), std::next(cache_ptr)))
+	  auto t = s.inp(i);
+	  if(t.done())
 	    {
-	      std::cout<< i;
-	      return true;
+	      if(t.pass())
+		{
+		  std::string ret;
+		  ret.push_back(char('0'+i));
+		  return ret;
+		}
+	      else
+		return {};
+	    }
+	  else
+	    {
+	      auto ret = solution_b(t, std::next(cache_ptr));
+	      if(not ret.empty())
+		{
+		  ret.push_back(char('0'+i));
+		  return ret;
+		}
 	    }
 	}
       cache_ptr->insert(s.data());
-      return false;
+      return {};
     }
 }
 
 void solution_b()
 {
   array<Cache, 15> cache;
-  std::cout<< std::endl;
-  std::cout<< std::endl;
-  solution_b(State(), cache.begin());
-  std::cout<< std::endl;
-  std::cout<< std::endl;
+  std::string ret = solution_b(State(), cache.begin());
+  std::reverse(ret.begin(), ret.end());
+    
+  std::cout<<ret<<std::endl;
+  
 }
 
 TEST(SOLUTION, b)
