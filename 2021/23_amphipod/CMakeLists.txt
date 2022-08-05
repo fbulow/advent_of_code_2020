@@ -10,8 +10,7 @@ project(main)
 Find_package(GTest)
 
 add_executable(${PROJECT_NAME}
-  main.cc
-  board.cc
+  solver.cc
 )
 
 target_compile_options(${PROJECT_NAME}
