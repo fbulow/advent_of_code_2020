@@ -21,10 +21,6 @@ struct Paths{
 };
 
 class Board{
-  array<char, 14> data;
-public:
-  Board(){}
-  Board(string_view s);
 
   virtual void fromTo(Pos from, Pos to)
   {

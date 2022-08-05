@@ -11,8 +11,7 @@ Find_package(GTest)
 
 add_executable(${PROJECT_NAME}
   main.cc
-  impl.cc
-  tile.cc
+  board.cc
 )
 
 target_compile_options(${PROJECT_NAME}
