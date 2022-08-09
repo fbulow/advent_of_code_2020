@@ -11,6 +11,9 @@ Find_package(GTest)
 
 add_executable(${PROJECT_NAME}
   solver.cc
+  solver_test.cc
+  board.cc
+  move.cc
 )
 
 target_compile_options(${PROJECT_NAME}
