@@ -18,8 +18,9 @@ std::optional<int> Solver(BOARD const &b)
     {
       for(auto const &x: m)
 	{
-	  return Solver(b.apply({}));
+	  Solver(b.apply({}));
 	}
+      return {0};
     }
 }
 
