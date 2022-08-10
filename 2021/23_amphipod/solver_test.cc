@@ -4,6 +4,30 @@
 #include "board.hh"
 using namespace testing;
 
+
+TEST(Solver, calls_apply_for_all_moves)
+{
+  static int apply_count{0};
+  
+  struct :Board{
+    std::vector<Move> moves() const
+    {
+      return {Move{},Move{}};
+    }
+    bool isDone() const{return false;}
+    Board apply(Move const & m) const
+    {
+      apply_count++;
+      ::Board ret;
+      assert(ret.isDone());
+      return ret;
+    }
+  } b;
+  Solver(b);
+  ASSERT_THAT(apply_count, Eq(2));
+    
+}
+
 TEST(Solver, recursive_call_on_return_value_of_apply)
 {
   struct :Board{
