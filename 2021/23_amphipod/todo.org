@@ -1,0 +1,3 @@
+
+* 
+** multiple scores for different moves

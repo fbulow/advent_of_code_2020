@@ -5,6 +5,34 @@
 using namespace testing;
 
 
+TEST(DISABLED_Solver, return_smalles_number_of_steps)
+{
+  static int next_score{5};
+  class :Board{
+    int cost_of_next_move_{1};
+  
+  public:
+    std::vector<Move> moves() const
+    {
+      return {Move{},Move{}};
+    }
+    bool isDone() const{return false;}
+    int score() const{return next_score++;}
+
+    Board apply(Move const & m) const
+    {
+      ::Board ret;
+      assert(ret.isDone());
+      return ret;
+    }
+  } b;
+
+  auto ret = Solver(b);
+  ASSERT_THAT(ret, Eq(true));
+
+      
+}
+
 TEST(Solver, calls_apply_for_all_moves)
 {
   static int apply_count{0};
@@ -25,7 +53,6 @@ TEST(Solver, calls_apply_for_all_moves)
   } b;
   Solver(b);
   ASSERT_THAT(apply_count, Eq(2));
-    
 }
 
 TEST(Solver, recursive_call_on_return_value_of_apply)

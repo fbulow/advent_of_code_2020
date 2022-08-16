@@ -16,11 +16,12 @@ std::optional<int> Solver(BOARD const &b)
     }
   else
     {
+      std::optional<int> ret;
       for(auto const &x: m)
 	{
-	  Solver(b.apply({}));
+	  ret = Solver(b.apply({}));
 	}
-      return {0};
+      return ret;
     }
 }
 
