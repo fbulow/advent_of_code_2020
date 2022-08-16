@@ -2,21 +2,22 @@
 #include<optional>
 #include<vector>
 #include<cassert>
+#include "result.hh"
 
 template<class BOARD>
-std::optional<int> Solver(BOARD const &b)
+Result Solver(BOARD const &b)
 {
   auto m = b.moves();
   if(m.empty())
     {
       if (b.isDone())
-	return {b.score()};
+	return b.score();
       else
 	return {};
     }
   else
     {
-      std::optional<int> ret;
+      Result ret;
       for(auto const &x: m)
 	{
 	  ret = Solver(b.apply({}));

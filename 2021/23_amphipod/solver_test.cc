@@ -71,7 +71,7 @@ TEST(Solver, recursive_call_on_return_value_of_apply)
     }
 
   } b;
-  ASSERT_THAT(Solver(b).value(), Eq(0));
+  ASSERT_THAT(Solver(b), Eq(0));
 }
 
 TEST(Solver, do_not_call_apply_if_moves_empty)
@@ -115,7 +115,7 @@ TEST(Solver, return_score_if_no_moves_and_isdone)
     int score() const{return 5;}
   }b;
 
-  ASSERT_THAT(Solver(b).value(), Eq(5));
+  ASSERT_THAT(Solver(b), Eq(5));
 }
 
 TEST(Solver, return_nothing_if_failed)
@@ -132,5 +132,5 @@ TEST(Solver, return_current_score_if_done)
     bool isDone() const {return true;}
     int score() const { return 5; }
   }b;
-  ASSERT_THAT(Solver(b).value(), testing::Eq(5));
+  ASSERT_THAT(Solver(b), testing::Eq(5));
 }

@@ -8,7 +8,7 @@ TEST(Board, increase_score_when_applying_move)
 {
   struct :Board
   {
-    int steps(Move) const override {
+    Result steps(Move) const override {
       return 5;
     }
   } sut;

@@ -14,6 +14,7 @@ add_executable(${PROJECT_NAME}
   solver_test.cc
   board.cc
   move.cc
+  result.cc
 )
 
 target_compile_options(${PROJECT_NAME}
