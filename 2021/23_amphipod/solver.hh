@@ -19,9 +19,7 @@ Result Solver(BOARD const &b)
     {
       Result ret;
       for(auto const &x: m)
-	{
-	  ret = Solver(b.apply({}));
-	}
+	ret = std::min(ret, Solver(b.apply({})));
       return ret;
     }
 }

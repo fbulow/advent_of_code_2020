@@ -13,7 +13,7 @@ public:
   Board apply(Move const & m) const
   {
     Board ret{};
-    ret.score_+= steps(m);
+    ret.score_= score_ + steps(m);
     return ret;
   }
 };

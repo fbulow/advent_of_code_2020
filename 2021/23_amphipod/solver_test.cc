@@ -5,10 +5,11 @@
 using namespace testing;
 
 
-TEST(DISABLED_Solver, return_smalles_number_of_steps)
+TEST(Solver, return_smalles_number_of_steps)
 {
-  static int next_score{5};
-  class :Board{
+  static int next_steps{5};
+  struct :Board{
+  private:
     int cost_of_next_move_{1};
   
   public:
@@ -17,18 +18,11 @@ TEST(DISABLED_Solver, return_smalles_number_of_steps)
       return {Move{},Move{}};
     }
     bool isDone() const{return false;}
-    int score() const{return next_score++;}
-
-    Board apply(Move const & m) const
-    {
-      ::Board ret;
-      assert(ret.isDone());
-      return ret;
-    }
+    Result steps(Move) const override {return next_steps++;} 
   } b;
 
   auto ret = Solver(b);
-  ASSERT_THAT(ret, Eq(true));
+  ASSERT_THAT(ret, Eq(5));
 
       
 }
