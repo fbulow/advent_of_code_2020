@@ -7,19 +7,25 @@ using namespace testing;
 
 TEST(Solver, return_smalles_number_of_steps)
 {
-  static int next_steps{5};
+  static int next_steps{0};
   struct :Board{
-  private:
-    int cost_of_next_move_{1};
-  
-  public:
     std::vector<Move> moves() const
     {
       auto m = A::Move();
-      return {m,m};
+      return {m,m,m};
     }
     bool isDone() const{return false;}
-    Result steps(Move) const override {return next_steps++;} 
+    Result steps(Move) const override {
+      switch(next_steps++)
+	{
+	case 0:return 6;
+	case 1:return 5;
+	case 2:return 7;
+	default:
+	  return 10;
+	}
+    }
+
   } b;
 
   auto ret = Solver(b);
