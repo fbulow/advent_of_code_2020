@@ -2,8 +2,8 @@
 #include<gmock/gmock.h>
 #include "solver.hh"
 #include "board.hh"
+#include "move.hh"
 using namespace testing;
-
 
 TEST(Solver, return_smalles_number_of_steps)
 {
@@ -15,7 +15,8 @@ TEST(Solver, return_smalles_number_of_steps)
   public:
     std::vector<Move> moves() const
     {
-      return {Move{},Move{}};
+      auto m = A::Move();
+      return {m,m};
     }
     bool isDone() const{return false;}
     Result steps(Move) const override {return next_steps++;} 
@@ -34,7 +35,8 @@ TEST(Solver, calls_apply_for_all_moves)
   struct :Board{
     std::vector<Move> moves() const
     {
-      return {Move{},Move{}};
+      auto m = A::Move();
+      return {m,m};
     }
     bool isDone() const{return false;}
     Board apply(Move const & m) const
@@ -52,7 +54,7 @@ TEST(Solver, calls_apply_for_all_moves)
 TEST(Solver, recursive_call_on_return_value_of_apply)
 {
   struct :Board{
-    std::vector<Move> moves() const {return {Move{}};}
+    std::vector<Move> moves() const {return {A::Move()};}
     Board apply(Move const & m) const{
       ::Board ret;
       assert(ret.isDone());
@@ -90,7 +92,7 @@ TEST(Solver, call_apply_if_moves_not_empty)
   static int count{0};
   struct :Board{
     bool isDone() const {return true;}
-    std::vector<Move> moves() const {return {Move{}};}
+    std::vector<Move> moves() const {return {A::Move()};}
     Board apply(Move const & m) const{
       count++;
       return ::Board::apply(m);

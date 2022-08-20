@@ -1,2 +1,33 @@
 #pragma once
-class Move{};
+#include<cassert>
+
+struct Move
+{
+  unsigned int from;
+  unsigned int to;
+  Move(unsigned int from, unsigned int  to)
+    :from(from)
+    ,to(to)
+  {
+    assert(from<to);
+    assert(to<11);
+  }
+};
+
+namespace A{
+
+  struct Move{
+    unsigned int from{0};
+    unsigned int to{1};
+
+    ::Move get() const
+    {
+      return {from, to};
+    }
+    operator ::Move() const
+    {
+      return get();
+    }
+  };
+};
+

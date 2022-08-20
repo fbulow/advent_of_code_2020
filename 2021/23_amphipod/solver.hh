@@ -3,6 +3,7 @@
 #include<vector>
 #include<cassert>
 #include "result.hh"
+#include "move.hh"
 
 template<class BOARD>
 Result Solver(BOARD const &b)
@@ -19,7 +20,7 @@ Result Solver(BOARD const &b)
     {
       Result ret;
       for(auto const &x: m)
-	ret = std::min(ret, Solver(b.apply({})));
+	ret = std::min(ret, Solver(b.apply(A::Move{})));
       return ret;
     }
 }

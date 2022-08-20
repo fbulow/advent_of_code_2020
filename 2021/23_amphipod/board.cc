@@ -15,6 +15,6 @@ TEST(Board, increase_score_when_applying_move)
 
 
   EXPECT_THAT(sut.score(), Eq(0));
-  EXPECT_THAT(sut.steps({}), Eq(5));
-  ASSERT_THAT(sut.apply(Move{}).score(), Eq(5));
+  EXPECT_THAT(sut.steps(A::Move{}), Eq(5));
+  ASSERT_THAT(sut.apply(A::Move{}).score(), Eq(5));
 }
