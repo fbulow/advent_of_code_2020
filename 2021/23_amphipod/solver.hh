@@ -8,21 +8,12 @@
 template<class BOARD>
 Result Solver(BOARD const &b)
 {
-  auto m = b.moves();
-  if(m.empty())
-    {
-      if (b.isDone())
-	return b.score();
-      else
-	return {};
-    }
-  else
-    {
-      Result ret;
-      for(auto const &x: m)
-	ret = std::min(ret, Solver(b.apply(A::Move{})));
-      return ret;
-    }
+  if (b.isDone())
+    return b.score();
+  Result ret;
+  for(auto const &x: b.moves())
+    ret = std::min(ret, Solver(b.apply(A::Move{})));
+  return ret;
 }
 
 

@@ -68,6 +68,7 @@ TEST(Solver, recursive_call_on_return_value_of_apply)
 
       return ret;
     }
+    bool isDone() const {return false;}
     int score() const{
       return 5; // not zero
     }
@@ -93,7 +94,7 @@ TEST(Solver, do_not_call_apply_if_moves_empty)
 }
 
 
-TEST(Solver, call_apply_if_moves_not_empty)
+TEST(Solver, do_not_call_apply_if_done)
 {
   static int count{0};
   struct :Board{
@@ -106,7 +107,7 @@ TEST(Solver, call_apply_if_moves_not_empty)
   }b;
 
   Solver(b);
-  ASSERT_THAT(count, Eq(1));
+  ASSERT_THAT(count, Eq(0));
 }
 
 TEST(Solver, return_score_if_no_moves_and_isdone)
