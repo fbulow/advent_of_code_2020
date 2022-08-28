@@ -22,4 +22,16 @@ public:
     ret.score_= score_ + steps(m);
     return ret;
   }
+  using Column = int;
+  using Amphipod = char;
+  Amphipod a{'.'};
+  void set(Column c, Amphipod a)
+  {
+    this->a=a;
+  }
+  Amphipod getTop(Column c)
+  {
+    return a;
+  }
+  bool isBurrow(Column c) const;
 };
