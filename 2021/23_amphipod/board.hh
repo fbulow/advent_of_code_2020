@@ -8,7 +8,13 @@ class Board{
 public:
   bool isDone() const{return true;}
   Result score() const{return score_;}
-  std::vector<Move> moves() const {return {};}
+  std::vector<Move> moves() const {
+    std::vector<Move> ret;
+    for(int i=0;i<11;i++)
+      for(int j=0;j<i;j++)
+	ret.emplace_back(Move(j,i));
+    return ret;
+  }
   virtual Result steps(Move) const {return 0;}
   Board apply(Move const & m) const
   {

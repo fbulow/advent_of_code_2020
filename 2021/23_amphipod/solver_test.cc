@@ -125,6 +125,7 @@ TEST(Solver, return_nothing_if_failed)
 {
   struct :Board{
     bool isDone() const {return false;}
+    std::vector<Move> moves() const {return {};}
   }b;
   ASSERT_FALSE(Solver(b));
 }

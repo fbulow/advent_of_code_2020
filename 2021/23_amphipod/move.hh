@@ -14,6 +14,11 @@ struct Move
   }
 };
 
+inline bool operator==(Move const &a, Move const &b)
+{
+  return (a.from==b.from) and (a.to==b.to);
+}
+
 namespace A{
 
   struct Move{
