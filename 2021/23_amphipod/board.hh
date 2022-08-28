@@ -22,10 +22,13 @@ public:
     ret.score_= score_ + steps(m);
     return ret;
   }
-  using Column = int;
-  using Amphipod = char;
+
   Amphipod a{'.'};
-  void set(Column c, Amphipod a)
+  void pop(Column c)
+  {
+    a={'.'};
+  }
+  void put(Column c, Amphipod a)
   {
     this->a=a;
   }

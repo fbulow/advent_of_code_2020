@@ -50,10 +50,10 @@ TEST(Board, get_empty_space)
   EXPECT_THAT(sut.getTop(0), Eq('.'));
 }
 
-TEST(Board, set_coridor_and_get)
+TEST(Board, put_coridor_and_get)
 {
   Board sut;
-  sut.set(0, 'A');
+  sut.put(0, 'A');
   EXPECT_THAT(sut.getTop(0), Eq('A'));
 }
 
@@ -71,4 +71,12 @@ TEST(Board, column_is_burrow_all_cases)
   EXPECT_TRUE (sut.isBurrow(8));
   EXPECT_FALSE(sut.isBurrow(9));
   EXPECT_FALSE(sut.isBurrow(10));
+}
+
+TEST(Boad, pop_from_corridor)
+{
+  Board sut;
+  sut.put(0, 'A');
+  sut.pop(0);
+  EXPECT_THAT(sut.getTop(0), Eq('.'));
 }
