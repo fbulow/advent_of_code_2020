@@ -19,7 +19,29 @@ bool Board::isBurrow(Column c) const
 #include<gmock/gmock.h>
 using namespace testing;
 
+namespace A{
+  Column burrow()
+  {
+    return {2};
+  }
+}
 
+
+TEST(Board, two_amphipods_in_a_burrow_one_leaves_the_other_is_on_top)
+{
+  Board sut;
+  auto c = A::burrow();
+  sut.put(c, {'A'});
+  sut.put(c, {'B'});
+  sut.pop(c);
+  ASSERT_THAT(sut.getTop(c), Eq('A'));
+}
+
+TEST(A_Board, burrow_returns_a_burrow)
+{
+  Board sut;
+  ASSERT_TRUE(sut.isBurrow(A::burrow()));
+}
 
 TEST(Board, has_ten_times_nine_valid_moves)
 {

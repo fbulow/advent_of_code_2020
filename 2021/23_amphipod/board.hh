@@ -23,19 +23,20 @@ public:
     ret.score_= score_ + steps(m);
     return ret;
   }
-
-  Amphipod a{'.'};
+  std::vector<Amphipod> burrow;
   void pop(Column c)
   {
-    a={'.'};
+    burrow.pop_back();
   }
   void put(Column c, Amphipod a)
   {
-    this->a=a;
+    burrow.push_back(a);
   }
-  Amphipod getTop(Column c)
+  Amphipod getTop(Column c)const
   {
-    return a;
+    if(burrow.empty())
+      return '.';
+    return *std::prev(burrow.cend());
   }
   bool isBurrow(Column c) const;
 };
