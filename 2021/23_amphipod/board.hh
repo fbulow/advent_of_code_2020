@@ -2,6 +2,7 @@
 #include<vector>
 #include"move.hh"
 #include "result.hh"
+#include "types.hh"
 
 class Board{
   Result score_{0};
