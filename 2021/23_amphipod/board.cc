@@ -35,14 +35,13 @@ TEST(Board, different_columns_have_different_values)
   EXPECT_THAT(sut.getTop(10), Eq('.'));
 }
 
-TEST(Board, two_amphipods_in_a_burrow_one_leaves_the_other_is_on_top)
+TEST(Board, two_amphipods_in_a_space_one_leaves_the_other_is_on_top)
 {
-  Board sut;
-  auto c = A::burrow();
-  sut.put(c, {'A'});
-  sut.put(c, {'B'});
-  sut.pop(c);
-  ASSERT_THAT(sut.getTop(c), Eq('A'));
+  Space sut;
+  sut.put({'A'});
+  sut.put({'B'});
+  sut.pop();
+  ASSERT_THAT(sut.getTop(), Eq('A'));
 }
 
 TEST(A_Board, burrow_returns_a_burrow)
