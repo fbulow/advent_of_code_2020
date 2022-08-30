@@ -37,7 +37,10 @@ public:
   virtual Result steps(Move) const {return 0;}
   Board apply(Move const & m) const
   {
-    Board ret{};
+    Board ret(*this);
+    ret.put(m.to, getTop(m.from));
+    ret.spaces[m.from].pop();
+    
     ret.score_= score_ + steps(m);
     return ret;
   }

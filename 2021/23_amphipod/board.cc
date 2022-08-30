@@ -26,6 +26,16 @@ namespace A{
   }
 }
 
+
+TEST(Board, apply_move_where_from_is_set)
+{
+  Board b;
+  b.put(0,{'A'});
+  auto sut = b.apply({0,1});
+  EXPECT_THAT(sut.getTop(0), Eq('.'));
+  EXPECT_THAT(sut.getTop(1), Eq('A'));
+}
+
 TEST(Board, different_columns_have_different_values)
 {
   Board sut;
