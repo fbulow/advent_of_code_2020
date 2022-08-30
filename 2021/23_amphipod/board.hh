@@ -3,9 +3,27 @@
 #include"move.hh"
 #include "result.hh"
 #include "types.hh"
+#include <array>
+class Space: std::vector<Amphipod>
+{
+ public:
+  void pop()
+  {
+    pop_back();
+  }
+  void put(Amphipod a)
+  {
+    push_back(a);
+  }
+  Amphipod getTop()const
+  {
+    return empty()?'.':back();
+  }
+};
 
 class Board{
   Result score_{0};
+  std::array<Space, 11> spaces;
 public:
   bool isDone() const{return true;}
   Result score() const{return score_;}
@@ -23,20 +41,18 @@ public:
     ret.score_= score_ + steps(m);
     return ret;
   }
-  std::vector<Amphipod> burrow;
+
   void pop(Column c)
   {
-    burrow.pop_back();
+    spaces[c].pop();
   }
   void put(Column c, Amphipod a)
   {
-    burrow.push_back(a);
+    spaces[c].put(a);
   }
   Amphipod getTop(Column c)const
   {
-    if(burrow.empty())
-      return '.';
-    return *std::prev(burrow.cend());
+    return spaces[c].getTop();
   }
   bool isBurrow(Column c) const;
 };

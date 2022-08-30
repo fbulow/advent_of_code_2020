@@ -26,6 +26,14 @@ namespace A{
   }
 }
 
+TEST(Board, different_columns_have_different_values)
+{
+  Board sut;
+  sut.put(0,{'A'});
+
+  EXPECT_THAT(sut.getTop(0), Eq('A'));
+  EXPECT_THAT(sut.getTop(10), Eq('.'));
+}
 
 TEST(Board, two_amphipods_in_a_burrow_one_leaves_the_other_is_on_top)
 {
