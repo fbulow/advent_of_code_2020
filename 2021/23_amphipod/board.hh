@@ -6,14 +6,29 @@
 #include <array>
 class Space: std::vector<Amphipod>
 {
- public:
+  uint depth_;
+  Amphipod resident;
+public:
+  Space(uint depth=0, Amphipod resident='.')
+    :depth_(depth)
+    ,resident(resident)
+  {}
+
+  uint depth() const
+  {
+    return depth_-size();
+  }
+  
   void pop()
   {
     pop_back();
   }
   void put(Amphipod a)
   {
-    push_back(a);
+    if(a!=resident)
+      push_back(a);
+    else
+      depth_--;
   }
   Amphipod getTop()const
   {
