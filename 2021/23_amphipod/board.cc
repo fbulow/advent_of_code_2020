@@ -143,3 +143,18 @@ TEST(Space, depth_reduced_when_adding_non_resident_to_empty)
   sut.put('B');
   ASSERT_THAT(sut.depth(),Eq(1));
 }
+
+TEST(swapOk, ampipod)
+{
+  EXPECT_TRUE(swapOk('.','A'));
+  EXPECT_FALSE(swapOk('.','.'));
+  EXPECT_TRUE(swapOk('A','.'));
+}
+
+TEST(swapOk, Space)
+{
+  auto a = Space(1); a.put('A');
+  auto empty = Space(1);
+  
+  ASSERT_TRUE(swapOk(a,empty));
+}

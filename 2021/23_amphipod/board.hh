@@ -9,7 +9,7 @@ class Space: std::vector<Amphipod>
   uint depth_;
   Amphipod resident;
 public:
-  Space(uint depth=0, Amphipod resident='.')
+  Space(uint depth=1, Amphipod resident='.')
     :depth_(depth)
     ,resident(resident)
   {}
@@ -35,6 +35,16 @@ public:
     return empty()?'.':back();
   }
 };
+
+inline bool swapOk(Amphipod const& a, Amphipod const& b)
+{
+  return (a!='.') xor (b!='.');
+}
+
+inline bool swapOk(Space const& a, Space const& b)
+{
+  return swapOk(a.getTop(), b.getTop());
+}
 
 class Board{
   Result score_{0};
