@@ -8,11 +8,16 @@ class Space: std::vector<Amphipod>
 {
   uint depth_;
   Amphipod resident;
+  bool isHallway_;
 public:
   Space(uint depth=1, Amphipod resident='.')
     :depth_(depth)
     ,resident(resident)
+    ,isHallway_(depth==1)
   {}
+
+  bool isHallway() const
+  {return isHallway_;}
 
   uint depth() const
   {

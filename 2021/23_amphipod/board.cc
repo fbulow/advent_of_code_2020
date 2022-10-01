@@ -162,8 +162,24 @@ TEST(swapOk, Space_a_to_empy_hallway)
 
 TEST(swapOk, A_to_dorm_type_A_with_an_B_in_there)
 {
+  // Not ok to move A to home when there is something else there
+  
   auto a = Space(1); a.put('A');
   auto b = Space(2, 'A'); b.put('B');
 
   ASSERT_FALSE(swapOk(a,b)); // Move from a->b
 }
+
+TEST(space, is_hallway_or_not)
+{
+  EXPECT_TRUE(Space(1).isHallway());
+  EXPECT_FALSE(Space(2).isHallway());
+}
+
+// TEST(swapOk, not_ok_to_move_from_hallway_to_hallway)
+// {
+//   auto a = Space(1); a.put('A');
+//   auto b = Space(1);
+  
+//   ASSERT_FALSE(swapOk(a,b)); // Move from a->b
+// }
