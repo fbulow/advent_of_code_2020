@@ -151,10 +151,19 @@ TEST(swapOk, ampipod)
   EXPECT_TRUE(swapOk('A','.'));
 }
 
-TEST(swapOk, Space)
+TEST(swapOk, Space_a_to_empy_hallway)
 {
   auto a = Space(1); a.put('A');
   auto empty = Space(1);
   
   ASSERT_TRUE(swapOk(a,empty));
+}
+
+
+TEST(swapOk, A_to_dorm_type_A_with_an_B_in_there)
+{
+  auto a = Space(1); a.put('A');
+  auto b = Space(2, 'A'); b.put('B');
+
+  ASSERT_FALSE(swapOk(a,b)); // Move from a->b
 }
