@@ -48,7 +48,9 @@ inline bool swapOk(Amphipod const& a, Amphipod const& b)
 
 inline bool swapOk(Space const& a, Space const& b)
 {
-  return swapOk(a.getTop(), b.getTop());
+  return
+    (a.isHallway() xor b.isHallway())
+    && swapOk(a.getTop(), b.getTop());
 }
 
 class Board{

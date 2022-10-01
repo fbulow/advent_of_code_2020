@@ -154,7 +154,7 @@ TEST(swapOk, ampipod)
 TEST(swapOk, Space_a_to_empy_hallway)
 {
   auto a = Space(1); a.put('A');
-  auto empty = Space(1);
+  auto empty = Space(2);
   
   ASSERT_TRUE(swapOk(a,empty));
 }
@@ -176,10 +176,10 @@ TEST(space, is_hallway_or_not)
   EXPECT_FALSE(Space(2).isHallway());
 }
 
-// TEST(swapOk, not_ok_to_move_from_hallway_to_hallway)
-// {
-//   auto a = Space(1); a.put('A');
-//   auto b = Space(1);
+TEST(swapOk, not_ok_to_move_from_hallway_to_hallway)
+{
+  auto a = Space(1); a.put('A');
+  auto b = Space(1);
   
-//   ASSERT_FALSE(swapOk(a,b)); // Move from a->b
-// }
+  ASSERT_FALSE(swapOk(a,b)); // Move from a->b
+}
