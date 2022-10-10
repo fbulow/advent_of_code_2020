@@ -11,7 +11,8 @@ class Space: std::vector<Amphipod>
   bool isHallway_;
 public:
   Space(uint depth=1, Amphipod resident='.')
-    :depth_(depth)
+    :std::vector<Amphipod>()
+    ,depth_(depth)
     ,resident(resident)
     ,isHallway_(depth==1)
   {}
@@ -22,6 +23,14 @@ public:
   uint depth() const
   {
     return depth_-size();
+  }
+
+  bool isDone() const
+  {
+    if(isHallway())
+      return getTop()=='.';
+    else
+      return depth() == 0 ;
   }
   
   void pop()
@@ -57,7 +66,20 @@ class Board{
   Result score_{0};
   std::array<Space, 11> spaces;
 public:
-  bool isDone() const{return true;}
+  Board(int depth=4)
+  {
+    for(int i=0;i<11;i++)
+      if(isBurrow(i))
+	spaces[i] = Space(depth);
+      else
+	spaces[i] = Space(1);
+  }
+  bool isDone() const{
+    for(int i=0;i<11;i++)
+      if (not spaces[i].isDone())
+	return false;
+    return true;
+  }
   Result score() const{return score_;}
   std::vector<Move> moves() const {
     std::vector<Move> ret;

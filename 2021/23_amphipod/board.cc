@@ -183,3 +183,25 @@ TEST(swapOk, not_ok_to_move_from_hallway_to_hallway)
   
   ASSERT_FALSE(swapOk(a,b)); // Move from a->b
 }
+
+TEST(Space, hallway_isDone)
+{
+  Space sut(1);
+  EXPECT_TRUE (sut.isDone());
+  sut.put('A');
+  EXPECT_FALSE(sut.isDone());
+}
+
+// TEST(Board, isDone)
+// {
+//   Board sut;
+//   for(int i=0;i<4;i++)
+//     {
+//       sut.put(2, 'A');
+//       sut.put(4, 'B');
+//       sut.put(6, 'C');
+//       EXPECT_FALSE(sut.isDone());
+//       sut.put(8, 'D');
+//     }
+//   EXPECT_TRUE(sut.isDone());
+// }

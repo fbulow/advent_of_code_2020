@@ -12,7 +12,7 @@ Result Solver(BOARD const &b)
     return b.score();
   Result ret;
   for(auto const &x: b.moves())
-    ret = std::min(ret, Solver(b.apply(A::Move{})));
+    ret = std::min(ret, Solver(b.apply(x)));
   return ret;
 }
 

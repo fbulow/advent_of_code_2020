@@ -7,74 +7,53 @@ using namespace testing;
 
 TEST(Solver, return_smalles_number_of_steps)
 {
-  static int next_steps{0};
-  struct :Board{
-    std::vector<Move> moves() const
+  class OneMoveBoard{
+  public:
+    bool isDone_ = {false};
+    int score_{0};
+    bool isDone() const {return isDone_;}
+    int score() const {return score_;}
+    std::vector<int> moves() const
     {
-      auto m = A::Move();
-      return {m,m,m};
+      return {1,2,3,4};
     }
-    bool isDone() const{return false;}
-    Result steps(Move) const override {
-      switch(next_steps++)
-	{
-	case 0:return 6;
-	case 1:return 5;
-	case 2:return 7;
-	default:
-	  return 10;
-	}
+  
+    OneMoveBoard apply(int a) const
+    {
+      return OneMoveBoard{true, a};
     }
-
   } b;
 
   auto ret = Solver(b);
-  ASSERT_THAT(ret, Eq(5));
+  ASSERT_THAT(ret, Eq(1));
 
       
 }
 
 TEST(Solver, calls_apply_for_all_moves)
 {
-  static int apply_count{0};
+  static std::set<int> seen{};
+
+  class OneMoveBoard{
+  public:
+    
+    bool isDone_ = {false};
+    bool isDone() const {return isDone_;}
+    int score() const {return {};}
+    std::vector<int> moves() const
+    {
+      return {1,2,3,4};
+    }
   
-  struct :Board{
-    std::vector<Move> moves() const
+    OneMoveBoard apply(int a) const
     {
-      auto m = A::Move();
-      return {m,m};
-    }
-    bool isDone() const{return false;}
-    Board apply(Move const & m) const
-    {
-      apply_count++;
-      ::Board ret;
-      assert(ret.isDone());
-      return ret;
+      seen.insert(a);
+      return OneMoveBoard{true};
     }
   } b;
+
   Solver(b);
-  ASSERT_THAT(apply_count, Eq(2));
-}
-
-TEST(Solver, recursive_call_on_return_value_of_apply)
-{
-  struct :Board{
-    std::vector<Move> moves() const {return {A::Move()};}
-    Board apply(Move const & m) const{
-      ::Board ret;
-      assert(ret.isDone());
-      assert(ret.score() == 0 );
-
-      return ret;
-    }
-    bool isDone() const {return false;}
-    int score() const{
-      return 5; // not zero
-    }
-
-  } b;
-  ASSERT_THAT(Solver(b), Eq(0));
+  ASSERT_THAT(seen.size(), Eq(4));
 }
 
 TEST(Solver, do_not_call_apply_if_moves_empty)
