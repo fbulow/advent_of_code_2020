@@ -16,29 +16,36 @@ public:
 
 class Space: ConstFullDepth, std::vector<Amphipod>
 {
-  Amphipod resident;
+  Amphipod resident_;
   bool isHallway_;
 public:
   Space(uint depth=1, Amphipod resident='.')
     :ConstFullDepth(depth)
     ,std::vector<Amphipod>()
-    ,resident(resident)
+    ,resident_(resident)
     ,isHallway_(depth==1)
   {
   }
   bool canMoveTo(Space const & other) const
   {
     auto const a = getTop();
+
+    if (not (isHallway() xor other.isHallway()))
+      return false;
     if(a=='.')
       return false;
     else if(not other.onlyResidents())
       return false;
     else if(other.availableDepth()==0)
       return false;
+    else if (other.resident() == '.')
+      return true;
     else
-      return other.resident==a;
+      return other.resident()==a;
   }
 
+  Amphipod resident() const {return resident_;}
+  
   bool isHallway() const
   {return fullDepth()==1;}
 
@@ -49,7 +56,7 @@ public:
 
   bool isDone() const
   {
-    if(resident=='.')
+    if(resident_=='.')
       return availableDepth()>0;
     else
       return (availableDepth()==0) and
@@ -59,7 +66,7 @@ public:
   bool onlyResidents() const
   {
     return all_of(cbegin(), cend(),
-		  [this](Amphipod a){return a==resident;});
+		  [this](Amphipod a){return a==resident_;});
   }
   
   void pop()

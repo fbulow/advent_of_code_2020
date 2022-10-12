@@ -20,16 +20,10 @@ inline unsigned int costPerStep(Amphipod a)
     }
   assert(false);
 }
-inline bool swapOk(Amphipod const& a, Amphipod const& b)
-{
-  return (a!='.') xor (b!='.');
-}
 
 inline bool swapOk(Space const& a, Space const& b)
 {
-  return
-    (a.isHallway() xor b.isHallway())
-    && swapOk(a.getTop(), b.getTop());
+  return a.canMoveTo(b) or b.canMoveTo(a);
 }
 
 class Board{

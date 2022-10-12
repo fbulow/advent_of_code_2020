@@ -157,23 +157,6 @@ TEST(Boad, pop_from_corridor)
   EXPECT_THAT(sut.getTop(0), Eq('.'));
 }
 
-
-TEST(swapOk, ampipod)
-{
-  EXPECT_TRUE(swapOk('.','A'));
-  EXPECT_FALSE(swapOk('.','.'));
-  EXPECT_TRUE(swapOk('A','.'));
-}
-
-TEST(swapOk, Space_a_to_empy_hallway)
-{
-  auto a = Space(1); a.put('A');
-  auto empty = Space(2);
-  
-  ASSERT_TRUE(swapOk(a,empty));
-}
-
-
 TEST(swapOk, A_to_dorm_type_A_with_an_B_in_there)
 {
   // Not ok to move A to home when there is something else there
@@ -408,13 +391,26 @@ TEST(Board, move_to_corridor)
 
 TEST(Board, illegalMoves)
 {
+  //                01234567890
   Board const sut("#############"
-		  "#...........#"
+		  "#.........A.#"
 		  "###.#.#.#.###"
 		  "  #.#.#.#.#  "
 		  "  #.#.#.#.#  "
-		  "  #D#C#B#A#  "
+		  "  #D#.#B#A#  "
 		  "  #########  ");
-  EXPECT_FALSE(sut.apply({0,1}).score());
-  EXPECT_FALSE(sut.apply({2,4}).score());
+  //                01234567890
+  EXPECT_FALSE(sut.apply({0,1}).score()); // hall to hall
+  EXPECT_FALSE(sut.apply({2,4}).score()); // burrow to burrow
+  EXPECT_FALSE(sut.apply({2,9}).score()); // to occupied burrow
+  EXPECT_FALSE(sut.apply({4,9}).score()); // to wrong burrow
+  
+}
+
+TEST(swapOk, not_ok_because_burrow_is_of_wrong_type)
+{
+  Space burrow(2, 'A');
+  Space hallway(1, '.');
+  hallway.put('B');
+  EXPECT_FALSE(swapOk(burrow, hallway));
 }
