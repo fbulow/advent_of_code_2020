@@ -39,7 +39,7 @@ public:
     else if(other.availableDepth()==0)
       return false;
     else if (other.resident() == '.')
-      return true;
+      return not onlyResidents();
     else
       return other.resident()==a;
   }
