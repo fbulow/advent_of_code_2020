@@ -19,6 +19,12 @@ Board::Board(int depth)
     else
       spaces[i] = Space(1);
 }
+Board Board::failed()
+{
+  Board ret(0);
+  ret.score_ = Result();
+  return ret;
+}
 
 
 bool Board::isValidVisual(string_view vi) const
@@ -376,4 +382,11 @@ TEST(Board, visual_first_hallways)
 
   }
 
+}
+
+TEST(Board, failed)
+{
+  auto const sut  = Board::failed();
+  ASSERT_TRUE(sut.isDone());
+  ASSERT_FALSE(sut.score());
 }
