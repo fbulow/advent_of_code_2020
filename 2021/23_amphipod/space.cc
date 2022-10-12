@@ -35,3 +35,13 @@ TEST(Space, burrow_isDone_false_when_none_resident_is_there)
   sut.put('A');
   EXPECT_FALSE(sut.isDone());
 }
+
+TEST(Space, putting_empty_space_does_not_reduce_depth)
+{
+  Space sut(1);
+  EXPECT_THAT(sut.availableDepth(), Eq(1));
+  sut.put('.');
+  EXPECT_THAT(sut.availableDepth(), Eq(1));
+  sut.put('A');
+  EXPECT_THAT(sut.availableDepth(), Eq(0));
+}

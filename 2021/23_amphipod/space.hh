@@ -56,6 +56,7 @@ public:
   }
   void put(Amphipod a)
   {
+    if(a=='.') return; // DO nothing for if noting is put.
     assert(availableDepth()>0);
     push_back(a);
   }
