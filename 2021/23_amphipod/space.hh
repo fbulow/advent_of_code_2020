@@ -26,6 +26,18 @@ public:
     ,isHallway_(depth==1)
   {
   }
+  bool canMoveTo(Space const & other) const
+  {
+    auto const a = getTop();
+    if(a=='.')
+      return false;
+    else if(not other.onlyResidents())
+      return false;
+    else if(other.availableDepth()==0)
+      return false;
+    else
+      return other.resident==a;
+  }
 
   bool isHallway() const
   {return fullDepth()==1;}

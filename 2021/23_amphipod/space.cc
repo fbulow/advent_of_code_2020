@@ -61,3 +61,27 @@ TEST(Space, burrow_stepsToCorridor)
   sut.put('A');
   ASSERT_EQ(sut.stepsToCorridor(), 2);
 }
+
+
+TEST(Space, canMoveTo)
+{
+  Space hallway(1);
+  EXPECT_FALSE(hallway.canMoveTo(Space(2,'A')));
+
+  hallway.put('A');
+  EXPECT_TRUE(hallway.canMoveTo(Space(2,'A')));
+  EXPECT_FALSE(hallway.canMoveTo(Space(2,'B'))); //Wrong burrow
+  EXPECT_FALSE(hallway.canMoveTo(Space(0,'A'))); //is full
+}
+
+TEST(Space, canMoveTo_burrow_with_a_bad_apple)
+{
+  Space hallway(1);
+  hallway.put('A');
+
+  Space burrow(3, 'A');
+  burrow.put('B');
+  burrow.put('A');
+
+  EXPECT_FALSE(hallway.canMoveTo(burrow)); //there is a 'B' in there
+}
