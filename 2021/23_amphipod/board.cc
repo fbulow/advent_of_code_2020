@@ -11,9 +11,10 @@ Board::Board(std::string_view vi)
 
 Board::Board(int depth)
 {
+  char c='A';
   for(int i=0;i<11;i++)
     if(isBurrow(i))
-      spaces[i] = Space(depth);
+      spaces[i] = Space(depth,c++);
     else
       spaces[i] = Space(1);
 }
@@ -236,6 +237,7 @@ TEST(Space, hallway_isDone)
   EXPECT_FALSE(sut.isDone());
 }
 
+
 TEST(Board, isDone)
 {
   Board sut;
@@ -396,4 +398,11 @@ TEST(Board, visual_first_hallways)
 
   }
 
+}
+TEST(Space, burrow_isDone)
+{
+  Space sut(2,'A');
+  sut.put('A');
+  sut.put('A');
+  EXPECT_TRUE(sut.isDone());
 }

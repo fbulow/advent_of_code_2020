@@ -30,10 +30,10 @@ public:
 
   bool isDone() const
   {
-    if(isHallway())
-      return getTop()=='.';
+    if(depth()==0)
+      return not isHallway();
     else
-      return depth() == 0 ;
+      return getTop()==resident;
   }
   
   void pop()
