@@ -15,6 +15,7 @@ add_executable(${PROJECT_NAME}
   board.cc
   move.cc
   result.cc
+  space.cc
 )
 
 target_compile_options(${PROJECT_NAME}
