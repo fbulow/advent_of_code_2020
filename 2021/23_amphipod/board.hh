@@ -4,6 +4,9 @@
 #include "result.hh"
 #include "types.hh"
 #include <array>
+
+using namespace std;
+
 class Space: std::vector<Amphipod>
 {
   uint depth_;
@@ -65,16 +68,19 @@ inline bool swapOk(Space const& a, Space const& b)
 class Board{
   Result score_{0};
   std::array<Space, 11> spaces;
-public:
-  Board(int depth=4)
+  bool isValidVisual(string_view vi) const;
+  void readColumn(std::string_view vi, int col)
   {
-    for(int i=0;i<11;i++)
-      if(isBurrow(i))
-	spaces[i] = Space(depth);
-      else
-	spaces[i] = Space(1);
-  }
+    size_t offset = col-2;
 
+    put(col, vi[68+offset]);
+    put(col, vi[55+offset]);
+    put(col, vi[42+offset]);
+    put(col, vi[29+offset]);
+  }
+public:
+  Board(std::string_view visual);
+  Board(int depth=4);
   bool isDone() const;
   Result score() const{return score_;}
 

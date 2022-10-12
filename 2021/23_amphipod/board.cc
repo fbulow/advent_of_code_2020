@@ -1,4 +1,41 @@
 #include "board.hh"
+Board::Board(std::string_view vi)
+{
+  assert(isValidVisual(vi));
+  for(int i=0;i<11;i++)
+    if(isBurrow(i))
+      readColumn(vi, i);
+    else
+      put(i, vi[14+i]);
+}
+
+Board::Board(int depth)
+{
+  for(int i=0;i<11;i++)
+    if(isBurrow(i))
+      spaces[i] = Space(depth);
+    else
+      spaces[i] = Space(1);
+}
+
+
+bool Board::isValidVisual(string_view vi) const
+{
+  //"#############"    
+  //"#...........#"
+  //"###.#.#.#.###"
+  //"  #.#.#.#.#  "
+  //"  #.#.#.#.#  "
+  //"  #.#.#.#.#  "
+  //"  #########  "
+  if (vi.size()!=91) return false;
+  for(size_t i : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 25, 26, 27, 28, 30, 32, 34, 36, 37, 38, 41, 43, 45, 47, 49, 54, 56, 58, 60, 62, 67, 69, 71, 73, 75, 80, 81, 82, 83, 84, 85, 86, 87, 88})
+    if(vi[i]!='#') return false;
+  for(size_t i : {39, 40, 50, 51, 52, 53, 63, 64, 65, 66, 76, 77, 78, 79, 89, 90, 39, 40, 50, 51, 52, 53, 63, 64, 65, 66, 76, 77, 78, 79, 89, 90})
+    if(vi[i]!=' ') return false;
+  return true;
+}
+
 bool Board::isDone() const
 {
   for(int i=0;i<11;i++)
@@ -211,4 +248,152 @@ TEST(Board, isDone)
       sut.put(8, 'D');
     }
   EXPECT_TRUE(sut.isDone());
+}
+
+TEST(Board, visual_ctor_empty)
+{
+    Board sut("#############"
+	      "#...........#"
+	      "###.#.#.#.###"
+	      "  #.#.#.#.#  "
+	      "  #.#.#.#.#  "
+	      "  #.#.#.#.#  "
+	      "  #########  ");
+    for(int i=0;i<11;i++)
+      EXPECT_THAT(sut.getTop(i), Eq('.'));
+}
+
+TEST(Board, visual_ctor_first_burrow)
+{
+  Board sut("#############"
+	    "#...........#"
+	    "###A#.#.#.###"
+	    "  #B#.#.#.#  "
+	    "  #C#.#.#.#  "
+	    "  #D#.#.#.#  "
+	    "  #########  ");
+  EXPECT_THAT(sut.getTop(2), Eq('A'));
+  sut.pop(2);
+  EXPECT_THAT(sut.getTop(2), Eq('B'));
+  sut.pop(2);
+  EXPECT_THAT(sut.getTop(2), Eq('C'));
+  sut.pop(2);
+  EXPECT_THAT(sut.getTop(2), Eq('D'));
+  sut.pop(2);
+  EXPECT_THAT(sut.getTop(2), Eq('.'));
+}
+
+TEST(Board, visual_ctor_second_burrow)
+{
+  Board sut("#############"
+	    "#...........#"
+	    "###.#A#.#.###"
+	    "  #.#B#.#.#  "
+	    "  #.#C#.#.#  "
+	    "  #.#D#.#.#  "
+	    "  #########  ");
+  EXPECT_THAT(sut.getTop(4), Eq('A'));
+  sut.pop(4);
+  EXPECT_THAT(sut.getTop(4), Eq('B'));
+  sut.pop(4);
+  EXPECT_THAT(sut.getTop(4), Eq('C'));
+  sut.pop(4);
+  EXPECT_THAT(sut.getTop(4), Eq('D'));
+  sut.pop(4);
+  EXPECT_THAT(sut.getTop(4), Eq('.'));
+}
+
+TEST(Board, visual_ctor_third_burrow)
+{
+  Board sut("#############"
+	    "#...........#"
+	    "###.#.#A#.###"
+	    "  #.#.#B#.#  "
+	    "  #.#.#C#.#  "
+	    "  #.#.#D#.#  "
+	    "  #########  ");
+  EXPECT_THAT(sut.getTop(6), Eq('A'));
+  sut.pop(6);
+  EXPECT_THAT(sut.getTop(6), Eq('B'));
+  sut.pop(6);
+  EXPECT_THAT(sut.getTop(6), Eq('C'));
+  sut.pop(6);
+  EXPECT_THAT(sut.getTop(6), Eq('D'));
+  sut.pop(6);
+  EXPECT_THAT(sut.getTop(6), Eq('.'));
+}
+
+TEST(Board, visual_ctor_fourth_and_last_burrow)
+{
+  Board sut("#############"
+	    "#...........#"
+	    "###.#.#.#A###"
+	    "  #.#.#.#B#  "
+	    "  #.#.#.#C#  "
+	    "  #.#.#.#D#  "
+	    "  #########  ");
+  EXPECT_THAT(sut.getTop(8), Eq('A'));
+  sut.pop(8);
+  EXPECT_THAT(sut.getTop(8), Eq('B'));
+  sut.pop(8);
+  EXPECT_THAT(sut.getTop(8), Eq('C'));
+  sut.pop(8);
+  EXPECT_THAT(sut.getTop(8), Eq('D'));
+  sut.pop(8);
+  EXPECT_THAT(sut.getTop(8), Eq('.'));
+}
+
+TEST(Board, visual_first_hallways)
+{
+  {
+    Board sut("#############"
+	      "#A..........#"
+	      "###.#.#.#.###"
+	      "  #.#.#.#.#  "
+	      "  #.#.#.#.#  "
+	      "  #.#.#.#.#  "
+	      "  #########  ");
+    EXPECT_THAT(sut.getTop(0), Eq('A'));
+    sut.pop(0);
+    EXPECT_THAT(sut.getTop(0), Eq('.'));
+  }
+  {
+    Board sut("#############"
+	      "#.A.........#"
+	      "###.#.#.#.###"
+	      "  #.#.#.#.#  "
+	      "  #.#.#.#.#  "
+	      "  #.#.#.#.#  "
+	      "  #########  ");
+    EXPECT_THAT(sut.getTop(1), Eq('A'));
+    sut.pop(1);
+    EXPECT_THAT(sut.getTop(1), Eq('.'));
+  }
+  {
+    Board sut("#############"
+	      "#...A.......#"
+	      "###.#.#.#.###"
+	      "  #.#.#.#.#  "
+	      "  #.#.#.#.#  "
+	      "  #.#.#.#.#  "
+	      "  #########  ");
+    EXPECT_THAT(sut.getTop(3), Eq('A'));
+    sut.pop(3);
+    EXPECT_THAT(sut.getTop(3), Eq('.'));
+  }
+  {
+    Board sut("#############"
+	      "#.....A.B.CD#"
+	      "###.#.#.#.###"
+	      "  #.#.#.#.#  "
+	      "  #.#.#.#.#  "
+	      "  #.#.#.#.#  "
+	      "  #########  ");
+    EXPECT_THAT(sut.getTop(5), Eq('A'));
+    EXPECT_THAT(sut.getTop(7), Eq('B'));
+    EXPECT_THAT(sut.getTop(9), Eq('C'));
+    EXPECT_THAT(sut.getTop(10), Eq('D'));
+
+  }
+
 }
