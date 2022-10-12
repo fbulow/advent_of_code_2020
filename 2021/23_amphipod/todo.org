@@ -1,3 +1,2 @@
+* NEXT Board visual ctor
 
-* 
-** multiple scores for different moves

@@ -1,5 +1,12 @@
 #include "board.hh"
-
+bool Board::isDone() const
+{
+  for(int i=0;i<11;i++)
+    if (not spaces[i].isDone())
+      return false;
+  return true;
+}
+ 
 bool Board::isBurrow(Column c) const
 {
   switch(c)
@@ -192,16 +199,16 @@ TEST(Space, hallway_isDone)
   EXPECT_FALSE(sut.isDone());
 }
 
-// TEST(Board, isDone)
-// {
-//   Board sut;
-//   for(int i=0;i<4;i++)
-//     {
-//       sut.put(2, 'A');
-//       sut.put(4, 'B');
-//       sut.put(6, 'C');
-//       EXPECT_FALSE(sut.isDone());
-//       sut.put(8, 'D');
-//     }
-//   EXPECT_TRUE(sut.isDone());
-// }
+TEST(Board, isDone)
+{
+  Board sut;
+  for(int i=0;i<4;i++)
+    {
+      sut.put(2, 'A');
+      sut.put(4, 'B');
+      sut.put(6, 'C');
+      EXPECT_FALSE(sut.isDone());
+      sut.put(8, 'D');
+    }
+  EXPECT_TRUE(sut.isDone());
+}

@@ -74,14 +74,12 @@ public:
       else
 	spaces[i] = Space(1);
   }
-  bool isDone() const{
-    for(int i=0;i<11;i++)
-      if (not spaces[i].isDone())
-	return false;
-    return true;
-  }
+
+  bool isDone() const;
   Result score() const{return score_;}
-  std::vector<Move> moves() const {
+
+  std::vector<Move> moves() const
+  {
     std::vector<Move> ret;
     for(int i=0;i<11;i++)
       for(int j=0;j<i;j++)
