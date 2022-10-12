@@ -4,18 +4,18 @@
 
 using namespace testing;
 
-TEST(Space, depth_reduced_when_adding_resident_to_empty)
+TEST(Space, availableDepth_reduced_when_adding_resident_to_empty)
 {
   Space sut(2, 'A');
-  ASSERT_THAT(sut.depth(),Eq(2));
+  ASSERT_THAT(sut.availableDepth(),Eq(2));
   sut.put('A');
-  ASSERT_THAT(sut.depth(),Eq(1));
+  ASSERT_THAT(sut.availableDepth(),Eq(1));
 }
 
-TEST(Space, depth_reduced_when_adding_non_resident_to_empty)
+TEST(Space, availableDepth_reduced_when_adding_non_resident_to_empty)
 {
   Space sut(2, 'A');
-  ASSERT_THAT(sut.depth(),Eq(2));
+  ASSERT_THAT(sut.availableDepth(),Eq(2));
   sut.put('B');
-  ASSERT_THAT(sut.depth(),Eq(1));
+  ASSERT_THAT(sut.availableDepth(),Eq(1));
 }

@@ -1,5 +1,6 @@
 #include "board.hh"
 Board::Board(std::string_view vi)
+  :Board(4)
 {
   assert(isValidVisual(vi));
   for(int i=0;i<11;i++)
@@ -92,7 +93,7 @@ TEST(Board, different_columns_have_different_values)
 
 TEST(Board, two_amphipods_in_a_space_one_leaves_the_other_is_on_top)
 {
-  Space sut;
+  Space sut(2);
   sut.put({'A'});
   sut.put({'B'});
   sut.pop();
