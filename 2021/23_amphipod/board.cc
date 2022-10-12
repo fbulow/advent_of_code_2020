@@ -377,10 +377,3 @@ TEST(Board, visual_first_hallways)
   }
 
 }
-TEST(Space, burrow_isDone)
-{
-  Space sut(2,'A');
-  sut.put('A');
-  sut.put('A');
-  EXPECT_TRUE(sut.isDone());
-}

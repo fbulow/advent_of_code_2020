@@ -19,3 +19,19 @@ TEST(Space, availableDepth_reduced_when_adding_non_resident_to_empty)
   sut.put('B');
   ASSERT_THAT(sut.availableDepth(),Eq(1));
 }
+
+TEST(Space, burrow_isDone)
+{
+    Space sut(2,'A');
+    sut.put('A');
+    sut.put('A');
+    EXPECT_TRUE(sut.isDone());
+}
+
+TEST(Space, burrow_isDone_false_when_none_resident_is_there)
+{
+  Space sut(2,'A');
+  sut.put('B');
+  sut.put('A');
+  EXPECT_FALSE(sut.isDone());
+}

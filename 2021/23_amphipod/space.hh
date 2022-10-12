@@ -41,7 +41,13 @@ public:
       return availableDepth()>0;
     else
       return (availableDepth()==0) and
-	(getTop()==resident);
+	onlyResidents();
+  }
+
+  bool onlyResidents() const
+  {
+    return all_of(cbegin(), cend(),
+		  [this](Amphipod a){return a==resident;});
   }
   
   void pop()
