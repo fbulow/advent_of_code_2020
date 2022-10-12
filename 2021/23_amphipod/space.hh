@@ -26,6 +26,19 @@ public:
     ,isHallway_(depth==1)
   {
   }
+
+  bool moveTo(Space & other)
+  {
+    if( not  canMoveTo(other))
+      return false;
+    else
+      {
+	other.put(getTop());
+	pop();
+	return true;
+      }
+  }
+  
   bool canMoveTo(Space const & other) const
   {
     auto const a = getTop();

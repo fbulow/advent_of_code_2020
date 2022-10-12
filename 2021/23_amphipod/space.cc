@@ -94,3 +94,17 @@ TEST(Space, canMoveTo_burrow_with_a_bad_apple)
 
   EXPECT_FALSE(hallway.canMoveTo(burrow)); //there is a 'B' in there
 }
+
+TEST(Space, moveTo)
+{
+  Space hallway(1);
+  hallway.put('A');
+
+  Space burrow(3, 'A');
+  ASSERT_TRUE(hallway.moveTo(burrow));
+  ASSERT_THAT(hallway.getTop(), Eq('.'));
+  ASSERT_THAT(burrow.getTop(), Eq('A'));
+
+  ASSERT_FALSE(burrow.moveTo(hallway));
+  
+}

@@ -1,2 +1,5 @@
-* NEXT Board visual ctor
+* DONE Board visual ctor
+* NEXT make transfer between spaces.... 
+* NEXT Road is free?
+** Checked by Board
 
