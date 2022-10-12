@@ -12,6 +12,11 @@ struct Move
     assert(from<to);
     assert(to<11);
   }
+
+  unsigned int distance() const
+  {
+    return to-from;
+  }
 };
 
 inline bool operator==(Move const &a, Move const &b)

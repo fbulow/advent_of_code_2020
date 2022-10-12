@@ -44,6 +44,12 @@ Result operator+(Result a, Result const & b)
   a+=b;
   return a;
 }
+inline
+Result operator+(Result a, unsigned int b)
+{
+  a+=b;
+  return a;
+}
 
 inline
 bool operator<(Result const & a, Result const & b)

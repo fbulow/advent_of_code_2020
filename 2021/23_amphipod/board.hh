@@ -5,6 +5,21 @@
 #include <array>
 #include "space.hh"
 
+inline unsigned int costPerStep(Amphipod a)
+{
+  switch(a)
+    {
+    case 'A':
+      return 1;
+    case 'B':
+      return 10;
+    case 'C':
+      return 100;
+    case 'D':
+      return 1000;
+    }
+  assert(false);
+}
 inline bool swapOk(Amphipod const& a, Amphipod const& b)
 {
   return (a!='.') xor (b!='.');
@@ -38,6 +53,11 @@ public:
   bool isDone() const;
   Result score() const{return score_;}
 
+  bool swapOk(Move const &m) const
+  {
+    return ::swapOk(spaces[m.from], spaces[m.to]);
+  }
+  
   std::vector<Move> moves() const
   {
     std::vector<Move> ret;
@@ -46,14 +66,27 @@ public:
 	ret.emplace_back(Move(j,i));
     return ret;
   }
-  virtual Result steps(Move) const {return 0;}
+  virtual Result steps(Move const&m) const {
+    return
+      spaces[m.from].stepsToCorridor()+
+      spaces[m.to].stepsToCorridor()+
+      m.distance();
+  }
+
+  Amphipod amphipod(Move const & m) const
+  {
+    return getTop(m.from)+getTop(m.to)-'.';
+  }
+  
   Board apply(Move const & m) const
   {
+    if (not swapOk(m))
+      return Board::failed();
     Board ret(*this);
     ret.put(m.to, getTop(m.from));
     ret.spaces[m.from].pop();
     
-    ret.score_= score_ + steps(m);
+    ret.score_= score_ + steps(m)*costPerStep(amphipod(m));
     return ret;
   }
 
@@ -71,3 +104,4 @@ public:
   }
   bool isBurrow(Column c) const;
 };
+

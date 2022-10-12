@@ -83,9 +83,9 @@ TEST(Board, apply_move_where_from_is_set)
 {
   Board b;
   b.put(0,{'A'});
-  auto sut = b.apply({0,1});
+  auto sut = b.apply({0,2});
   EXPECT_THAT(sut.getTop(0), Eq('.'));
-  EXPECT_THAT(sut.getTop(1), Eq('A'));
+  EXPECT_THAT(sut.getTop(2), Eq('A'));
 }
 
 TEST(Board, different_columns_have_different_values)
@@ -119,21 +119,6 @@ TEST(Board, has_ten_times_nine_valid_moves)
   EXPECT_THAT(sut.moves(), Contains(Move{0,2}));
 }
 
-
-TEST(Board, increase_score_when_applying_move)
-{
-  struct :Board
-  {
-    Result steps(Move) const override {
-      return 5;
-    }
-  } sut;
-
-
-  EXPECT_THAT(sut.score(), Eq(0));
-  EXPECT_THAT(sut.steps(A::Move{}), Eq(5));
-  ASSERT_THAT(sut.apply(A::Move{}).score(), Eq(5));
-}
 
 TEST(Board, get_empty_space)
 {
@@ -384,9 +369,52 @@ TEST(Board, visual_first_hallways)
 
 }
 
+
 TEST(Board, failed)
 {
   auto const sut  = Board::failed();
   ASSERT_TRUE(sut.isDone());
   ASSERT_FALSE(sut.score());
+}
+
+TEST(costPerStep, all_cases)
+{
+  EXPECT_THAT(costPerStep('A'), Eq(1));
+  EXPECT_THAT(costPerStep('B'), Eq(10));
+  EXPECT_THAT(costPerStep('C'), Eq(100));
+  EXPECT_THAT(costPerStep('D'), Eq(1000));
+}
+
+TEST(Board, move_to_corridor)
+{
+  Board sut("#############"
+	    "#...........#"
+	    "###B#C#B#D###"
+	    "  #D#C#B#A#  "
+	    "  #D#B#A#C#  "
+	    "  #A#D#C#A#  "
+	    "  #########  ");
+
+  Move m{8,10};
+  
+  EXPECT_THAT(sut.steps(m),
+	      Eq(3));
+  
+  EXPECT_THAT(sut.amphipod(m), Eq('D'));
+  
+  EXPECT_THAT(sut.apply(m).score(), Eq(3000));
+}
+
+
+TEST(Board, illegalMoves)
+{
+  Board const sut("#############"
+		  "#...........#"
+		  "###.#.#.#.###"
+		  "  #.#.#.#.#  "
+		  "  #.#.#.#.#  "
+		  "  #D#C#B#A#  "
+		  "  #########  ");
+  EXPECT_FALSE(sut.apply({0,1}).score());
+  EXPECT_FALSE(sut.apply({2,4}).score());
 }
