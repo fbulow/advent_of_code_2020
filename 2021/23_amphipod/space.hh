@@ -64,4 +64,12 @@ public:
   {
     return empty()?'.':back();
   }
+  uint stepsToCorridor() const
+  {
+    if(isHallway())
+      return 0;
+    else
+      return availableDepth()+1;
+  }
+
 };

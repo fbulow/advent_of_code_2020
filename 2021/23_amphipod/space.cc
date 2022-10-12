@@ -45,3 +45,19 @@ TEST(Space, putting_empty_space_does_not_reduce_depth)
   sut.put('A');
   EXPECT_THAT(sut.availableDepth(), Eq(0));
 }
+
+TEST(Space, corridor_stepsToCorridor)
+{
+  Space sut(1);
+  sut.put('A');
+  ASSERT_EQ(sut.stepsToCorridor(), 0);
+}
+
+TEST(Space, burrow_stepsToCorridor)
+{
+  Space sut(3);
+  sut.put('A');
+  ASSERT_EQ(sut.stepsToCorridor(), 3);
+  sut.put('A');
+  ASSERT_EQ(sut.stepsToCorridor(), 2);
+}
