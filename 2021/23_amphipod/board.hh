@@ -42,6 +42,9 @@ class Board{
 public:
   Board(std::string_view visual);
   Board(int depth=4);
+
+  size_t burrow(Amphipod a) const;
+
   static Board failed();
 
   bool isDone() const;

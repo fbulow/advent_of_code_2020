@@ -13,12 +13,28 @@ Board::Board(std::string_view vi)
 Board::Board(int depth)
 {
   char c='A';
-  for(int i=0;i<11;i++)
+  for(size_t i=0;i<11;i++)
     if(isBurrow(i))
-      spaces[i] = Space(depth,c++);
+      {
+	assert(burrow(c) == i);
+	spaces[i] = Space(depth,c++);
+      }
     else
       spaces[i] = Space(1);
 }
+size_t Board::burrow(Amphipod a) const
+{
+  switch(a)
+    {
+    case'A': return 2;
+    case'B': return 4;
+    case'C': return 6;
+    case'D': return 8;
+    }
+  assert(false);
+}
+
+
 Board Board::failed()
 {
   Board ret(0);
@@ -418,4 +434,24 @@ TEST(swapOk, not_ok_because_burrow_is_of_wrong_type)
   Space hallway(1, '.');
   hallway.put('B');
   EXPECT_FALSE(swapOk(burrow, hallway));
+}
+
+TEST(Board, burrow__Amphipod_to_burrow_index_mapping)
+{
+
+  //                01234567890
+  Board const sut("#############"
+		  "#...........#"
+		  "###.#.#.#.###"
+		  "  #.#.#.#.#  "
+		  "  #.#.#.#.#  "
+		  "  #.#.#.#.#  "
+		  "  #########  ");
+  //                01234567890
+  //                  A B C D
+
+  EXPECT_THAT(sut.burrow('A'), Eq(2));
+  EXPECT_THAT(sut.burrow('B'), Eq(4));
+  EXPECT_THAT(sut.burrow('C'), Eq(6));
+  EXPECT_THAT(sut.burrow('D'), Eq(8));
 }
