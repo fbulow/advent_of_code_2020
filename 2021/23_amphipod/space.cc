@@ -108,3 +108,14 @@ TEST(Space, moveTo)
   ASSERT_FALSE(burrow.moveTo(hallway));
   
 }
+
+TEST(Space, hard_move)
+{
+  Space from(2,'A');
+  from.put('A');
+  from.put('B');
+
+  Space to(1);
+
+  
+}

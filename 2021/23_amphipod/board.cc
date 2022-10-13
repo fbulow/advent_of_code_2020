@@ -537,4 +537,3 @@ TEST(Board, example_first_step)
 		  "  #A#B#C#D#  "
 		  "  #########  ").steps({9,8}), 2);
 }
-

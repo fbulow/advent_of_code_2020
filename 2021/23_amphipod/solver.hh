@@ -6,13 +6,14 @@
 #include "move.hh"
 
 template<class BOARD>
-Result Solver(BOARD const &b)
+Result Solver(BOARD const &b, Result ret={})
 {
-  if (b.isDone())
+  if (b.score()>ret)
+    return ret;
+  else if (b.isDone())
     return b.score();
-  Result ret;
   for(auto const &x: b.moves())
-    ret = std::min(ret, Solver(b.apply(x)));
+    ret = std::min(ret, Solver(b.apply(x), ret));
   return ret;
 }
 

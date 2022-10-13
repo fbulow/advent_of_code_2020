@@ -87,3 +87,25 @@ public:
   bool isBurrow(Column c) const;
 };
 
+inline
+ostream& operator<<(ostream& out, Board b)
+{
+  bool done=false;
+  out<<"01234567890"<<endl;
+  while(not done)
+    {
+      done = true;
+      for(int i =0;i<11;i++)
+	{
+	  auto c = b.getTop(i);
+	  out<<c;
+	  if(c!='.')
+	    {
+	      b.pop(i);
+	      done=false;
+	    }
+	}
+      out<<endl;
+    }
+    return out;
+}
