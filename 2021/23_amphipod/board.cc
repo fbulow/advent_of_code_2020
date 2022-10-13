@@ -403,7 +403,21 @@ TEST(Board, illegalMoves)
   EXPECT_FALSE(sut.apply({2,4}).score()); // burrow to burrow
   EXPECT_FALSE(sut.apply({2,9}).score()); // to occupied burrow
   EXPECT_FALSE(sut.apply({4,9}).score()); // to wrong burrow
-  
+}
+
+TEST(apply, move_is_not_swap)
+{
+  //                01234567890
+  Board const sut("#############"
+		  "#.........A.#"
+		  "###.#.#.#.###"
+		  "  #.#.#.#.#  "
+		  "  #.#.#.#.#  "
+		  "  #D#.#B#A#  "
+		  "  #########  ");
+  //                01234567890
+  EXPECT_TRUE(sut.apply({2,3}).score());
+  EXPECT_FALSE(sut.apply({3,2}).score());
 }
 
 TEST(swapOk, not_ok_because_burrow_is_of_wrong_type)

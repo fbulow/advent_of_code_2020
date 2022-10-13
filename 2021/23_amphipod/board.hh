@@ -70,7 +70,8 @@ public:
   
   Board apply(Move const & m) const
   {
-    if (not swapOk(m))
+
+    if (not spaces[m.from].canMoveTo(spaces[m.to]))
       return Board::failed();
     Board ret(*this);
     ret.put(m.to, getTop(m.from));
