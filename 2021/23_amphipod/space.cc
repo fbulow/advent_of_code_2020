@@ -57,9 +57,9 @@ TEST(Space, burrow_stepsToCorridor)
 {
   Space sut(3);
   sut.put('A');
-  ASSERT_EQ(sut.stepsToCorridor(), 3);
-  sut.put('A');
   ASSERT_EQ(sut.stepsToCorridor(), 2);
+  sut.put('A');
+  ASSERT_EQ(sut.stepsToCorridor(), 1);
 }
 
 

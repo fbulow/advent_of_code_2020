@@ -101,7 +101,7 @@ public:
     if(isHallway())
       return 0;
     else
-      return availableDepth()+1;
+      return availableDepth();
   }
 
 };

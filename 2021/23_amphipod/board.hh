@@ -57,13 +57,7 @@ public:
   
   vector<Move> moves() const;
   
-  virtual Result steps(Move const&m) const {
-    return
-      spaces[m.from].stepsToCorridor()+
-      spaces[m.to].stepsToCorridor()+
-      m.distance();
-  }
-
+  Result steps(Move const&m) const;
   
   Board apply(Move const & m) const
   {

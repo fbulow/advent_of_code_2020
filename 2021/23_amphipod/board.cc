@@ -22,6 +22,17 @@ Board::Board(int depth)
     else
       spaces[i] = Space(1);
 }
+
+Result Board::steps(Move const&m) const
+{
+  return
+    spaces[m.from].stepsToCorridor()+
+    spaces[m.to].stepsToCorridor()+
+    m.distance()
+    +(spaces[m.from].isHallway()?0:1)
+    ;
+}
+
 unsigned int Board::burrow(Amphipod a) const
 {
   switch(a)
@@ -401,6 +412,7 @@ TEST(costPerStep, all_cases)
 
 TEST(Board, move_to_corridor)
 {
+  //          01234567890
   Board sut("#############"
 	    "#...........#"
 	    "###B#C#B#D###"
@@ -408,6 +420,7 @@ TEST(Board, move_to_corridor)
 	    "  #D#B#A#C#  "
 	    "  #A#D#C#A#  "
 	    "  #########  ");
+  //          01234567890
 
   Move m{8,10};
   
@@ -495,4 +508,33 @@ TEST(Board, moves_from_a_burrow)
 				 ));
 }
 
+
+TEST(Board, example_first_step)
+{
+  EXPECT_EQ(Board(//01234567890
+		  "#############"
+		  "#..........D#"
+		  "###A#B#C#.###"
+		  "  #A#B#C#D#  "
+		  "  #A#B#C#D#  "
+		  "  #A#B#C#D#  "
+		  "  #########  ").steps({10,8}), 3);
+  EXPECT_EQ(Board(//01234567890
+		  "#############"
+		  "#..........D#"
+		  "###A#B#C#.###"
+		  "  #A#B#C#D#  "
+		  "  #A#B#C#D#  "
+		  "  #A#B#C#D#  "
+		  "  #########  ").steps({8,9}), 3);
+
+  EXPECT_EQ(Board(//01234567890
+		  "#############"
+		  "#.........D.#"
+		  "###A#B#C#.###"
+		  "  #A#B#C#D#  "
+		  "  #A#B#C#D#  "
+		  "  #A#B#C#D#  "
+		  "  #########  ").steps({9,8}), 2);
+}
 
