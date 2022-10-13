@@ -1,5 +1,35 @@
 #include "board.hh"
 
+void Board::pop(Column c)
+{
+  spaces[c].pop();
+}
+void Board::put(Column c, Amphipod a)
+{
+  spaces[c].put(a);
+}
+Amphipod Board::getTop(Column c)const
+{
+  return spaces[c].getTop();
+}
+
+bool Board::isLegalMove(Move const & m) const
+{
+  if(m.distance()>1)
+    {
+      if(any_of(
+		next(spaces.begin(), m.min()+1),
+		next(spaces.begin(), m.max()),
+		[this](auto const &s)
+		{
+		  auto ret = s.corridorIsBlocked();
+		  return ret;
+		}))
+	return false;
+    }
+  return spaces[m.from].canMoveTo(spaces[m.to]);
+}
+
 unsigned int costPerStep(Amphipod a)
 {
   switch(a)

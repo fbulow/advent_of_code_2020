@@ -93,8 +93,6 @@ TEST(solution_a, step_by_step_right_score)
 
     .apply({9,2});
     ;
-
-  cout<<sut<<endl;
   
   EXPECT_THAT(sut.score()
 	      ,Eq(
@@ -103,7 +101,7 @@ TEST(solution_a, step_by_step_right_score)
 		  ));
 }
 
-TEST(solution_b, example)
+TEST(DISABLED_solution_b, example)
 {
   Board b(
 "#############"

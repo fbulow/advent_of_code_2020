@@ -36,22 +36,7 @@ public:
   
   Result steps(Move const&m) const;
 
-  bool isLegalMove(Move const & m) const
-  {
-    if(m.distance()>1)
-      {
-	if(any_of(
-		  next(spaces.begin(), m.min()+1),
-		  next(spaces.begin(), m.max()),
-		  [this](auto const &s)
-		  {
-		    auto ret = s.corridorIsBlocked();
-		    return ret;
-		  }))
-	  return false;
-      }
-    return spaces[m.from].canMoveTo(spaces[m.to]);
-  }
+  bool isLegalMove(Move const & m) const;
   
   Board apply(Move const & m) const
   {
@@ -66,18 +51,9 @@ public:
     return ret;
   }
 
-  void pop(Column c)
-  {
-    spaces[c].pop();
-  }
-  void put(Column c, Amphipod a)
-  {
-    spaces[c].put(a);
-  }
-  Amphipod getTop(Column c)const
-  {
-    return spaces[c].getTop();
-  }
+  void pop(Column c);
+  void put(Column c, Amphipod a);
+  Amphipod getTop(Column c) const;
   bool isBurrow(Column c) const;
 };
 
