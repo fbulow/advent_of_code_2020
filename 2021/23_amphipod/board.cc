@@ -567,3 +567,16 @@ TEST(Board, isLegalMove_space)
 		     "  #########  "
 		     ).isLegalMove({2,7}));
 }
+
+TEST(Board, isLegalMove_bug)
+{
+  //                   01234567890
+  EXPECT_FALSE(Board("#############"
+		     "#.....C.....#"
+		     "###.#.#.#.###"
+		     "  #.#.#.#.#  "
+		     "  #B#.#B#D#  "
+		     "  #A#D#C#A#  "
+		     "  #########  "
+		     ).isLegalMove({6,3}));
+}

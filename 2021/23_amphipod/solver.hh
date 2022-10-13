@@ -11,10 +11,11 @@ Result Solver(BOARD const &b, Result ret={})
   if (b.score()>ret)
     return ret;
   else if (b.isDone())
-    return b.score();
+    {
+      auto r = b.score();
+      return r;
+    }
   for(auto const &x: b.moves())
     ret = std::min(ret, Solver(b.apply(x), ret));
   return ret;
 }
-
-

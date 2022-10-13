@@ -42,10 +42,11 @@ public:
       {
 	if(any_of(
 		  next(spaces.begin(), m.min()+1),
-		  next(spaces.begin(), m.max()-1),
+		  next(spaces.begin(), m.max()),
 		  [this](auto const &s)
 		  {
-		    return s.corridorIsBlocked();
+		    auto ret = s.corridorIsBlocked();
+		    return ret;
 		  }))
 	  return false;
       }

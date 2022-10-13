@@ -66,9 +66,8 @@ Board example_a_board()
   return b;
 }
 
-TEST(DISABLED_solution_a, example)
+TEST(solution_a, example)
 {
-
   EXPECT_THAT(Solver(example_a_board()),
 	      Eq(12521));
 
@@ -104,7 +103,7 @@ TEST(solution_a, step_by_step_right_score)
 		  ));
 }
 
-TEST(DISABLED_solution_b, example)
+TEST(solution_b, example)
 {
   Board b(
 "#############"
