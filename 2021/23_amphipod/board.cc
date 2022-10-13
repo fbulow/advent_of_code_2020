@@ -101,17 +101,11 @@ vector<Move> Board::moves() const
       Amphipod a = getTop(i);
       if(a=='.')
 	{} // Do nothing
-      else if(isBurrow(i))
+      for(unsigned int j=0;j<11;j++)
 	{
-	  for(unsigned int j=0;j<11;j++)
-	    if( spaces[i].canMoveTo(spaces[j]) )
-	      ret.emplace_back(i,j);
-	}
-      else// (not isBurrow(i))
-	{
-	  auto j = burrow(a);
-	  if ( spaces[i].canMoveTo(spaces[j]) )
-	    return {Move{i,j}};
+	  Move m{i,j};
+	  if(isLegalMove(m))
+	    ret.emplace_back(move(m));
 	}
     }
   return ret;
@@ -472,11 +466,11 @@ TEST(Board, illegalMoves)
 		  "  #D#.#B#A#  "
 		  "  #########  ");
   //                01234567890
-  EXPECT_FALSE(sut.apply({0,1}).score()); // hall to hall
-  EXPECT_FALSE(sut.apply({10,9}).score()); // hall to hall
-  EXPECT_FALSE(sut.apply({2,4}).score()); // burrow to burrow
-  EXPECT_FALSE(sut.apply({2,9}).score()); // to occupied burrow
-  EXPECT_FALSE(sut.apply({4,9}).score()); // to wrong burrow
+  EXPECT_FALSE(sut.isLegalMove({0,1})); // hall to hall
+  EXPECT_FALSE(sut.isLegalMove({10,9})); // hall to hall
+  EXPECT_FALSE(sut.isLegalMove({2,4})); // burrow to burrow
+  EXPECT_FALSE(sut.isLegalMove({2,9})); // to occupied burrow
+  EXPECT_FALSE(sut.isLegalMove({4,9})); // to wrong burrow
 }
 
 TEST(apply, move_is_not_swap)
@@ -490,8 +484,8 @@ TEST(apply, move_is_not_swap)
 		  "  #D#.#B#A#  "
 		  "  #########  ");
   //                01234567890
-  EXPECT_TRUE(sut.apply({2,3}).score());
-  EXPECT_FALSE(sut.apply({3,2}).score());
+  EXPECT_TRUE(sut.isLegalMove({2,3}));
+  EXPECT_FALSE(sut.isLegalMove({3,2}));
 }
 
 
@@ -559,18 +553,6 @@ TEST(Board, example_first_step)
 		  "  #A#B#C#D#  "
 		  "  #A#B#C#D#  "
 		  "  #########  ").steps({9,8}), 2);
-}
-
-TEST(Board, invalid_score_after_illegal_move)
-{
-  EXPECT_FALSE(Board("#############"
-		     "#.A.A.......#"
-		     "###.#.#.#.###"
-		     "  #.#.#.#.#  "
-		     "  #.#.#.#.#  "
-		     "  #B#.#.#.#  "
-		     "  #########  "
-		     ).apply({2,5}).score());
 }
 
 TEST(Board, isLegalMove)

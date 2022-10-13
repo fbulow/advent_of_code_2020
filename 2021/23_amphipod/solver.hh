@@ -15,7 +15,11 @@ Result Solver(BOARD const &b, Result ret={})
       auto r = b.score();
       return r;
     }
-  for(auto const &x: b.moves())
+  auto m = b.moves();
+  if(m.empty())
+    return {};
+  
+  for(auto const &x: m)
     ret = std::min(ret, Solver(b.apply(x), ret));
   return ret;
 }

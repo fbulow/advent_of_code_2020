@@ -40,9 +40,7 @@ public:
   
   Board apply(Move const & m) const
   {
-
-    if (not isLegalMove(m))
-      return Board::failed();
+    assert(isLegalMove(m));
     Board ret(*this);
     ret.put(m.to, getTop(m.from));
     ret.spaces[m.from].pop();
