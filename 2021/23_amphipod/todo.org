@@ -1,4 +1,5 @@
 * DONE Board visual ctor
+* NEXT move from to means from to, not swap
 * NEXT make transfer between spaces.... 
 * NEXT Road is free?
 ** Checked by Board

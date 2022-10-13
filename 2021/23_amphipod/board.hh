@@ -67,10 +67,6 @@ public:
       m.distance();
   }
 
-  Amphipod amphipod(Move const & m) const
-  {
-    return getTop(m.from)+getTop(m.to)-'.';
-  }
   
   Board apply(Move const & m) const
   {
@@ -80,7 +76,7 @@ public:
     ret.put(m.to, getTop(m.from));
     ret.spaces[m.from].pop();
     
-    ret.score_= score_ + steps(m)*costPerStep(amphipod(m));
+    ret.score_= score_ + steps(m)*costPerStep(getTop(m.from));
     return ret;
   }
 

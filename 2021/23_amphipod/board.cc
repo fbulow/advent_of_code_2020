@@ -383,8 +383,6 @@ TEST(Board, move_to_corridor)
   EXPECT_THAT(sut.steps(m),
 	      Eq(3));
   
-  EXPECT_THAT(sut.amphipod(m), Eq('D'));
-  
   EXPECT_THAT(sut.apply(m).score(), Eq(3000));
 }
 
@@ -401,6 +399,7 @@ TEST(Board, illegalMoves)
 		  "  #########  ");
   //                01234567890
   EXPECT_FALSE(sut.apply({0,1}).score()); // hall to hall
+  EXPECT_FALSE(sut.apply({10,9}).score()); // hall to hall
   EXPECT_FALSE(sut.apply({2,4}).score()); // burrow to burrow
   EXPECT_FALSE(sut.apply({2,9}).score()); // to occupied burrow
   EXPECT_FALSE(sut.apply({4,9}).score()); // to wrong burrow

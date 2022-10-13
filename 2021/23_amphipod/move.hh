@@ -9,7 +9,7 @@ struct Move
     :from(from)
     ,to(to)
   {
-    assert(from<to);
+    assert(from<11);
     assert(to<11);
   }
 
