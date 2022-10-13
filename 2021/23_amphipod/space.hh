@@ -27,6 +27,8 @@ public:
   {
   }
 
+  bool corridorIsBlocked() const;
+  
   bool moveTo(Space & other)
   {
     if( not  canMoveTo(other))

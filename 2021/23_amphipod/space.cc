@@ -1,4 +1,14 @@
 #include "space.hh"
+
+bool Space::corridorIsBlocked() const
+{
+  if(isHallway())
+    return getTop()!='.';
+  else
+    return false;
+}
+
+
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
@@ -118,4 +128,20 @@ TEST(Space, hard_move)
   Space to(1);
 
   
+}
+
+TEST(Space, corridorIsBlocked_hallway)
+{
+  Space sut;
+  EXPECT_FALSE(sut.corridorIsBlocked());
+  sut.put('A');
+  EXPECT_TRUE(sut.corridorIsBlocked());
+}
+
+TEST(Space, corridorIsBlocked_burrow)
+{
+  Space sut(2);
+  EXPECT_FALSE(sut.corridorIsBlocked());
+  sut.put('A');
+  EXPECT_FALSE(sut.corridorIsBlocked());
 }

@@ -537,3 +537,40 @@ TEST(Board, example_first_step)
 		  "  #A#B#C#D#  "
 		  "  #########  ").steps({9,8}), 2);
 }
+
+TEST(Board, invalid_score_after_illegal_move)
+{
+  EXPECT_FALSE(Board("#############"
+		     "#.A.A.......#"
+		     "###.#.#.#.###"
+		     "  #.#.#.#.#  "
+		     "  #.#.#.#.#  "
+		     "  #B#.#.#.#  "
+		     "  #########  "
+		     ).apply({2,5}).score());
+}
+
+TEST(Board, isLegalMove)
+{
+  EXPECT_FALSE(Board("#############"
+		     "#.A.AA......#"
+		     "###.#.#.#.###"
+		     "  #.#.#.#.#  "
+		     "  #.#.#.#.#  "
+		     "  #B#.#.#.#  "
+		     "  #########  "
+		     ).isLegalMove({2,5}));
+}
+
+TEST(Board, isLegalMove_space)
+{
+  //                   01234567890  
+  EXPECT_FALSE(Board("#############"
+		     "#.....A.....#"
+		     "###.#.#.#.###"
+		     "  #.#.#.#.#  "
+		     "  #.#.#.#.#  "
+		     "  #B#.#.#.#  "
+		     "  #########  "
+		     ).isLegalMove({2,7}));
+}

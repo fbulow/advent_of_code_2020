@@ -2,7 +2,7 @@
 
 unsigned int Move::distance() const
 {
-  return max(to,from) - min(to,from);
+  return max() - min();
 }
 
 

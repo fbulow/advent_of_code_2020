@@ -1,7 +1,7 @@
 #pragma once
 #include<cassert>
 #include<ostream>
-
+#include<cmath>
 using namespace std;
 
 struct Move
@@ -15,6 +15,9 @@ struct Move
     assert(from<11);
     assert(to<11);
   }
+
+  unsigned int min() const {return ::min(from, to);}
+  unsigned int max() const {return ::max(from, to);}
 
   unsigned int distance() const;
 };

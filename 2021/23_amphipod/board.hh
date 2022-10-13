@@ -58,11 +58,27 @@ public:
   vector<Move> moves() const;
   
   Result steps(Move const&m) const;
+
+  bool isLegalMove(Move const & m) const
+  {
+    if(m.distance()>1)
+      {
+	if(any_of(
+		  next(spaces.begin(), m.min()+1),
+		  next(spaces.begin(), m.max()-1),
+		  [this](auto const &s)
+		  {
+		    return s.corridorIsBlocked();
+		  }))
+	  return false;
+      }
+    return spaces[m.from].canMoveTo(spaces[m.to]);
+  }
   
   Board apply(Move const & m) const
   {
 
-    if (not spaces[m.from].canMoveTo(spaces[m.to]))
+    if (not isLegalMove(m))
       return Board::failed();
     Board ret(*this);
     ret.put(m.to, getTop(m.from));
