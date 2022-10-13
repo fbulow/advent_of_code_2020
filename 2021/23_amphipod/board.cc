@@ -1,4 +1,22 @@
 #include "board.hh"
+
+unsigned int costPerStep(Amphipod a)
+{
+  switch(a)
+    {
+    case 'A':
+      return 1;
+    case 'B':
+      return 10;
+    case 'C':
+      return 100;
+    case 'D':
+      return 1000;
+    }
+  assert(false);
+}
+
+
 Board::Board(std::string_view vi)
   :Board(4)
 {

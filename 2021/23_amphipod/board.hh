@@ -5,21 +5,7 @@
 #include <array>
 #include "space.hh"
 
-inline unsigned int costPerStep(Amphipod a)
-{
-  switch(a)
-    {
-    case 'A':
-      return 1;
-    case 'B':
-      return 10;
-    case 'C':
-      return 100;
-    case 'D':
-      return 1000;
-    }
-  assert(false);
-}
+unsigned int costPerStep(Amphipod a);
 
 inline bool swapOk(Space const& a, Space const& b)
 {
