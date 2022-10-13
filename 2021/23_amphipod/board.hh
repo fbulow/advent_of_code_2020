@@ -7,10 +7,6 @@
 
 unsigned int costPerStep(Amphipod a);
 
-inline bool swapOk(Space const& a, Space const& b)
-{
-  return a.canMoveTo(b) or b.canMoveTo(a);
-}
 
 class Board{
   Result score_{0};
@@ -36,11 +32,6 @@ public:
   bool isDone() const;
   Result score() const{return score_;}
 
-  bool swapOk(Move const &m) const
-  {
-    return ::swapOk(spaces[m.from], spaces[m.to]);
-  }
-  
   vector<Move> moves() const;
   
   Result steps(Move const&m) const;

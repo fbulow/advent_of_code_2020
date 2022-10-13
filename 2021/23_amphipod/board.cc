@@ -217,28 +217,10 @@ TEST(Boad, pop_from_corridor)
   EXPECT_THAT(sut.getTop(0), Eq('.'));
 }
 
-TEST(swapOk, A_to_dorm_type_A_with_an_B_in_there)
-{
-  // Not ok to move A to home when there is something else there
-  
-  auto a = Space(1); a.put('A');
-  auto b = Space(2, 'A'); b.put('B');
-
-  ASSERT_FALSE(swapOk(a,b)); // Move from a->b
-}
-
 TEST(space, is_hallway_or_not)
 {
   EXPECT_TRUE(Space(1).isHallway());
   EXPECT_FALSE(Space(2).isHallway());
-}
-
-TEST(swapOk, not_ok_to_move_from_hallway_to_hallway)
-{
-  auto a = Space(1); a.put('A');
-  auto b = Space(1);
-  
-  ASSERT_FALSE(swapOk(a,b)); // Move from a->b
 }
 
 TEST(Space, hallway_isDone)
@@ -482,13 +464,6 @@ TEST(apply, move_is_not_swap)
   EXPECT_FALSE(sut.apply({3,2}).score());
 }
 
-TEST(swapOk, not_ok_because_burrow_is_of_wrong_type)
-{
-  Space burrow(2, 'A');
-  Space hallway(1, '.');
-  hallway.put('B');
-  EXPECT_FALSE(swapOk(burrow, hallway));
-}
 
 TEST(Board, burrow__Amphipod_to_burrow_index_mapping)
 {
