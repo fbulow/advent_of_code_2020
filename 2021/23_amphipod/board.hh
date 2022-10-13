@@ -54,12 +54,9 @@ public:
   
   std::vector<Move> moves() const
   {
-    std::vector<Move> ret;
-    for(int i=0;i<11;i++)
-      for(int j=0;j<i;j++)
-	ret.emplace_back(Move(j,i));
-    return ret;
+    return {};
   }
+  
   virtual Result steps(Move const&m) const {
     return
       spaces[m.from].stepsToCorridor()+

@@ -112,14 +112,6 @@ TEST(A_Board, burrow_returns_a_burrow)
   ASSERT_TRUE(sut.isBurrow(A::burrow()));
 }
 
-TEST(Board, has_ten_times_nine_valid_moves)
-{
-  Board sut;
-  EXPECT_THAT(sut.moves().size(), Eq(55));
-  EXPECT_THAT(sut.moves(), Contains(Move{0,2}));
-}
-
-
 TEST(Board, get_empty_space)
 {
   Board sut;
