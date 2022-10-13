@@ -44,7 +44,9 @@ public:
   bool canMoveTo(Space const & other) const
   {
     auto const a = getTop();
-
+    if(other.resident() == a)
+      return other.onlyResidents();
+    
     if (not (isHallway() xor other.isHallway()))
       return false;
     if(a=='.')

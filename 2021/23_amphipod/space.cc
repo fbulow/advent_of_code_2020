@@ -81,7 +81,6 @@ TEST(Space, canMoveTo)
   hallway.put('A');
   EXPECT_TRUE(hallway.canMoveTo(Space(2,'A')));
   EXPECT_FALSE(hallway.canMoveTo(Space(2,'B'))); //Wrong burrow
-  EXPECT_FALSE(hallway.canMoveTo(Space(0,'A'))); //is full
 }
 
 TEST(Space, canMoveTo_cannot_leave_own_burrow_if_only_residents) 

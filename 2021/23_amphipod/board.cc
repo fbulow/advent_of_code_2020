@@ -15,7 +15,11 @@ Amphipod Board::getTop(Column c)const
 
 bool Board::isLegalMove(Move const & m) const
 {
-  if(m.distance()>1)
+  if(m.from==m.to)
+    return false;
+  if(getTop(m.from)=='.')
+    return false;
+  else if(m.distance()>1)
     {
       if(any_of(
 		next(spaces.begin(), m.min()+1),
@@ -591,4 +595,26 @@ TEST(Board, isLegalMove_bug)
 		     "  #A#D#C#A#  "
 		     "  #########  "
 		     ).isLegalMove({6,3}));
+}
+
+TEST(Board, quick_pass)
+{
+  //          01234567890
+  Board sut("#############"
+	    "#...........#"
+	    "###.#.#.#.###"
+	    "  #.#.#.#.#  "
+	    "  #B#.#.#.#  "
+	    "  #A#.#.#.#  "
+	    "  #########  "
+  //          01234567890
+	    );
+  EXPECT_THAT(sut.steps({2, 4}), Eq(9));
+  EXPECT_TRUE(sut.isLegalMove({2, 4}));
+}
+
+TEST(Board, move_that_does_not_move_is_illegal)
+{
+  Board sut;
+  EXPECT_FALSE(sut.isLegalMove({1,1}));
 }

@@ -37,6 +37,11 @@ public:
   Result steps(Move const&m) const;
 
   bool isLegalMove(Move const & m) const;
+
+  Result cost(Move const &m) const
+  {
+    return steps(m)*costPerStep(getTop(m.from));
+  }
   
   Board apply(Move const & m) const
   {
@@ -45,7 +50,7 @@ public:
     ret.put(m.to, getTop(m.from));
     ret.spaces[m.from].pop();
     
-    ret.score_= score_ + steps(m)*costPerStep(getTop(m.from));
+    ret.score_= score_ + cost(m);
     return ret;
   }
 
