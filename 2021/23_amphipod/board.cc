@@ -22,7 +22,7 @@ Board::Board(int depth)
     else
       spaces[i] = Space(1);
 }
-size_t Board::burrow(Amphipod a) const
+unsigned int Board::burrow(Amphipod a) const
 {
   switch(a)
     {
@@ -34,6 +34,29 @@ size_t Board::burrow(Amphipod a) const
   assert(false);
 }
 
+vector<Move> Board::moves() const
+{
+  vector<Move> ret;
+  for(unsigned int i=0;i<11;i++)
+    {
+      Amphipod a = getTop(i);
+      if(a=='.')
+	{} // Do nothing
+      else if(isBurrow(i))
+	{
+	  for(unsigned int j=0;j<11;j++)
+	    if( spaces[i].canMoveTo(spaces[j]) )
+	      ret.emplace_back(i,j);
+	}
+      else// (not isBurrow(i))
+	{
+	  auto j = burrow(a);
+	  if ( spaces[i].canMoveTo(spaces[j]) )
+	    return {Move{i,j}};
+	}
+    }
+  return ret;
+}
 
 Board Board::failed()
 {
@@ -455,3 +478,21 @@ TEST(Board, burrow__Amphipod_to_burrow_index_mapping)
   EXPECT_THAT(sut.burrow('C'), Eq(6));
   EXPECT_THAT(sut.burrow('D'), Eq(8));
 }
+
+TEST(Board, moves_from_a_hallway)
+{
+  Board sut;
+  sut.put(1,'A');
+  ASSERT_THAT(sut.moves(), ElementsAre(Move{1,2}));
+}
+
+TEST(Board, moves_from_a_burrow)
+{
+  Board sut;
+  sut.put(2,'B');
+  ASSERT_THAT(sut.moves(), AllOf(Contains(Move{2,0})
+				 ,Contains(Move{2,1})
+				 ));
+}
+
+

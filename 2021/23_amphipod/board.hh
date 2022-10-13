@@ -43,7 +43,7 @@ public:
   Board(std::string_view visual);
   Board(int depth=4);
 
-  size_t burrow(Amphipod a) const;
+  unsigned int burrow(Amphipod a) const;
 
   static Board failed();
 
@@ -55,10 +55,7 @@ public:
     return ::swapOk(spaces[m.from], spaces[m.to]);
   }
   
-  std::vector<Move> moves() const
-  {
-    return {};
-  }
+  vector<Move> moves() const;
   
   virtual Result steps(Move const&m) const {
     return

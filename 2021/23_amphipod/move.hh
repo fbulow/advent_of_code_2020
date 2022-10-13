@@ -1,5 +1,8 @@
 #pragma once
 #include<cassert>
+#include<ostream>
+
+using namespace std;
 
 struct Move
 {
@@ -41,3 +44,9 @@ namespace A{
   };
 };
 
+inline
+ostream& operator<<(ostream& out, Move const &m)
+{
+  out<<"Move{"<<m.from<<", "<<m.to<<"}";
+  return out;
+}
