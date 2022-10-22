@@ -105,6 +105,12 @@ vector<Move> Board::moves() const
       Amphipod a = getTop(i);
       if(a=='.')
 	{} // Do nothing
+      else
+	{
+	  Move straightHome(i, burrow(a));
+	  if(isLegalMove(straightHome))
+	    return {straightHome};
+	}
       for(unsigned int j=0;j<11;j++)
 	{
 	  Move m{i,j};
@@ -520,10 +526,12 @@ TEST(Board, moves_from_a_hallway)
   ASSERT_THAT(sut.moves(), ElementsAre(Move{1,2}));
 }
 
-TEST(Board, moves_from_a_burrow)
+TEST(Board, moves_from_a_burrow_when_home_is_taken)
 {
   Board sut;
   sut.put(2,'B');
+  sut.put(4,'C'); //To block b
+  sut.put(6,'B'); //To block c
   ASSERT_THAT(sut.moves(), AllOf(Contains(Move{2,0})
 				 ,Contains(Move{2,1})
 				 ));
@@ -612,6 +620,22 @@ TEST(Board, quick_pass)
   EXPECT_THAT(sut.steps({2, 4}), Eq(9));
   EXPECT_TRUE(sut.isLegalMove({2, 4}));
 }
+
+TEST(Board, only_quick_pass_allowed_if_possible)
+{
+  //          01234567890
+  Board sut("#############"
+	    "#...........#"
+	    "###.#.#.#.###"
+	    "  #.#.#.#.#  "
+	    "  #B#.#.#.#  "
+	    "  #A#.#.#.#  "
+	    "  #########  "
+  //          01234567890
+	    );
+  EXPECT_THAT(sut.moves(), ElementsAre(Move(2,4)));
+}
+
 
 TEST(Board, move_that_does_not_move_is_illegal)
 {

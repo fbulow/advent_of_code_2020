@@ -66,7 +66,7 @@ Board example_a_board()
   return b;
 }
 
-TEST(DISABLED_solution_a, example)
+TEST(solution_a, example)
 {
   EXPECT_THAT(Solver(example_a_board()),
 	      Eq(12521));
@@ -101,7 +101,7 @@ TEST(solution_a, step_by_step_right_score)
 		  ));
 }
 
-TEST(DISABLED_solution_b, example)
+TEST(DISABLE_solution_b, example)
 {
   Board b(
 "#############"
@@ -112,6 +112,22 @@ TEST(DISABLED_solution_b, example)
 "  #A#D#C#A#  "
 "  #########  "
 	  );
-  EXPECT_THAT(
+  ASSERT_THAT(
 	      Solver(b, 44175), Eq(44169));
+}
+
+TEST(solution_b, actual)
+{
+
+  Board b(
+	  "#############"
+	  "#...........#"
+	  "###D#D#B#A###"
+	  "  #D#C#B#A#  "
+	  "  #D#B#A#C#  "
+	  "  #B#C#A#C#  "
+	  "  #########  ");
+
+  ASSERT_THAT(
+	      Solver(b), Eq(43226));
 }
