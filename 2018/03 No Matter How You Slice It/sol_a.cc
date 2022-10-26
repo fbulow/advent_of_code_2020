@@ -4,6 +4,8 @@
 #include<sstream>
 #include<ranges>
 
+#include<structured_input.hh>
+
 using namespace std;
 
 using Coord = pair<int,int>;
@@ -13,81 +15,6 @@ struct Claim
   int id, x, y, width, height;
 };
 
-class Missmatch: public exception{
-public:
-  string expected_{};
-  string got_{};
-  mutable string message;
-
-  string expected() const
-  {
-    return {expected_.rbegin(), expected_.rend()};
-  };
-  string got() const
-  {
-    return {got_.rbegin(), got_.rend()};
-  };
-
-  Missmatch(char cexpected,
-	   char cgot)
-  {
-    expected_+=cexpected;
-    got_+=cgot;
-  }
-  Missmatch(string expected,
-	   string got)
-    :expected_(expected)
-    ,got_(got)
-  {}
-  
-  const char * what() const noexcept
-  {
-    ostringstream out;
-
-    string rgot(got_.rbegin(), got_.rend());
-    
-    out <<endl
-	<< "Expected: " << expected()<<endl
-	<< "Got:      " << got()<<endl;
-    message = out.str();
-    
-    return message.data();
-  }
-
-};
-
-
-void compareFirst(istream& real, istream& chunk)
-{
-  if(real.eof()) return;
-    
-  char aa;
-  chunk >> aa;
-  if(chunk.eof()) return;
-
-  char bb;
-  real>> bb;
-  if(aa!=bb)
-    throw Missmatch(aa, bb);
-  try
-    {
-      compareFirst(real, chunk);
-    }
-  catch(Missmatch &m)
-    {
-      m.expected_+=aa;
-      m.got_+=aa;
-      
-      throw m;
-    }
-}
-
-istream& operator>>(istream& in, const string &s)
-{
-  istringstream ins(s);
-  compareFirst(in, ins);
-  return in;
-}
 istream& operator>>(istream& in, Claim &c)
 {
   in>>"#">>c.id>>" @ ">>c.x>>",">>c.y>>": ">>c.width>>"x">>c.height;

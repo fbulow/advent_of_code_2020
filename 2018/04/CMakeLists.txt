@@ -4,13 +4,15 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-project(main)
+project(1804)
 
 Find_package(GTest)
 
 add_executable(${PROJECT_NAME}
-  sol_a.cc
-#  sol_b.cc
+  note.cc
+  time.cc
+  notes.cc
+  simulation.cc
   )
 
 target_compile_options(${PROJECT_NAME}
@@ -20,6 +22,8 @@ target_compile_options(${PROJECT_NAME}
     #-O2
   )
 
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+  
 target_link_libraries(${PROJECT_NAME}
   GTest::GTest
   GTest::Main
