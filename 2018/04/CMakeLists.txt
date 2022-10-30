@@ -13,6 +13,7 @@ add_executable(${PROJECT_NAME}
   time.cc
   notes.cc
   simulation.cc
+  sol_a.cc
   )
 
 target_compile_options(${PROJECT_NAME}

@@ -6,7 +6,7 @@
 
 using namespace std;
 
-using Callback = function<void(int, bool)>;
+using Callback = function<void(int, bool, int)>;
 class Simulation{
 public:
   Simulation(Note const &n,
@@ -18,42 +18,45 @@ public:
   {
     assert(n.a==Action::guard);
   }
-  
+
   Time time() const{return time_;}
   bool awake() const{ return awake_;}
   void execute(Note const &n)
   {
-    if(n.t.day>time_.day)
+    if(n.a==Action::guard)
       {
+	if(not awake_)
+	  {
+	    for(; time_.minute<60 ;time_.minute++)
+	      callback_(guard_, awake(), time_.minute);
+	  }
+	guard_=n.guard;
 	time_ = n.t;
-	time_.hour=0;
-	time_.minute=0;
       }
-    for(; time_<n.t ;time_.minute++)
-      callback_(guard_, awake());
+    else if (awake_)
+      {
+	assert(n.a==Action::sleep);
+	time_ = n.t;
+      }
+    else
+      {
+	assert(n.a==Action::wake);
+
+	for(; time_<n.t ;time_.minute++)
+	{
+	  assert(time_.minute < 60);
+	  callback_(guard_, awake(), time_.minute);
+	}
+      }
     awake_= (n.a != Action::sleep);
   }
+
+  int guard() const {return guard_;}
   
 private:
   Callback callback_;
   Time time_;
   int guard_;
-  bool awake_;
+  bool awake_{true};
 };
 
-
-#include<sstream>
-#include<gtest/gtest.h>
-#include<gmock/gmock.h>
-using namespace testing;
-
-TEST(Simulation, callback_second_guard_shows_up)
-{
-  int a=0;
-  Simulation sut(Note("[1518-11-01 00:00] Guard #10 begins shift"),
-		 [&a](auto...){
-		   a++;
-		 });
-  sut.execute(Note("[1518-11-02 00:00] Guard #11 begins shift"));
-  EXPECT_THAT(a, Eq(60));
-}

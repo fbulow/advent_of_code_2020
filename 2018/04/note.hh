@@ -7,8 +7,11 @@ using namespace std;
 enum class Action  {sleep, wake, guard};
 
 class Note{
-public:
   Note(string const &s);
+public:
+  Note(auto const&x)
+  :Note(string(x))
+  {}
   Note() = default;
   Time t;
   Action a;
