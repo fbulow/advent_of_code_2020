@@ -21,7 +21,7 @@ istream& operator>>(istream& in, Note&n)
     {
       n.a = ::Action::guard;
       istringstream in(s);
-      in>>"Guard #">>n.guard>>" begins shift";
+      in>>"Guard #">>n.guard.get()>>" begins shift";
     }
   
 

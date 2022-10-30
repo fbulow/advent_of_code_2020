@@ -2,6 +2,8 @@
 #include<string>
 #include<set>
 #include"time.hh"
+#include"named_types.hh"
+
 using namespace std;
 
 enum class Action  {sleep, wake, guard};
@@ -15,7 +17,7 @@ public:
   Note() = default;
   Time t;
   Action a;
-  int guard;
+  Guard guard{0};
 };
 
 istream& operator>>(istream& in, Note&n);

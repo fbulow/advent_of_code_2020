@@ -8,7 +8,7 @@ TEST(Simulation, guard_is_asleep_at_end_of_shift)
 {
   int count{0};
   Simulation sut("[1518-11-01 00:00] Guard #10 begins shift",
-		 [&count](int, bool awake, int )
+		 [&count](Guard, bool awake, int )
 		 {
 		   if(not awake)
 		     count++;
@@ -23,7 +23,7 @@ TEST(Simulation, start_awake)
 {
   int count{0};
   Simulation sut("[1518-11-01 00:00] Guard #10 begins shift",
-		 [&count](int, bool awake, int )
+		 [&count](Guard, bool awake, int )
 		 {
 		   if(not awake)
 		     count++;
@@ -43,9 +43,9 @@ TEST(Simulation, minute_overflow)
 TEST(Simulation, callback_second_guard_shows_up)
 {
   Simulation sut(Note("[1518-11-01 00:00] Guard #10 begins shift"));
-  EXPECT_THAT(sut.guard(), Eq(10));
+  EXPECT_THAT(sut.guard().get(), Eq(10));
   sut.execute(Note("[1518-11-02 00:00] Guard #11 begins shift"));
-  EXPECT_THAT(sut.guard(), Eq(11));
+  EXPECT_THAT(sut.guard().get(), Eq(11));
 }
 
 TEST(Simulation, callback_fall_asleep_and_wake_up)
@@ -53,7 +53,7 @@ TEST(Simulation, callback_fall_asleep_and_wake_up)
   int awake{0};
   int asleep{0};
   Simulation sut(Note("[1518-11-01 00:00] Guard #10 begins shift"),
-		 [&awake, &asleep](int guard, bool isAwake, int){
+		 [&awake, &asleep](Guard, bool isAwake, int){
 		   if(isAwake)
 		     awake++;
 		   else

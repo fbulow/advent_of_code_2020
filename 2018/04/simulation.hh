@@ -3,10 +3,13 @@
 #include "notes.hh"
 #include <cassert>
 #include <functional>
-
+#include "named_types.hh"
 using namespace std;
 
-using Callback = function<void(int, bool, int)>;
+
+
+
+using Callback = function<void(Guard, bool, int)>;
 class Simulation{
 public:
   Simulation(Note const &n,
@@ -51,12 +54,12 @@ public:
     awake_= (n.a != Action::sleep);
   }
 
-  int guard() const {return guard_;}
+  Guard guard() const {return guard_;}
   
 private:
   Callback callback_;
   Time time_;
-  int guard_;
+  Guard guard_;
   bool awake_{true};
 };
 

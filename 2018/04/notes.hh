@@ -10,6 +10,8 @@ class Notes{
   {return data.cbegin();}
   auto cend() const
   {return data.cend();}
+  auto size() const
+  {return data.size();}
 };
 
 istream& operator>>(istream& in, Notes &n);

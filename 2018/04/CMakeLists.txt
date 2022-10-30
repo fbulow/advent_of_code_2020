@@ -7,6 +7,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 project(1804)
 
 Find_package(GTest)
+include(${CMAKE_BINARY_DIR}/Findnamedtype.cmake)
 
 add_executable(${PROJECT_NAME}
   note.cc
@@ -29,4 +30,5 @@ target_link_libraries(${PROJECT_NAME}
   GTest::GTest
   GTest::Main
   structured_input
+  namedtype::namedtype
   )
