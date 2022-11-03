@@ -9,7 +9,7 @@ using namespace std;
 
 
 
-using Callback = function<void(Guard, bool, int)>;
+using Callback = function<void(Guard, int)>;
 class Simulation{
 public:
   Simulation(Note const &n,
@@ -31,7 +31,7 @@ public:
 	if(not awake_)
 	  {
 	    for(; time_.minute<60 ;time_.minute++)
-	      callback_(guard_, awake(), time_.minute);
+	      callback_(guard_, time_.minute);
 	  }
 	guard_=n.guard;
 	time_ = n.t;
@@ -48,7 +48,7 @@ public:
 	for(; time_<n.t ;time_.minute++)
 	{
 	  assert(time_.minute < 60);
-	  callback_(guard_, awake(), time_.minute);
+	  callback_(guard_, time_.minute);
 	}
       }
     awake_= (n.a != Action::sleep);

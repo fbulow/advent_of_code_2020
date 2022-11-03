@@ -53,9 +53,8 @@ auto sleepiestGuard(Notes const &n)
 {
   map<int, Sleepogram> guardToMinutesAsleep;
   Simulation s(*n.cbegin(),
-	       [&guardToMinutesAsleep](Guard guard, bool awake, int minute)
+	       [&guardToMinutesAsleep](Guard guard, int minute)
 	       {
-		 if(not awake)
 		   guardToMinutesAsleep[guard.get()].add(minute);
 	       }
 	       );
@@ -92,10 +91,9 @@ TEST(example, times_of_ten)
 {
   Sleepogram s;
   Simulation sut("[1518-11-01 00:00] Guard #10 begins shift",
-		 [&s](Guard, bool awake, int minute)
+		 [&s](Guard, int minute)
 		 {
-		   if(not awake)
-		     s.add(minute);
+		   s.add(minute);
 		 });
   sut.execute("[1518-11-01 00:05] falls asleep\n");
   sut.execute("[1518-11-01 00:25] wakes up\n");
@@ -108,9 +106,8 @@ TEST(example, times_of_ten_two)
 {
   Sleepogram s;
   Simulation sut("[1518-11-03 00:05] Guard #10 begins shift",
-		 [&s](Guard, bool awake, int minute)
+		 [&s](Guard, int minute)
 		 {
-		   if(not awake)
 		     s.add(minute);
 		 });
   sut.execute("[1518-11-03 00:24] falls asleep");
