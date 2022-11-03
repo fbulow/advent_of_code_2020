@@ -21,6 +21,7 @@ public:
   {}
 
   Time(string const &s);
+  void operator++();
 };
 
 bool operator<(Time const &a, Time const &b);
