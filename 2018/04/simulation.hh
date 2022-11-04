@@ -9,7 +9,7 @@ using namespace std;
 
 
 
-using Callback = function<void(Guard, int)>;
+using Callback = function<void(Guard, Time const &)>;
 class Simulation{
 public:
   Simulation(Note const &n,
@@ -26,32 +26,29 @@ public:
   bool awake() const{ return awake_;}
   void execute(Note const &n)
   {
-    if(n.a==Action::guard)
+    while(time_ < n.t)
       {
-	if(not awake_)
-	  {
-	    for(; time_.minute<60 ;time_.minute++)
-	      callback_(guard_, time_.minute);
-	  }
-	guard_=n.guard;
-	time_ = n.t;
+	if((not awake_) and (time_.hour==0))
+	  callback_(guard_, time_);
+	++time_;
       }
-    else if (awake_)
-      {
-	assert(n.a==Action::sleep);
-	time_ = n.t;
-      }
-    else
-      {
-	assert(n.a==Action::wake);
+    if(time_.hour>0) 
+      awake_ = true;
 
-	for(; time_<n.t ;time_.minute++)
-	{
-	  assert(time_.minute < 60);
-	  callback_(guard_, time_.minute);
-	}
+    switch(n.a)
+      {
+      case Action::guard:
+	awake_=true;
+	guard_=n.guard;
+	return;
+      case Action::sleep:
+	assert(awake_);
+	awake_= false;
+	return;
+      case Action::wake:
+	assert(not awake_);
+	awake_= true;
       }
-    awake_= (n.a != Action::sleep);
   }
 
   Guard guard() const {return guard_;}

@@ -8,21 +8,21 @@ TEST(Simulation, guard_is_asleep_at_end_of_shift)
 {
   int count{0};
   Simulation sut("[1518-11-01 00:00] Guard #10 begins shift",
-		 [&count](Guard, int )
+		 [&count](Guard, Time const & )
 		 {
 		   count++;
 		 });
   sut.execute("[1518-11-01 00:01] falls asleep");
   sut.execute("[1518-11-02 00:03] Guard #10 begins shift");
 
-  EXPECT_THAT(count, Eq(59));  
+  EXPECT_THAT(count, Eq(62));  
 }
 
 TEST(Simulation, start_awake)
 {
   int count{0};
   Simulation sut("[1518-11-01 00:00] Guard #10 begins shift",
-		 [&count](Guard, int )
+		 [&count](Guard, Time const & )
 		 {
 		     count++;
 		 });
@@ -51,7 +51,7 @@ TEST(Simulation, callback_fall_asleep_and_wake_up)
   int awake{0};
   int asleep{0};
   Simulation sut(Note("[1518-11-01 00:00] Guard #10 begins shift"),
-		 [&awake, &asleep](Guard, int){
+		 [&awake, &asleep](Guard, Time const &){
 		     asleep++;
 		 });
   sut.execute(Note("[1518-11-01 00:05] falls asleep"));
