@@ -49,13 +49,13 @@ class Sleepogram
   }
 };
 
-auto sleepiestGuard(Notes const &n)
+pair<int, Sleepogram> sleepiestGuard(Notes const &n)
 {
   map<int, Sleepogram> guardToMinutesAsleep;
   Simulation s(*n.cbegin(),
-	       [&guardToMinutesAsleep](Guard guard, int minute)
+	       [&guardToMinutesAsleep](Guard guard, Time const & time)
 	       {
-		   guardToMinutesAsleep[guard.get()].add(minute);
+		   guardToMinutesAsleep[guard.get()].add(time.minute);
 	       }
 	       );
   for_each(next(n.cbegin()),
@@ -64,21 +64,20 @@ auto sleepiestGuard(Notes const &n)
 	   {
 	     s.execute(note);
 	   });
-
   
-  
-  return max_element(guardToMinutesAsleep.cbegin(),
-		     guardToMinutesAsleep.cend(),
-		     [](auto const& lhs, auto const& rhs)
-		     {
-		       return lhs.second.total() < rhs.second.total();
-		     });
+  auto ret = max_element(guardToMinutesAsleep.cbegin(),
+			 guardToMinutesAsleep.cend(),
+			 [](auto const& lhs, auto const& rhs)
+			 {
+			   return lhs.second.total() < rhs.second.total();
+			 });
+  return {ret->first, ret->second};
 }
 
 int solA(Notes const &n)
 {
   auto guard = sleepiestGuard(n);
-  return guard->first * guard->second.sleepiestMinute();
+  return guard.first * guard.second.sleepiestMinute();
 }
 
 #include "simulation.hh"
@@ -91,9 +90,9 @@ TEST(example, times_of_ten)
 {
   Sleepogram s;
   Simulation sut("[1518-11-01 00:00] Guard #10 begins shift",
-		 [&s](Guard, int minute)
+		 [&s](Guard, Time const &t)
 		 {
-		   s.add(minute);
+		   s.add(t.minute);
 		 });
   sut.execute("[1518-11-01 00:05] falls asleep\n");
   sut.execute("[1518-11-01 00:25] wakes up\n");
@@ -106,9 +105,9 @@ TEST(example, times_of_ten_two)
 {
   Sleepogram s;
   Simulation sut("[1518-11-03 00:05] Guard #10 begins shift",
-		 [&s](Guard, int minute)
+		 [&s](Guard, Time const & time)
 		 {
-		     s.add(minute);
+		     s.add(time.minute);
 		 });
   sut.execute("[1518-11-03 00:24] falls asleep");
   sut.execute("[1518-11-03 00:29] wakes up");
@@ -120,33 +119,33 @@ TEST(a, example)
 {
   istringstream in(
 		   "[1518-11-01 00:00] Guard #10 begins shift\n"
+		   "[1518-11-05 00:03] Guard #99 begins shift\n"
 		   "[1518-11-01 00:05] falls asleep\n"
 		   "[1518-11-01 00:25] wakes up\n"
 		   "[1518-11-01 00:30] falls asleep\n"
 		   "[1518-11-01 00:55] wakes up\n"
 		   "[1518-11-01 23:58] Guard #99 begins shift\n"
 		   "[1518-11-02 00:40] falls asleep\n"
-		   "[1518-11-02 00:50] wakes up\n"
 		   "[1518-11-03 00:05] Guard #10 begins shift\n"
+		   "[1518-11-02 00:50] wakes up\n"
 		   "[1518-11-03 00:24] falls asleep\n"
 		   "[1518-11-03 00:29] wakes up\n"
 		   "[1518-11-04 00:02] Guard #99 begins shift\n"
 		   "[1518-11-04 00:36] falls asleep\n"
 		   "[1518-11-04 00:46] wakes up\n"
-		   "[1518-11-05 00:03] Guard #99 begins shift\n"
 		   "[1518-11-05 00:45] falls asleep\n"
 		   "[1518-11-05 00:55] wakes up\n");
   Notes n;
   in>>n;
 
   auto guard = sleepiestGuard(n);
-  ASSERT_THAT(guard->first, Eq(10));
-  ASSERT_THAT(guard->second.sleepiestMinute(), Eq(24));
+  ASSERT_THAT(guard.first, Eq(10));
+  ASSERT_THAT(guard.second.sleepiestMinute(), Eq(24));
   ASSERT_THAT(solA(n), Eq(240));
     
 }
 
-TEST(DISABLED_a, acutal)
+TEST(a, acutal)
 {
   ifstream in(INPUT);
   Notes n;
