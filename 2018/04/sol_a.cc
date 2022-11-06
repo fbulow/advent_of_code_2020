@@ -5,6 +5,31 @@
 #include <fstream>
 #include <array>
 #include <numeric>
+#include <map>
+int solB(Notes const &n)
+{
+  map<pair<int, int>, int> guardToMinutesAsleep;
+  Simulation s(*n.cbegin(),
+	       [&guardToMinutesAsleep](Guard guard, Time const & time)
+	       {
+		 guardToMinutesAsleep[{guard.get(), time.minute}]++;
+	       }
+	       );
+  for_each(next(n.cbegin()),
+	   n.cend(),
+	   [&s](Note const &note)
+	   {
+	     s.execute(note);
+	   });
+  auto ret = max_element(guardToMinutesAsleep.cbegin(),
+			 guardToMinutesAsleep.cend(),
+			 [](auto const& lhs, auto const& rhs)
+			 {
+			   return lhs.second < rhs.second;
+			 })->first;
+  return (ret.first)*(ret.second);
+  
+}
 
 class Sleepogram
 {
@@ -142,7 +167,6 @@ TEST(a, example)
   ASSERT_THAT(guard.first, Eq(10));
   ASSERT_THAT(guard.second.sleepiestMinute(), Eq(24));
   ASSERT_THAT(solA(n), Eq(240));
-    
 }
 
 TEST(a, acutal)
@@ -153,6 +177,41 @@ TEST(a, acutal)
   ASSERT_THAT(n.size(), Eq(1102));
   auto ans = solA(n);
   ASSERT_THAT(ans, Lt(30857));
+  ASSERT_THAT(ans, Eq(19874));
   cout<<"Ans A: "<<ans<<endl;
+}
+
+TEST(b, example)
+{
+  {
+    istringstream in(
+		     "[1518-11-01 00:00] Guard #10 begins shift\n"
+		     "[1518-11-05 00:03] Guard #99 begins shift\n"
+		     "[1518-11-01 00:05] falls asleep\n"
+		     "[1518-11-01 00:25] wakes up\n"
+		     "[1518-11-01 00:30] falls asleep\n"
+		     "[1518-11-01 00:55] wakes up\n"
+		     "[1518-11-01 23:58] Guard #99 begins shift\n"
+		     "[1518-11-02 00:40] falls asleep\n"
+		     "[1518-11-03 00:05] Guard #10 begins shift\n"
+		     "[1518-11-02 00:50] wakes up\n"
+		     "[1518-11-03 00:24] falls asleep\n"
+		     "[1518-11-03 00:29] wakes up\n"
+		     "[1518-11-04 00:02] Guard #99 begins shift\n"
+		     "[1518-11-04 00:36] falls asleep\n"
+		     "[1518-11-04 00:46] wakes up\n"
+		     "[1518-11-05 00:45] falls asleep\n"
+		     "[1518-11-05 00:55] wakes up\n");
+    Notes n;
+    in>>n;
+
+    ASSERT_THAT(solB(n), Eq(4455));
+  }
+
+  ifstream in(INPUT);
+  Notes n;
+  in>>n;
+  auto ans = solB(n);
+  cout<<"Ans B: "<<ans<<endl;
 
 }
