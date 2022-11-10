@@ -29,8 +29,8 @@ Board::Board(Box const & box, Coords const &points)
   for(int i=0;i<points.size(); i++)
     {
       auto p = points[i];
-      get(p.row()-box.row.min,
-	  p.col()-box.col.min) = i;
+      set(p.row()-box.row.min,
+	  p.col()-box.col.min, i);
     }
 }
 
@@ -38,8 +38,8 @@ Board::Board(Coords const &points)
   :Board(Box(points), points)
 {}
 
-int& Board::get(int row, int col)
-{return data_[row][col];}
+void Board::set(int row, int col, int value)
+{data_[row][col] = value;}
 
 int Board::get(int row, int col) const
 {return data_[row][col];}

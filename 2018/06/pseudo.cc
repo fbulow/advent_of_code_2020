@@ -20,7 +20,7 @@ Board::floodFillOneStep()
 	  auto v = newValue(get(pos), a);
 	  assert(v!=Board::free)
 	  addToNextEdge(a);
-	  nxt.set(pos, v);
+	  setNext(pos, v);
 	}
     }
   stepDone();

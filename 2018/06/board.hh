@@ -34,6 +34,6 @@ public:
   static constexpr int free={-1};
   static constexpr int border={-2}; // between regions
 
-  int& get(int row, int col);
   int get(int row, int col) const;
+  void set(int row, int col, int value);
 };
