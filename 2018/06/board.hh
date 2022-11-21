@@ -1,39 +1,79 @@
 #pragma once
+#include"input.hh"
 #include<vector>
-#include<tuple>
-#include<algorithm>
-#include"coord.hh"
-#include<ranges>
+#include<limits>
+#include<set>
+#include<iostream>
+#include<string_view>
+#include"char_convert.hh"
 using namespace std;
+class BoardAsVectors : public vector<vector<int>>
+{
+public:
+  BoardAsVectors()=default;
+  BoardAsVectors(size_t s):vector<vector<int>>(s){}
+  BoardAsVectors(vector<vector<int>> && data)
+    :vector<vector<int>>(move(data))
+  {}
+  BoardAsVectors(vector<string_view> const &strings)
+  {
+    assert(strings.size()>0);
+    reserve(strings.size());
+    auto const n = strings.begin()->size();
+    for(auto const &x : strings)
+      {
+	vector<int> row;
+	row.resize(n);
+	transform(x.begin(),
+		  x.end(),
+		  row.begin(),
+		  fromVisibleChar);
+	emplace_back(move(row));
+      }
+  }
+  int get(int row, int col)
+  {
+    return (*this)[row][col];
+  }
 
-
-struct Range{
-  int min;
-  int max;
-  int length()const {return 1+max-min;}
-};
-
-#include<ranges>
-struct Box{
-  Box(vector<Coord> const & v);
-  Range row;
-  Range col;  
-
-  int height() const{ return row.length();}
-  int width()  const{ return col.length();}
 };
 
 class Board{
-  vector<vector<int>> data_;
 public:
-  Board(Coords const &points);
-  Board(Box const & box, Coords const &points);
+  Board(Data d);
+  Board(BoardAsVectors &&data);
+  template<typename ... T>
+  Board(T && ...  x)
+    :Board(BoardAsVectors({std::forward<T>(x)...}))
+  {}
+     
+    
 
-  bool thereAreUnknowns() const;
+  int get(int row, int col)
+  {
+    return data[row][col];
+  }
   
-  static constexpr int free={-1};
-  static constexpr int border={-2}; // between regions
-
-  int get(int row, int col) const;
-  void set(int row, int col, int value);
+  
+  void fill()
+  {
+    
+  }
+  int sizeOfLargestFiniteRegion();
+  set<int>infiniteRegions();
+  
+  vector<int> regionSizes()
+  {
+    auto infinite = numeric_limits<int>::max();
+    return {1, 99, infinite, 9, 17, infinite}; //TODO
+  }
+  int nRows() const{return data.size();}
+  int nCols() const{return data[0].size();}
+  
+private:
+  friend ostream& operator<<(ostream& out, Board const &b);
+  BoardAsVectors data;
 };
+
+ostream& operator<<(ostream& out, Board const &b);
+

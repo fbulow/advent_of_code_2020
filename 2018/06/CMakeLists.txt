@@ -11,7 +11,9 @@ include(${CMAKE_BINARY_DIR}/Findnamedtype.cmake)
 
 add_executable(${PROJECT_NAME}
   board.cc
-  coord.cc
+  solA.cc
+  char_convert.cc
+  input.cc
 )
 
 target_compile_options(${PROJECT_NAME}

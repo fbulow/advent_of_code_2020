@@ -1,108 +1,188 @@
 #include "board.hh"
+#include <ranges>
+#include <set>
+#include <algorithm>
+#include <cassert>
+#include <iostream>
+#include "char_convert.hh"
 
-Box::Box(vector<Coord> const & v)
+ostream& operator<<(ostream& out, BoardAsVectors const &b)
 {
-  auto rows = v|views::transform([](auto const &x)->int {return x.row();});
-  row.max = *max_element(rows.begin(),rows.end());
-  row.min = *min_element(rows.begin(),rows.end());
-
-  auto cols = v|views::transform([](auto const &x)->int {return x.col();});
-  col.max = *max_element(cols.begin(),cols.end());
-  col.min = *min_element(cols.begin(),cols.end());
-}
-
-bool Board::thereAreUnknowns() const
-{
-  auto rowDoesNotContainFree =
-    [](vector<int> const &row) -> bool
+  for(auto row: b)
     {
-      return ranges::any_of(row, [](int x){return x==free;});
-    };
-  return ranges::any_of(data_, rowDoesNotContainFree);
-}  
-
-Board::Board(Box const & box, Coords const &points)
-{
-  data_.reserve(box.height());
-  for(int i=box.row.min; i<=box.row.max; i++)
-    data_.emplace_back(vector<int>(box.width(), free));
-  for(int i=0;i<points.size(); i++)
-    {
-      auto p = points[i];
-      set(p.row()-box.row.min,
-	  p.col()-box.col.min, i);
+      for(auto c : row)
+	out<<toVisibleChar(c)<<' ';
+      out<<endl;
     }
+  return out;
 }
 
-Board::Board(Coords const &points)
-  :Board(Box(points), points)
+ostream& operator<<(ostream& out, Board const &b)
+{
+  return (out<<b.data);
+}
+set<int> Board::infiniteRegions()
+{
+  set<int> ret;
+  for(auto const &x: data[0])
+    ret.insert(x);
+  for(auto const &x: *data.rbegin())
+    ret.insert(x);
+
+  for(auto const &x:data)
+    {
+      ret.insert(x[0]);
+      ret.insert(*x.rbegin());
+    }
+	  
+  return ret;
+}
+
+int Board::sizeOfLargestFiniteRegion()
+{
+
+  auto rs = regionSizes();
+  auto ir = infiniteRegions();
+
+  auto finteRegionSizes =
+    ranges::iota_view{0, int(rs.size())}
+    |ranges::views::filter([ir = set(ir.begin(), ir.end())](auto rowNr ){return not ir.contains(rowNr);})
+    |ranges::views::transform([rs](auto rowNr){return rs[rowNr];});
+
+  for(auto x: finteRegionSizes)
+    cout<<x<<" ";
+  cout<<endl;
+  
+  
+  auto ret = max_element(finteRegionSizes.begin(), finteRegionSizes.end());
+  assert (ret!=finteRegionSizes.end());
+  auto r = *ret;
+  return r;
+}
+
+
+
+
+Board::Board(BoardAsVectors &&data)
+  :data(move(data))
 {}
+Board::Board(Data d)
+{
+  normalize(d);
+  data = BoardAsVectors(maxRow(d)+1);
+  auto const Ncol = maxCol(d)+1;
+  int color=1;
+  for(auto &row: data)
+      row = vector<int>(Ncol);
+  for(auto [row, col] : d)
+    data[row][col]=color++;
+}
 
-void Board::set(int row, int col, int value)
-{data_[row][col] = value;}
-
-int Board::get(int row, int col) const
-{return data_[row][col];}
 
 
 #include<gtest/gtest.h>
 #include<gmock/gmock.h>
+#include"input.hh"
 using namespace testing;
 
-//TEST(Board, get_outside_board_is_always_free)
-//TEST(newValue, border)
-//TEST(newValue, already_known)
-//TEST(newValue, assign_value)
-
-
-
-TEST(Board, thereAreUnknowns_true)
+TEST(BoardAsVectors, ctor)
 {
-  Board sut(Coords({Coord{1,0},Coord{0,1}}));
-  EXPECT_TRUE(sut.thereAreUnknowns());
+  BoardAsVectors sut({
+      "a . .",
+      ". . .",
+      ". . b"
+    });  
+  ostringstream s;
+  s<<sut;
+  ASSERT_THAT(s.str(), Eq("a . . \n . . . \n . . b\n "));
+  
 }
 
-TEST(Board, thereAreUnknowns_false)
+// TEST(Board, fill)
+// {
+//   // a . .
+//   // . . .
+//   // . . b  
+//   Board sut({pair(0,0), pair(2,2)});
+//   auto ans = sut.fill();
+//   ASSERT_THAT(ans.get(1,0), Eq(1));
+//   ASSERT_THAT(ans.get(0,1), Eq(1));
+//   ASSERT_THAT(ans.get(1,1), Eq(0));
+// }
+
+TEST(Board, data_ctor)
 {
-  Board sut(Coords({Coord{1,0},Coord{0,0}}));
-  EXPECT_FALSE(sut.thereAreUnknowns());
+  Board sut(Data({pair(0,0)}));
+  ASSERT_THAT(sut.nRows(), Eq(1));
+  ASSERT_THAT(sut.nCols(), Eq(1));
+  ASSERT_THAT(sut.get(0,0), Eq(1));
+}
+TEST(Board, data_ctor_four_squares)
+{
+  Board sut(Data({pair(0,0), pair(1,1)}));
+  ASSERT_THAT(sut.get(0,0), Eq(1));
+  ASSERT_THAT(sut.get(1,1), Eq(2));
+  ASSERT_THAT(sut.get(0,1), Eq(0));
 }
 
 
-TEST(Box, ctor)
+
+TEST(Board, infiniteRegions_are_border_regions)
 {
-  vector<Coord> data{{0,0}};
-  auto sut = Box(data);
-  EXPECT_THAT(sut.row.min, Eq(0));
-  EXPECT_THAT(sut.row.max, Eq(0));
-  EXPECT_THAT(sut.col.min, Eq(0));
-  EXPECT_THAT(sut.col.max, Eq(0));
+  Board sut(vector<vector<int>>{
+      {1,2,3},
+      {4,0,5},
+      {6,7,8}});
+  ASSERT_THAT(sut.infiniteRegions(), AllOf(Contains(1)
+					   ,Contains(2)
+					   ,Contains(3)
+					   ,Contains(4)
+					   ,Contains(5)
+					   ,Contains(6)
+					   ,Contains(7)
+					   ,Contains(8)));
 }
 
-TEST(Box, ctor_two_points)
+
+
+TEST(Board, ctor_BoardAsVectors)
 {
-  vector<Coord> data{{1,5}, {3,2}};
-  auto sut = Box(data);
-  EXPECT_THAT(sut.row.min, Eq(1));
-  EXPECT_THAT(sut.row.max, Eq(3));
-  EXPECT_THAT(sut.col.min, Eq(2));
-  EXPECT_THAT(sut.col.max, Eq(5));
+  Board sut(BoardAsVectors({
+      {0,0,0},
+      {0,1,0},
+      {0,2,0}}));
+  ASSERT_THAT(sut.get(1,1), Eq(1));
+  ASSERT_THAT(sut.get(2,1), Eq(2));
+  ASSERT_THAT(sut.get(0,2), Eq(0));
 }
 
-TEST(Box, height)
+
+
+TEST(Board, check_infinites_in_example)
 {
-  vector<Coord> data{{0,0}, {1,0}};
-  auto sut = Box(data);
-  EXPECT_THAT(sut.height(), Eq(2));
-}
+  auto sut = Board(
+      "aaaaa.cccc",
+      "aaaaa.cccc",
+      "aaaddecccc",
+      "aadddecccc",
+      "..dddeeccc",
+      "bb.deeeecc",
+      "bbb.eeee..",
+      "bbb.eeefff",
+      "bbb.eeffff",
+      "bbb.ffffff")
+    .infiniteRegions();
 
-TEST(Board, ctor)
+   
+  ASSERT_THAT(sut,
+	      AllOf(Contains(fromVisibleChar('a')),
+		    Contains(fromVisibleChar('b')),
+		    Contains(fromVisibleChar('c')),
+		    Contains(fromVisibleChar('f'))));
+}
+     
+TEST(char, dot_is_zero)
 {
-  vector<Coord> points{{1,5}, {3,2}};
-  auto sut = Board(Box(points), points);
-
-  EXPECT_THAT(sut.get(0,0), Eq(Board::free));
-  EXPECT_THAT(sut.get(0,3), Eq(0));
-  EXPECT_THAT(sut.get(2,0), Eq(1));
+  ASSERT_THAT(int('.'), Eq(0));
+  ASSERT_THAT(int('a'), Eq(1));
 }
-
