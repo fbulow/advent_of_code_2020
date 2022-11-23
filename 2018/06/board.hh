@@ -15,6 +15,8 @@ public:
   BoardAsVectors(vector<vector<int>> && data)
     :vector<vector<int>>(move(data))
   {}
+  BoardAsVectors(string const &singleString);
+  
   BoardAsVectors(vector<string_view> const &strings)
   {
     assert(strings.size()>0);
@@ -77,3 +79,5 @@ private:
 
 ostream& operator<<(ostream& out, Board const &b);
 
+inline
+vector<int> regionSizes(BoardAsVectors const &b){return {};}

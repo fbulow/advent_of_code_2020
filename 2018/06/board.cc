@@ -5,6 +5,29 @@
 #include <cassert>
 #include <iostream>
 #include "char_convert.hh"
+#include <sstream>
+
+BoardAsVectors::BoardAsVectors(string const & singleString)
+{
+  istringstream in(singleString);
+  string s;
+  in>>s;
+  vector<vector<int>> ret;
+  while(not in.eof())
+    {
+      emplace_back(
+		   [s]()
+		   {
+		     vector<int> ret;
+		     ret.resize(s.size());
+		     transform(s.begin(), s.end(),
+			       ret.begin(),
+			       fromVisibleChar);
+		     return ret;
+		   }());
+      in>>s;
+    }
+}
 
 ostream& operator<<(ostream& out, BoardAsVectors const &b)
 {
@@ -87,15 +110,32 @@ using namespace testing;
 
 TEST(BoardAsVectors, ctor)
 {
-  BoardAsVectors sut({
-      "a . .",
-      ". . .",
-      ". . b"
-    });  
+  BoardAsVectors sut(
+		     R""""(
+a..
+...
+..b
+)"""");
   ostringstream s;
   s<<sut;
-  ASSERT_THAT(s.str(), Eq("a . . \n . . . \n . . b\n "));
+  ASSERT_THAT(s.str(), Eq("a . . \n. . . \n. . b \n"));
   
+}
+TEST(regionSizes, example)
+{
+  cout<<BoardAsVectors(
+		     R""""(
+aaaaa.cccc
+aAaaa.cccc
+aaaddecccc
+aadddeccCc
+..dDdeeccc
+bb.deEeecc
+bBb.eeee..
+bbb.eeefff
+bbb.eeffff
+bbb.ffffFf
+)"""")<<endl;
 }
 
 // TEST(Board, fill)
@@ -181,8 +221,3 @@ TEST(Board, check_infinites_in_example)
 		    Contains(fromVisibleChar('f'))));
 }
      
-TEST(char, dot_is_zero)
-{
-  ASSERT_THAT(int('.'), Eq(0));
-  ASSERT_THAT(int('a'), Eq(1));
-}
