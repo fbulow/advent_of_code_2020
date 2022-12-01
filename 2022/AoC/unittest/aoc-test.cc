@@ -8,7 +8,7 @@ using namespace std;
 TEST(getAllLines, getInput)
 {
   istringstream in("input");
-  auto sut = getAllLines<std::string>(in);
+  auto sut = getAllLines(in);
   EXPECT_EQ(std::string("input"), sut[0]);
   EXPECT_EQ(1, sut.size());
 }
@@ -28,3 +28,25 @@ TEST(getAllLines, default_input_file)
   EXPECT_EQ(std::string("input"), sut[0]);
   EXPECT_EQ(1, sut.size());
 }
+
+
+class Integer{
+  int v;
+public:
+  Integer(string s)
+  {
+    istringstream in(s);
+    in>>v;
+  }
+  operator int () const{return v;}
+};
+
+TEST(getAllLines, getNumbers)
+{
+  istringstream in("100\n200");
+  
+  auto sut = getAllLines<Integer>(in);
+  EXPECT_EQ(100, sut[0]);
+  EXPECT_EQ(200, sut[1]);
+}
+

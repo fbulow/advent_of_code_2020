@@ -4,7 +4,7 @@
 #include <string>
 #include <fstream>
 
-template<typename T>
+template<typename T=std::string>
 std::vector<T> getAllLines(std::istream &in)
 {
   std::vector<T> ret;
@@ -15,7 +15,7 @@ std::vector<T> getAllLines(std::istream &in)
   return ret;
 }
 
-template<typename T>
+template<typename T=std::string>
 std::vector<T> getAllLines()
 {
   std::ifstream in(INPUT);
