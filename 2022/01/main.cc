@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <numeric>
+#include <cassert>
 
 #include <AoC/getAllLines.hh>
 
@@ -25,27 +26,61 @@ int getElfCalories(istream& input)
     return val+getElfCalories(input);
 }
 
+class PositiveIntOrEmpty{
+  int value_;
+public:
+  PositiveIntOrEmpty(string const & s)
+  {
+    if(s.empty())
+      value_=-1;
+    else
+      {
+	istringstream in(s);
+	in>>value_;
+      }
+  }
+
+  int value() const {
+    assert(not empty());
+    return value_;
+  }
+  bool empty() const {return value_<0;}
+};
+
+struct ElfCalories:vector<int>
+{
+  ElfCalories(auto && data)
+  {
+    int nxt{0};
+    for(auto x:data)
+      if(x.empty())
+	{
+	  push_back(nxt);
+	  nxt=0;
+	}
+      else
+	nxt+=x.value();
+  }
+};
+
+
+
 int solA(istream& input, int ret=0)
 {
-  auto next = getElfCalories(input);
-  if(input.eof())
-    return ret;
-  else
-    return solA(input, max(ret, next));
+  ElfCalories  elfCalories(getAllLines<PositiveIntOrEmpty>(input));
+  return *max_element(elfCalories.begin(), elfCalories.end());
 }
 
 int solB(istream& input)
 {
-  vector<int> values;
-  while(not input.eof())
-    values.push_back(getElfCalories(input));
-  partial_sort(values.begin(),
-	       next(values.begin(),4),
-	       values.end(),
+  ElfCalories  elfCalories(getAllLines<PositiveIntOrEmpty>(input));
+  partial_sort(elfCalories.begin(),
+	       next(elfCalories.begin(),4),
+	       elfCalories.end(),
 	       [](int a, int b){
 		 return a>b;});
-  return accumulate(values.begin(),
-		    next(values.begin(), 3),
+  return accumulate(elfCalories.begin(),
+		    next(elfCalories.begin(), 3),
 		    0);
 		    
 }
@@ -109,9 +144,22 @@ TEST(examlpe, B)
   EXPECT_EQ(45000, solB(input));
 }
 
-
 TEST(solution, B)
 {
   ifstream in(INPUT);
   EXPECT_EQ(210406, solB(in));
 }
+
+TEST(PositiveIntOrEmpty, empty_string_is_empty)
+{
+  PositiveIntOrEmpty sut("");
+  ASSERT_TRUE(sut.empty());
+}
+
+TEST(PositiveIntOrEmpty, not_empty_if_string_is_a_number)
+{
+  PositiveIntOrEmpty sut("55");
+  EXPECT_FALSE(sut.empty());
+  EXPECT_EQ(55, sut.value());
+}
+
