@@ -1,0 +1,9 @@
+cmake_minimum_required(VERSION 3.20)
+
+project(Aoc2022)
+enable_testing()
+
+add_subdirectory(AoC)
+add_subdirectory(01)
+
+

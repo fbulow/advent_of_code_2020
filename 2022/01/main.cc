@@ -4,6 +4,9 @@
 #include <vector>
 #include <algorithm>
 #include <numeric>
+
+#include <AoC/getAllLines.hh>
+
 using namespace std;
 
 int getElfCalories(istream& input)
@@ -110,5 +113,5 @@ TEST(examlpe, B)
 TEST(solution, B)
 {
   ifstream in(INPUT);
-  EXPECT_EQ(45000, solB(in));
+  EXPECT_EQ(210406, solB(in));
 }
