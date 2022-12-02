@@ -1,5 +1,6 @@
 #include <AoC/getAllLines.hh>
 #include <numeric>
+#include <algorithm>
 
 using namespace std;
 
@@ -62,17 +63,19 @@ int iWon(string s)
 struct Score{
   int value;
   Score(string s)
-    :value(s.empty()?0:iWon(s) + intrisicValue(s))
+    :value()
   {}
 };
 
 
-int solA(vector<Score> const && scores)
+int solA(vector<string> scores)
 {
   return accumulate(scores.begin(),
 		    scores.end(),
 		    0,
-		    [](int a,Score s){return s.value+a;});
+		    [](int a,string s){
+		      return a+(s.empty()?0:iWon(s) + intrisicValue(s));
+		    });
 }
 
 string decrypt(string s)
@@ -112,12 +115,36 @@ string decrypt(string s)
     }
   return s;
 }
+int solB(vector<string> s)
+{
+  transform(s.begin(),
+	    s.end(),
+	    s.begin(),
+	    decrypt);
+  return solA(s);
+}
 
 
 #include<gtest/gtest.h>
 #include<gmock/gmock.h>
 
 using namespace testing;
+
+TEST(solB, real)
+{
+  ASSERT_EQ(10560, solB(getAllLines<>()));
+}
+
+
+TEST(solB, example)
+{
+  istringstream in(R""(A Y
+B X
+C Z
+)"");
+
+  ASSERT_EQ(12, solB(getAllLines<string>(in)));
+}
 
 TEST(decrypt, losses)
 {
@@ -141,7 +168,7 @@ TEST(decrypt, wins)
 
 TEST(solA, real)
 {
-  ASSERT_EQ(9651, solA(getAllLines<Score>()));
+  ASSERT_EQ(9651, solA(getAllLines()));
 }
 
 TEST(Score, empty_string_value_zero)
@@ -156,7 +183,7 @@ B X
 C Z
 )"");
 
-  ASSERT_EQ(15, solA(getAllLines<Score>(in)));
+  ASSERT_EQ(15, solA(getAllLines<string>(in)));
 }
 
 TEST(intrisicValue, example)
