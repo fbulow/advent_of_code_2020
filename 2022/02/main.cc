@@ -19,6 +19,24 @@ Hand hand(char h)
   assert(false);
 }
 
+int intrisicValue(Hand h)
+{
+  //...for the shape you selected (1 for Rock, 2 for Paper, and 3 for Scissors)
+  switch(h)
+    {
+    case Hand::Rock:	 return 1;
+    case Hand::Paper:	 return 2;
+    case Hand::Scissors: return 3;
+    }
+  assert(false);
+}
+
+int intrisicValue(string const &s)
+{
+  return intrisicValue(hand(s[2]));
+}
+
+
 int iWon(Hand opponent, Hand me)
 {
   if(me==opponent) return 3;
@@ -39,6 +57,16 @@ int iWon(string s)
 #include<gmock/gmock.h>
 
 using namespace testing;
+
+
+
+TEST(intrisicValue, example)
+{
+  // In the first round, your opponent will choose Rock (A), and you
+  // should choose Paper (Y). This ends in a win for you with a score of
+  // 8 (2 because you chose Paper + 6 because you won).
+  ASSERT_EQ(2, intrisicValue("A Y"));
+}
 
 
 TEST(iWon, examples)
