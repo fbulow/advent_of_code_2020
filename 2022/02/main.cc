@@ -1,4 +1,5 @@
 #include <AoC/getAllLines.hh>
+#include <numeric>
 
 using namespace std;
 
@@ -53,12 +54,48 @@ int iWon(string s)
   return iWon(hand(s[0]), hand(s[2]));
 }
 
+struct Score{
+  int value;
+  Score(string s)
+    :value(s.empty()?0:iWon(s) + intrisicValue(s))
+  {}
+};
+
+
+int solA(vector<Score> const && scores)
+{
+  return accumulate(scores.begin(),
+		    scores.end(),
+		    0,
+		    [](int a,Score s){return s.value+a;});
+}
+
+
 #include<gtest/gtest.h>
 #include<gmock/gmock.h>
 
 using namespace testing;
 
 
+TEST(solA, real)
+{
+  ASSERT_EQ(9651, solA(getAllLines<Score>()));
+}
+
+TEST(Score, empty_string_value_zero)
+{
+  ASSERT_EQ(0, Score("").value);
+}
+
+TEST(solA, example)
+{
+  istringstream in(R""(A Y
+B X
+C Z
+)"");
+
+  ASSERT_EQ(15, solA(getAllLines<Score>(in)));
+}
 
 TEST(intrisicValue, example)
 {
@@ -67,6 +104,7 @@ TEST(intrisicValue, example)
   // 8 (2 because you chose Paper + 6 because you won).
   ASSERT_EQ(2, intrisicValue("A Y"));
 }
+
 
 
 TEST(iWon, examples)

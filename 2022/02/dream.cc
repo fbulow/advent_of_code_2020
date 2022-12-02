@@ -15,11 +15,4 @@ int intrisicValue(s)
 
 }
 
-struct Score{
-  int value;
-  Score(string s)
-    :value(iWon(s) + intrisicValue(s))
-  {
-  }
-};
 
