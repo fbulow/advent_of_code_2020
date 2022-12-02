@@ -3,19 +3,24 @@
 
 using namespace std;
 
-enum class Hand{Rock, Paper, Scissors};
+
+using Hand = char;
+
+constexpr char Rock	= 'A';
+constexpr char Paper	= 'B';
+constexpr char Scissors	= 'C';
 
 
 Hand hand(char h)
 {
   switch(h)
     {
-    case 'A':return Hand::Rock;	   
-    case 'B':return Hand::Paper;   
-    case 'C':return Hand::Scissors;
-    case 'X':return Hand::Rock;	   
-    case 'Y':return Hand::Paper;   
-    case 'Z':return Hand::Scissors;
+    case 'A':return Rock;	   
+    case 'B':return Paper;   
+    case 'C':return Scissors;
+    case 'X':return Rock;	   
+    case 'Y':return Paper;   
+    case 'Z':return Scissors;
     }
   assert(false);
 }
@@ -25,9 +30,9 @@ int intrisicValue(Hand h)
   //...for the shape you selected (1 for Rock, 2 for Paper, and 3 for Scissors)
   switch(h)
     {
-    case Hand::Rock:	 return 1;
-    case Hand::Paper:	 return 2;
-    case Hand::Scissors: return 3;
+    case Rock:	 return 1;
+    case Paper:	 return 2;
+    case Scissors: return 3;
     }
   assert(false);
 }
@@ -40,13 +45,14 @@ int intrisicValue(string const &s)
 
 int iWon(Hand opponent, Hand me)
 {
-  if(me==opponent) return 3;
-
-  if(me==Hand::Rock      and opponent==Hand::Scissors) return 6;
-  if(me==Hand::Paper     and opponent==Hand::Rock    ) return 6;
-  if(me==Hand::Scissors  and opponent==Hand::Paper   ) return 6;
-
-  return 0;
+  auto val = (opponent-me+3)%3;
+  switch(val)
+    {
+    case 2: return 6;
+    case 0: return 3;
+    case 1: return 0;
+    }
+  assert(false);
 }
 
 int iWon(string s)
