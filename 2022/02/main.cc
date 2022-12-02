@@ -42,7 +42,6 @@ int intrisicValue(string const &s)
   return intrisicValue(hand(s[2]));
 }
 
-
 int iWon(Hand opponent, Hand me)
 {
   auto val = (opponent-me+3)%3;
@@ -76,11 +75,68 @@ int solA(vector<Score> const && scores)
 		    [](int a,Score s){return s.value+a;});
 }
 
+string decrypt(string s)
+{
+  switch(s[2])
+    {
+    case 'X':
+      switch(s[0])
+	{
+	case 'A':
+	  s[2] = 'C';
+	  return s;
+	case 'B':
+	  s[2] = 'A';
+	  return s;
+	case 'C':
+	  s[2] = 'B';
+	  return s;
+	}
+    case 'Y':
+      s[2]=s[0];
+      return s;
+    case 'Z':
+      switch(s[0])
+	{
+	case 'A':
+	  s[2] = 'B';
+	  return s;
+	case 'B':
+	  s[2] = 'C';
+	  return s;
+	case 'C':
+	  s[2] = 'A';
+	  return s;
+	}
+      
+    }
+  return s;
+}
+
 
 #include<gtest/gtest.h>
 #include<gmock/gmock.h>
 
 using namespace testing;
+
+TEST(decrypt, losses)
+{
+  ASSERT_EQ(0, iWon(decrypt("A X")));
+  ASSERT_EQ(0, iWon(decrypt("B X")));
+  ASSERT_EQ(0, iWon(decrypt("C X")));
+}
+TEST(decrypt, draws)
+{
+  ASSERT_EQ(3, iWon(decrypt("A Y")));
+  ASSERT_EQ(3, iWon(decrypt("B Y")));
+  ASSERT_EQ(3, iWon(decrypt("C Y")));
+}
+TEST(decrypt, wins)
+{
+  ASSERT_EQ(6, iWon(decrypt("A Z")));
+  ASSERT_EQ(6, iWon(decrypt("B Z")));
+  ASSERT_EQ(6, iWon(decrypt("C Z")));
+}
 
 
 TEST(solA, real)
