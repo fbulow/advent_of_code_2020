@@ -66,6 +66,10 @@ string commonLetters(vector<string> const & lines)
   return ret;
 }
 
+int solA(auto const &data)
+{
+  return sumUp(commonLetters(data));
+}
 
 
 
@@ -74,10 +78,30 @@ string commonLetters(vector<string> const & lines)
 
 using namespace testing;
 
-// TEST(sumUp, example)
-// {
-//   16 (p), 38 (L), 42 (P), 22 (v), 20 (t), and 19 (s)
-// }
+TEST(solA, real)
+{
+  EXPECT_EQ(7826, solA(getAllLines()));
+}
+
+TEST(solA, example)
+{
+  istringstream in(
+		   R""(vJrwpWtwJgWrhcsFMMfFFhFp
+jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+PmmdzqPrVvPwwTWBwg
+wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+ttgJtRGJQctTZtZT
+CrZsJsPPZsGzwwsLwLmpwMDw)"");
+
+
+  EXPECT_EQ(157, solA(getAllLines(in)));
+}
+
+
+TEST(sumUp, example)
+{
+  EXPECT_EQ(157, sumUp("pLPvts"));
+}
 
 TEST(priority, all)
 {
