@@ -10,7 +10,7 @@ int solA()
 string commonLetters(lines)
 {
   string ret;
-  ret.resize(lines.size());
+  ret.reserve(lines.size());
   for(x:lines)
     {
       middle = advance(line.begin(), line.size()/2);
@@ -27,7 +27,9 @@ string commonLetters(lines)
   return ret;
 }
 
-int sumUp(string)
+int sumUp(string s)
 {
-
+  return accumulate(s.begin(), s.end(),
+		    0,
+		    priority);
 }
