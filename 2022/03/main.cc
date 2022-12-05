@@ -73,14 +73,26 @@ int solA(auto const &data)
   return sumUp(commonLetters(data));
 }
 
-optional<char> badge(set<char> const &a,
-		     set<char> const &b,
-		     set<char> const &c)
+using OptBadge = std::optional<char>;
+struct  Rucksack : set<char>
 {
-  set<char> ab;
+  Rucksack()
+    :set<char>()
+  {}
+  Rucksack(auto const & s)
+  {
+    ranges::copy_if(s, inserter(*this, end()), [](auto c){return c!=0;});
+  }
+};
+
+OptBadge badge(Rucksack const &a,
+	       Rucksack const &b,
+	       Rucksack const &c)
+{
+  Rucksack ab;
   ranges::set_intersection(a,
 			   b, inserter(ab,ab.end()));
-  set<char> abc;
+  Rucksack abc;
   ranges::set_intersection(ab,c, inserter(abc, abc.end()));
   if(abc.size()==1)
     return *abc.begin();
@@ -88,43 +100,28 @@ optional<char> badge(set<char> const &a,
     return {};
 }
 
-
 #include<gtest/gtest.h>
 #include<gmock/gmock.h>
 
 using namespace testing;
 
-set<char> toSet(string const &s)
-{
-  return {s.begin(), s.end()};
-}
-
 TEST(badge, two_common)
 {
-  auto a = toSet("ade");
-  auto b = toSet("bde");
-  auto c = toSet("cde");
-
-
-  auto sut = badge(a,b,c);
+  auto sut = badge("ade","bde","cde");
   EXPECT_FALSE(sut);
 }
 
-
 TEST(badge, example_1)
 {
-  auto a = toSet("vJrwpWtwJgWrhcsFMMfFFhFp");
-  auto b = toSet("jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL");
-  auto c = toSet("PmmdzqPrVvPwwTWBwg");
 
 
-  auto sut = badge(a,b,c);
+  auto sut = badge(
+		   "vJrwpWtwJgWrhcsFMMfFFhFp",
+		   "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
+		   "PmmdzqPrVvPwwTWBwg");
   EXPECT_TRUE(sut);
   EXPECT_EQ('r', sut.value());
 }
-
-
-
 
 TEST(solA, real)
 {
