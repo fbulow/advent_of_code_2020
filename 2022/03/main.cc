@@ -4,6 +4,8 @@
 #include <iterator>
 #include <set>
 #include <ranges>
+#include <iterator>
+
 
 using namespace std;
 
@@ -71,12 +73,58 @@ int solA(auto const &data)
   return sumUp(commonLetters(data));
 }
 
+optional<char> badge(set<char> const &a,
+		     set<char> const &b,
+		     set<char> const &c)
+{
+  set<char> ab;
+  ranges::set_intersection(a,
+			   b, inserter(ab,ab.end()));
+  set<char> abc;
+  ranges::set_intersection(ab,c, inserter(abc, abc.end()));
+  if(abc.size()==1)
+    return *abc.begin();
+  else
+    return {};
+}
 
 
 #include<gtest/gtest.h>
 #include<gmock/gmock.h>
 
 using namespace testing;
+
+set<char> toSet(string const &s)
+{
+  return {s.begin(), s.end()};
+}
+
+TEST(badge, two_common)
+{
+  auto a = toSet("ade");
+  auto b = toSet("bde");
+  auto c = toSet("cde");
+
+
+  auto sut = badge(a,b,c);
+  EXPECT_FALSE(sut);
+}
+
+
+TEST(badge, example_1)
+{
+  auto a = toSet("vJrwpWtwJgWrhcsFMMfFFhFp");
+  auto b = toSet("jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL");
+  auto c = toSet("PmmdzqPrVvPwwTWBwg");
+
+
+  auto sut = badge(a,b,c);
+  EXPECT_TRUE(sut);
+  EXPECT_EQ('r', sut.value());
+}
+
+
+
 
 TEST(solA, real)
 {
