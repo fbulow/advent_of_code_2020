@@ -1,25 +1,21 @@
 #include"headers.hh"
 
-char getStack(int stackNr, string const &s);
-bool isNumbersRow(string const & row);
-string numbersRow(vector<string>(input));
-
-int vectorSize(vector<string> const &input);
-int vectorSize(string const &numbersRow);
-
-
 class State{
   vector<stack<char>> stacks; // Stack zero is never used to match index
   
 public:
   State(vector<string> const &input)
   {
-    numbersRow(input);
-    stacks.resize(vectorSize(numbersRow(input)));
+    auto it = numbersRow(input);
+    stacks.resize(vectorSize(*it));
+
+    auto itRow = input.begin();
+    while(itRow<it)
+      {
+	//applyInstruction(*it);
+	itRow++;
+      }
     
-    
-    // for(auto const & row: input)
-      
     
   }
   operator string ()

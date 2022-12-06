@@ -1,9 +1,6 @@
 #include"headers.hh"
 
-bool isNumbersRow(string const & row)
-{  return  (row[0]==' ') and (row[1]=='1');}
-
-string numbersRow(vector<string> input)
+vector<string>::iterator numbersRow(vector<string> input)
 {
   auto it = find_if(input.begin(),
 		    input.end(),
@@ -11,27 +8,39 @@ string numbersRow(vector<string> input)
 
 
   assert(it!=input.end());
-  return *it;
+  return it;
 }
 
+bool isNumbersRow(string const & row)
+{  return  (row[0]==' ') and (row[1]=='1');}
 
-int vectorSize(string const &numbersRow)
+
+int numberOflargestStack(string const & row)
 {
-  istringstream in(numbersRow);
+  istringstream in(row);
 
   int ret;
   in>>ret;
   while(not in.eof())
     in>>ret;
+  return ret;
+}
 
-  return ret+1;
 
+int vectorSize(int largetsStack)
+{
+  return largetsStack+1;
+}
+
+int vectorSize(string const &numbersRow)
+{
+  return vectorSize(numberOflargestStack(numbersRow));
 }
 
 
 int vectorSize(vector<string> const &input)
 {
-  return vectorSize(numbersRow(input));
+  return vectorSize(*numbersRow(input));
 }
 
 char getStack(int stackNr, string const &s)
