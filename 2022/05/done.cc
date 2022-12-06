@@ -1,5 +1,17 @@
 #include"headers.hh"
 
+Command::Command(string const row)
+{
+  istringstream in(row);
+  string slask;
+  //move 1 from 2 to 3
+  in>>
+    slask >>count >> 
+    slask >>from >> 
+    slask >>to ;         
+}
+
+
 vector<string>::iterator numbersRow(vector<string> input)
 {
   auto it = find_if(input.begin(),

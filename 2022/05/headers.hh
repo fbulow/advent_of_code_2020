@@ -12,3 +12,10 @@ bool isNumbersRow(string const & row);
 vector<string>::iterator numbersRow(vector<string> input);
 int vectorSize(vector<string> const &input);
 int vectorSize(string const &numbersRow);
+
+struct Command{
+  int count;
+  int from;
+  int to;
+  Command(string const row);
+};

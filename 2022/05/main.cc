@@ -1,5 +1,6 @@
 #include"headers.hh"
 
+
 class State{
   vector<stack<char>> stacks; // Stack zero is never used to match index
   
@@ -12,11 +13,9 @@ public:
     auto itRow = input.begin();
     while(itRow<it)
       {
-	//applyInstruction(*it);
+	//applyCommand(*it);
 	itRow++;
       }
-    
-    
   }
   operator string ()
   {
@@ -35,6 +34,15 @@ string solA(vector<string> const &input)
 #include<gmock/gmock.h>
 
 using namespace testing;
+
+TEST(command, ctor)
+{
+  Command sut("move 1 from 2 to 3");
+  EXPECT_THAT(sut.count	, Eq(1));
+  EXPECT_THAT(sut.from	, Eq(2));
+  EXPECT_THAT(sut.to	, Eq(3));
+}
+
 
 TEST(getStack, example)
 {
