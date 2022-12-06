@@ -1,5 +1,10 @@
 #include"headers.hh"
 
+size_t vectorSize(size_t v)
+{
+  return v+1;
+}
+  
 
 class State{
   vector<stack<char>> stacks; // Stack zero is never used to match index
@@ -7,19 +12,50 @@ class State{
 public:
   State(vector<string> const &input)
   {
-    auto it = numbersRow(input);
-    stacks.resize(vectorSize(*it));
+    size_t endCrates = numbersRow(input);    
+    stacks.resize(vectorSize(endCrates));
 
-    auto itRow = input.begin();
-    while(itRow<it)
+    for(auto row=stacks.size()-1; row>=0; row--)
       {
-	//applyCommand(*it);
-	itRow++;
+	string const & s = input[row];
+	if(not s.empty())
+	  for(int column=1; column < stacks.size(); column++)
+	    {
+	      char c =getStack(column , s);
+	      if(c!=' ')
+		stacks[column].push(c);
+	    }
+      }
+    applyCommands(input);
+	  
+	  
+
+  }
+
+  void applyCommands(vector<string> input) //TODO
+  {}
+  void applyCommand(Command i)
+  {
+    while(i.count-->0)
+      {
+	stacks[i.to].push(stacks[i.from].top());
+	stacks[i.from].pop();
       }
   }
+  
   operator string ()
   {
-    return "CMZ"; //TODO
+    string ret;
+    auto N = stacks.size();
+    for(auto i = 1; i<N; i++)
+      {
+	auto const & s = stacks[i];
+	if(s.empty())
+	  ret.push_back('@');
+	else
+	  ret.push_back(s.top());
+      }
+    return ret;  //"CMZ"; //TODO
   }
 };
 
@@ -66,4 +102,22 @@ TEST(vectorSize, just_one_row)
 TEST(solA, example)
 {
   EXPECT_THAT(solA(getAllLines(EXAMPLE)), Eq("CMZ"));
+}
+
+
+TEST(stack, test)
+{
+  stack<char> sut;
+  
+  sut.push('a');
+  sut.push('b');
+  
+  EXPECT_THAT(sut.top(), Eq('b'));
+  sut.pop();
+
+  EXPECT_THAT(sut.top(), Eq('a'));
+  EXPECT_FALSE(sut.empty());
+  EXPECT_THAT(sut.top(), Eq('a'));
+  sut.pop();
+  EXPECT_TRUE(sut.empty());;
 }

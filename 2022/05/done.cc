@@ -12,7 +12,10 @@ Command::Command(string const row)
 }
 
 
-vector<string>::iterator numbersRow(vector<string> input)
+
+
+
+size_t numbersRow(vector<string> const & input)
 {
   auto it = find_if(input.begin(),
 		    input.end(),
@@ -20,7 +23,7 @@ vector<string>::iterator numbersRow(vector<string> input)
 
 
   assert(it!=input.end());
-  return it;
+  return distance(input.begin(), it);
 }
 
 bool isNumbersRow(string const & row)
@@ -52,10 +55,15 @@ int vectorSize(string const &numbersRow)
 
 int vectorSize(vector<string> const &input)
 {
-  return vectorSize(*numbersRow(input));
+  return vectorSize(input[numbersRow(input)]);
 }
 
 char getStack(int stackNr, string const &s)
 {
-    return s[stackNr==1?1:stackNr*4-3];
+  auto index=(1==stackNr)?1:stackNr*4-3;
+  
+  if(index >= s.size())
+     return '@';     
+  else
+    return s[index];
 }
