@@ -5,6 +5,16 @@
 #include <gtest/gtest.h>
 using namespace std;
 
+TEST(getAllLines, filename)
+{
+  vector<string> sut;
+  {
+    ifstream in(INPUT);
+    sut = getAllLines(in);
+  }
+  EXPECT_EQ(sut, getAllLines(INPUT));
+}
+
 TEST(getAllLines, getInput)
 {
   istringstream in("input");
