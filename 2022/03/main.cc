@@ -5,6 +5,9 @@
 #include <set>
 #include <ranges>
 #include <iterator>
+#include <string_view>
+#include <map>
+#include "row.hh"
 
 
 using namespace std;
@@ -76,10 +79,17 @@ int solA(auto const &data)
 using OptBadge = std::optional<char>;
 struct  Rucksack : set<char>
 {
+  string original;
   Rucksack()
     :set<char>()
   {}
-  Rucksack(auto const & s)
+
+  Rucksack(char const *s)
+    :Rucksack(string_view(s))
+  {}
+    
+  Rucksack(string_view s)
+    :original(s)
   {
     ranges::copy_if(s, inserter(*this, end()), [](auto c){return c!=0;});
   }
@@ -100,10 +110,130 @@ OptBadge badge(Rucksack const &a,
     return {};
 }
 
+class Group: public array<RowNr, 3>
+{
+public:
+  Group(RowNr a, RowNr b, RowNr c)
+    :array<RowNr, 3>{a,b,c}
+  {
+    assert(a!=b);
+    assert(a!=c);
+    assert(b!=c);
+  }
+
+  bool contains(RowNr nr) const
+  {
+    return any_of(begin(), end(), [nr](auto x){return x==nr;});
+  }
+};
+
+struct Groups:vector<Group>
+{
+  unsigned int count(RowNr nr) const
+  {
+    return count_if(begin(),
+		    end(),
+		    [nr](auto const & group)
+		    {
+		      return group.contains(nr);
+		    });
+  }
+};
+
+struct BadgeToGroups:map<char, Groups>
+{
+  
+  BadgeToGroups (vector<Rucksack> const &allRucksacks)
+  {
+    size_t const end = allRucksacks.size();
+
+  for(RowNr a=0;
+      a < end-2;
+      a++)
+    for(RowNr b = a+1;
+	b < end-1;
+	b++)
+      for(RowNr c = b+1;
+	  c < end;
+	  c++)
+	{
+	  auto itIsAGroup = badge(allRucksacks[a],
+				  allRucksacks[b],
+				  allRucksacks[c]);
+	  if(itIsAGroup)
+	    (*this)[itIsAGroup.value()]
+	      .emplace_back(Group{a,b,c});
+	}
+  }
+
+  void removeAllRow(RowNr nr)
+  {
+    for(pair<const char, Groups> &charAndGroups: *this)
+      {
+	auto groupIt = charAndGroups.second.begin();
+	while(groupIt<charAndGroups.second.end())
+	  if(groupIt->contains(nr))
+	    groupIt=charAndGroups.second.erase(groupIt);
+	  else
+	    groupIt++;
+      }
+  }
+  
+  unsigned int countGroupsWithRow(RowNr nr) const
+  {
+    return accumulate(begin(),
+		      end(),
+		      uint(0),
+		      [nr](unsigned int summa, auto const& char_and_groups)
+		      {
+			return summa+char_and_groups.second.count(nr);
+		      });
+  }
+};
+  
+
+
+
+
 #include<gtest/gtest.h>
 #include<gmock/gmock.h>
 
 using namespace testing;
+
+TEST(countGroupsWithRow, example)
+{
+  auto sut = BadgeToGroups(getAllLines<Rucksack>(EXAMPLE));
+  ASSERT_THAT(sut.countGroupsWithRow(5)
+	      ,Gt(0));
+  sut.removeAllRow(5);
+  EXPECT_THAT(sut.countGroupsWithRow(5)
+	      ,Eq(0));
+  
+}
+  
+TEST(Group, contains)
+{
+  auto sut = Group(1,2,3);
+  EXPECT_TRUE (sut.contains(1));
+  EXPECT_FALSE(sut.contains(4));
+}
+
+
+TEST(BadgeToGroups, cpy)
+{
+  auto sut = BadgeToGroups(getAllLines<Rucksack>(EXAMPLE));
+  BadgeToGroups cpy = sut;
+  ASSERT_EQ(1, sut['r'].size());
+  ASSERT_EQ(2, sut['Z'].size());
+}
+
+TEST(BadgeToGroups, example)
+{
+  auto sut = BadgeToGroups(getAllLines<Rucksack>(EXAMPLE));
+
+  ASSERT_EQ(1, sut['r'].size());
+  ASSERT_EQ(2, sut['Z'].size());
+}
 
 TEST(badge, two_common)
 {
