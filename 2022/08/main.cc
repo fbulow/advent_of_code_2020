@@ -13,8 +13,8 @@ public:
     :value_(c)
   {
   }
-  bool ticked() {return ticked_;}
-  char value(){return value_;}
+  bool ticked() const {return ticked_;} 
+  char value()  const {return value_;} 
   void tick(){ticked_=true;}
 };
 
