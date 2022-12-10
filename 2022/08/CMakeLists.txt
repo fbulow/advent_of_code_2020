@@ -11,6 +11,10 @@ Find_package(GTest)
 
 add_executable(${PROJECT_NAME}
   main.cc
+  tree.cc
+  tree_line.cc
+  sweep_line.cc
+  forest.cc
   )
 
 target_compile_options(${PROJECT_NAME}

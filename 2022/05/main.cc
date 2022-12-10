@@ -1,4 +1,5 @@
 #include"headers.hh"
+#include <iostream>
 
 size_t vectorSize(size_t v)
 {
@@ -27,13 +28,15 @@ public:
 	    }
       }
     applyCommands(input);
-	  
-	  
-
   }
 
   void applyCommands(vector<string> input) //TODO
-  {}
+  {
+    auto begin = next(find(input.begin(), input.end(), ""));
+    auto end   = prev(input.end());
+    while(begin<end)
+      std::cout << *begin << std::endl;
+  }
   void applyCommand(Command i)
   {
     while(i.count-->0)
