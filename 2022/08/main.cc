@@ -2,6 +2,8 @@
 #include <numeric>
 #include <algorithm>
 #include <sstream>
+#include <ranges>
+#include <iterator>
 
 #include "tree.hh"
 #include "tree_line.hh"
@@ -16,10 +18,131 @@ int solA(vector<string> const &data)
   return f.sweep().countVisible();
 }
 
+using namespace std;
+using ranges::iota_view;
+
+int visibleTrees(auto start, auto end)
+{
+  auto limit = start->value();
+  int ret =0;
+  start++;
+  while(start!=end)
+    {
+      if(start->value()>=limit)
+	return ret+1;
+      else
+	{
+	  ret++;
+	  start++;
+	}
+    }
+    return ret;
+}
+
+int sweepLeft(TreeLine t, int col)
+{
+  return visibleTrees(next(t.rbegin(), t.size()-col-1), t.rend());
+}
+
+int sweepRight(TreeLine t, int col)
+{
+  return visibleTrees(next(t.begin(), col), t.end());
+}
+
+int sweepLeftAndRight(TreeLine t, int col)
+{
+  return sweepLeft(t, col) * sweepRight(t, col);
+}
+
+int scenicScore(Forrest a, int row, int col)
+{
+  auto original   = sweepLeftAndRight(a[row], col);
+  auto transposed = sweepLeftAndRight(a.transpose()[col], row);
+    
+  return original * transposed;
+    
+}
+
+
+
+int solB(vector<string> const &data)
+{
+  Forrest const a(data);
+  int ret=0;
+  for(int row = 0; row<a.size(); row++)
+    for(int col =0; col<a[0].size(); col++)
+      ret=max(ret, scenicScore(a, row, col));
+  return ret;
+}
+
+
 #include<gtest/gtest.h>
 #include<gmock/gmock.h>
 
 using namespace testing;
+
+TEST(b, real)
+{
+  EXPECT_THAT(solB(getAllLines()), Eq(291840));
+}
+
+
+TEST(b, example)
+{
+  EXPECT_THAT(solB(getAllLines(EXAMPLE)), Eq(8));
+}
+
+TEST(sweepLeftAndRight, example)
+{
+  TreeLine sut("33549");
+  EXPECT_EQ(2 ,sweepLeft (sut, 2));
+  EXPECT_EQ(2 ,sweepRight(sut, 2));
+}
+
+TEST(visibleTrees, example_right)
+{
+  TreeLine sut("33549");
+  EXPECT_THAT(visibleTrees(sut.begin(), sut.end()),
+	      Eq(1));
+}
+
+TEST(visibleTrees, example_left)
+   {
+     TreeLine sut("33549");
+     EXPECT_THAT(visibleTrees(sut.rbegin(), sut.rend()),
+		 Eq(4));
+   }
+
+TEST(visibleTrees, right_two_visible)
+{
+  TreeLine sut("549");
+  EXPECT_EQ(2, visibleTrees(sut.begin(), sut.end()));
+
+}
+
+TEST(sweepLeft, example_)
+{
+  //            01234
+  TreeLine sut("33549");
+
+  EXPECT_EQ(1, sweepLeft(sut, 1));
+}
+
+TEST(sweepRight, example_right)
+{
+  //            01234
+  TreeLine sut("33549");
+
+  EXPECT_EQ(2, sweepRight(sut, 2));
+}
+
+
+TEST(scenicScore, example)
+{
+  Forrest sut(getAllLines(EXAMPLE));
+  
+  EXPECT_THAT(scenicScore(sut, 3, 2), Eq(8));
+}
 
 TEST(a, solA)
 {
@@ -29,8 +152,7 @@ TEST(a, solA)
 
 }
 
-
-TEST(example, solA)
+TEST(a, example)
 {
   EXPECT_THAT(
 	      solA(getAllLines(EXAMPLE)),

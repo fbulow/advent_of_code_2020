@@ -11,6 +11,7 @@ public:
   Forrest(std::vector<TreeLine> data);
 
   using std::vector<TreeLine>::operator[];
+  using std::vector<TreeLine>::size;
 
   Forrest	transpose	() const;
   int		countVisible	() const;
