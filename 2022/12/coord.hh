@@ -15,10 +15,14 @@ struct Coord : pair<Row, Column>
   Coord(Row r, Column c)
     :pair<Row, Column>(r,c)
   {}
-  Coord up()	const {assert(not "implemented");} //NEXT
-  Coord down()	const {assert(not "implemented");} //NEXT
-  Coord left()	const {assert(not "implemented");} //NEXT
-  Coord right() const {assert(not "implemented");} //NEXT
+  Row row()const;
+  Row col()const;
+  
+  Coord up()	const;
+  Coord down()	const;
+  Coord left()	const;
+  Coord right() const;
+
   vector<Coord> adjacent() const
   {
     {assert(not "implemented");}
