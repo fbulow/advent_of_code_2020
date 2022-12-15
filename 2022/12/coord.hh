@@ -23,15 +23,8 @@ struct Coord : pair<Row, Column>
   Coord left()	const;
   Coord right() const;
 
-  vector<Coord> adjacent() const
+  vector<Coord> adjacent() const //STARTED
   {
-    {assert(not "implemented");}
-    vector<Coord> ret;
-    // ret.reserve(4);
-    // for(auto c:{up(), down(), left(), right()})
-    //   if(input.canMoveFromTo(*this, c))
-    // 	ret.push_back(c);
-    
-    return ret;
+    return {up(), down(), left(), right()};
   }
 };
