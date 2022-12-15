@@ -81,3 +81,25 @@ TEST(Coord, adjacent)
   EXPECT_THAT(sut, Contains(Coord(-1, 0)));
   EXPECT_THAT(sut, Contains(Coord( 0,-1)));
 }
+
+TEST(Input, onBoard_row)
+{
+  Input sut(
+	    {"00",
+	     "00"});
+
+  EXPECT_TRUE (sut.onBoard({0,0}));
+  EXPECT_FALSE(sut.onBoard({-1,0}));
+  EXPECT_FALSE(sut.onBoard({2,0}));
+}
+
+TEST(Input, onBoard_column)
+{
+  Input sut(
+	    {"00",
+	     "00"});
+
+  EXPECT_TRUE (sut.onBoard({0,1}));
+  EXPECT_FALSE(sut.onBoard({0,-1}));
+  EXPECT_FALSE(sut.onBoard({0,2}));
+}
