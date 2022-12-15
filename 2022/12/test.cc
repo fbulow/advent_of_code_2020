@@ -44,3 +44,40 @@ TEST(Coord, right)
   EXPECT_EQ(1, sut.right().row());
   EXPECT_EQ(3, sut.right().col());
 }
+
+TEST(Input, canMoveFromTo)
+{
+  Coord from{0,0};
+  Coord to{0,1};
+
+  Input sut(vector<string>{"01"});
+  EXPECT_TRUE(sut.canMoveFromTo(from, to));
+}
+
+TEST(Input, canMoveFromTo_because_are_equal)
+{
+  Coord from{0,0};
+  Coord to{0,1};
+  
+  Input sut(vector<string>{"11"});
+  EXPECT_TRUE(sut.canMoveFromTo(from, to));
+}
+
+TEST(Input, canMoveFromTo_is_false)
+{
+  Coord from{0,0};
+  Coord to{0,1};
+  
+  Input sut(vector<string>{"02"});
+  EXPECT_FALSE(sut.canMoveFromTo(from, to));
+}
+
+TEST(Coord, adjacent)
+{
+  auto sut = Coord{0,0}.adjacent();
+  EXPECT_EQ(4, sut.size());
+  EXPECT_THAT(sut, Contains(Coord( 1, 0)));
+  EXPECT_THAT(sut, Contains(Coord( 0, 1)));
+  EXPECT_THAT(sut, Contains(Coord(-1, 0)));
+  EXPECT_THAT(sut, Contains(Coord( 0,-1)));
+}

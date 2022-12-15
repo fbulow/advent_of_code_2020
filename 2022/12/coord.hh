@@ -29,7 +29,7 @@ struct Coord : pair<Row, Column>
     vector<Coord> ret;
     // ret.reserve(4);
     // for(auto c:{up(), down(), left(), right()})
-    //   if(input.isValidStep(*this, c))
+    //   if(input.canMoveFromTo(*this, c))
     // 	ret.push_back(c);
     
     return ret;
