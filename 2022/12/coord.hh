@@ -2,6 +2,7 @@
 
 #include <tuple>
 #include <vector>
+#include<ostream>
 
 #include "int_types.hh"
 #include <cassert>
@@ -25,3 +26,5 @@ struct Coord : pair<Row, Column>
 
   vector<Coord> adjacent() const;
 };
+
+std::ostream& operator<<(std::ostream& out, Coord const &c);

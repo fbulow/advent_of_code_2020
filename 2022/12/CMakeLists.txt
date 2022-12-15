@@ -10,10 +10,11 @@ project(2212)
 Find_package(GTest)
 
 add_executable(${PROJECT_NAME}
-  test.cc
-  int_types.hh
   coord.cc
   input.cc
+  int_types.hh
+  solA.cc
+  test.cc
   )
 
 target_compile_options(${PROJECT_NAME}

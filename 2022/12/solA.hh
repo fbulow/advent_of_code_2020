@@ -62,13 +62,8 @@ public:
   }
 };
 
-
-
-
-Coord findStart(Input const &data){assert(not "implemented");}
-Coord findEnd  (Input const &data){assert(not "implemented");}
-
-  
+Coord findStart(Input const &data);
+Coord findEnd  (Input const &data);
 
 inline
 int solA(Input data)

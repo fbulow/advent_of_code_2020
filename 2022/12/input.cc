@@ -29,4 +29,14 @@ bool Input::onBoard(Coord const & c)
       return true;
   return false;
 }
-  
+
+Coord Input::find(char c) const
+{
+  for(int row=0; row<data.size(); row++)
+    {
+      int col = data[row].find(c);
+      if (col!=std::string::npos)
+	return {row, col};
+    }
+  assert(("letter not found", false));
+}

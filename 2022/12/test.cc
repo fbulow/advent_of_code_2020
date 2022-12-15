@@ -122,3 +122,15 @@ TEST(Input, adjacent_step_height)
   EXPECT_THAT(sut.size(), Eq(1));
   EXPECT_THAT(sut, Contains(Coord(0,0)));
 }
+
+TEST(Input, find_char)
+{
+  Input sut({
+      "...",
+      "..E",
+      "..."
+    });
+  EXPECT_THAT(sut.find('E'),
+	      Eq(Coord(1,2)));
+}
+

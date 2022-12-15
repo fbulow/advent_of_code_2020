@@ -18,4 +18,5 @@ public:
   bool onBoard(Coord const & c);
   bool canMoveFromTo(Coord from, Coord to) const;
   vector<Coord> adjacent(Coord c);
+  Coord find(char c) const;
 };

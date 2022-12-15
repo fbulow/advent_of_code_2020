@@ -14,3 +14,8 @@ vector<Coord> Coord::adjacent() const
 {
   return {up(), down(), left(), right()};
 }
+
+std::ostream& operator<<(std::ostream& out, Coord const &c)
+{
+  return out<<"Coord("<< c.row()<<", "<<c.col()<<")";
+}
