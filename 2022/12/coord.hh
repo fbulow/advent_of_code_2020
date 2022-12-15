@@ -23,8 +23,5 @@ struct Coord : pair<Row, Column>
   Coord left()	const;
   Coord right() const;
 
-  vector<Coord> adjacent() const //STARTED
-  {
-    return {up(), down(), left(), right()};
-  }
+  vector<Coord> adjacent() const;
 };

@@ -10,3 +10,7 @@ Row Coord::row()const
 Row Coord::col()const
 {return get<1>(*this);}
 
+vector<Coord> Coord::adjacent() const
+{
+  return {up(), down(), left(), right()};
+}
