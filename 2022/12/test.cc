@@ -103,3 +103,22 @@ TEST(Input, onBoard_column)
   EXPECT_FALSE(sut.onBoard({0,-1}));
   EXPECT_FALSE(sut.onBoard({0,2}));
 }
+
+TEST(Input, adjacent_next_to_in_corridor)
+{
+  vector<Coord> sut =Input({
+      "000",
+    }).adjacent(Coord(0,1));
+  EXPECT_THAT(sut.size(), Eq(2));
+  EXPECT_THAT(sut, Contains(Coord(0,0)));
+  EXPECT_THAT(sut, Contains(Coord(0,2)));
+}
+
+TEST(Input, adjacent_step_height)
+{
+  vector<Coord> sut =Input({
+      "019",
+    }).adjacent(Coord(0,1));
+  EXPECT_THAT(sut.size(), Eq(1));
+  EXPECT_THAT(sut, Contains(Coord(0,0)));
+}
