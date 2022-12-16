@@ -142,3 +142,11 @@ TEST(StepCount, set)
   EXPECT_THAT(sut.get(c), Eq(22));
 }
 
+TEST(StepCount, isUnset)
+{
+  Coord c(0,0);
+  StepCount sut;
+  EXPECT_TRUE(sut.isUnset(c));
+  sut.set(c, Steps(22));
+  EXPECT_FALSE(sut.isUnset(c));
+}

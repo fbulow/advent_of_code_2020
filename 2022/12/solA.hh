@@ -39,7 +39,9 @@ public:
   {
     return data_.at(c);
   }
-  bool isUnset(Coord) const {}//TODO
+
+  bool isUnset(Coord c) const;
+
   void fillAllUnset(Input const &input, Steps current)//TODO
   {
     for (Coord c:allUnset())
