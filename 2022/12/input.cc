@@ -1,5 +1,9 @@
 #include "input.hh"
 
+Input::Input(vector<string> data)
+  :data(move(data))
+{}
+
 bool Input::canMoveFromTo(Coord from, Coord to) const
 {
 

@@ -134,3 +134,11 @@ TEST(Input, find_char)
 	      Eq(Coord(1,2)));
 }
 
+TEST(StepCount, set)
+{
+  Coord c(0,0);
+  StepCount sut;
+  sut.set(c, Steps(22));
+  EXPECT_THAT(sut.get(c), Eq(22));
+}
+

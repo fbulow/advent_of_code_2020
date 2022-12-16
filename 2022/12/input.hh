@@ -11,9 +11,7 @@ class Input: vector<string>
   vector<string> data;
 
 public:
-  Input(vector<string> data)
-    :data(move(data))
-  {}
+  Input(vector<string> data);
 
   bool onBoard(Coord const & c);
   bool canMoveFromTo(Coord from, Coord to) const;

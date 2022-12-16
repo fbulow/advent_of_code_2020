@@ -13,28 +13,16 @@
 
 using namespace std;
 
-
-
-
-
-
-class Space{
-public:
-  Space(Coord topLeft, Coord bottomRight){assert(not "implemented");}
-  bool inSpace(Coord c){assert(not "implemented");}
-};
-
-
 class StepCount;
 
 Steps minAdjacent(Input const &, StepCount const &, Coord c);
 
-class StepCount : public Space
+class StepCount
 {
   map<Coord, Steps> data_;
 public:
+  StepCount() = default;
   StepCount(Input)
-    :Space(Coord(0,0), Coord(0,0))//TODO
   {
     //Same size as input but everything is set to -1;
     
@@ -42,8 +30,15 @@ public:
 
   static constexpr Steps unset = numeric_limits<Steps>::max();
 
-  void  set(Steps, Coord){assert(not "implemented");}
-  Steps get(Coord) const {assert(not "implemented");}
+  void  set(Coord c, Steps s)
+  {
+    data_[c]=s;
+  }
+
+  Steps get(Coord c) const
+  {
+    return data_.at(c);
+  }
   bool isUnset(Coord) const {}//TODO
   void fillAllUnset(Input const &input, Steps current)//TODO
   {
@@ -74,7 +69,7 @@ int solA(Input data)
   StepCount sc(data);
 
   int steps = 0;
-  sc.set(steps++, start);
+  sc.set(start, steps++);
   while(sc.isUnset(stop))
     sc.fillAllUnset(data, steps++);
       
