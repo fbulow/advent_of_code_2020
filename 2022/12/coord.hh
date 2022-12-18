@@ -13,6 +13,7 @@ class Input;
 
 struct Coord : pair<Row, Column>
 {
+  Coord() = default;
   Coord(Row r, Column c)
     :pair<Row, Column>(r,c)
   {}
