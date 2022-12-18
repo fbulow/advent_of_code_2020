@@ -150,3 +150,9 @@ TEST(StepCount, isUnset)
   sut.set(c, Steps(22));
   EXPECT_FALSE(sut.isUnset(c));
 }
+
+TEST(Input, allCoordinates)
+{
+  auto sut = Input(getAllLines(EXAMPLE)).allCoordinates();
+  EXPECT_EQ(40, sut.size());
+}

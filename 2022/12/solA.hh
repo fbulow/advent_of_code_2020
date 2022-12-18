@@ -15,8 +15,6 @@ using namespace std;
 
 class StepCount;
 
-Steps minAdjacent(Input const &, StepCount const &, Coord c);
-
 class StepCount
 {
   map<Coord, Steps> data_;
@@ -44,19 +42,12 @@ public:
 
   void fillAllUnset(Input const &input, Steps current)//TODO
   {
-    for (Coord c:allUnset())
-      if(current == minAdjacent(c)+1)
-	data_.at(c) = current;
+    for(auto & c: input.allCoordinates())
+      if(isUnset(c))
+	if(input.isAdjacentTo(c, current-1))
+	  data_.at(c) = current;
   }
   vector<Coord> allUnset() const {assert(not "implemented");}
-  
-  Steps minAdjacent(Coord c)
-  {
-    Steps ret = StepCount::unset;
-    for(Coord cc: c.adjacent())
-      ret = min(ret, get(cc));
-    return ret; 
-  }
 };
 
 Coord findStart(Input const &data);

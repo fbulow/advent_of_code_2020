@@ -1,8 +1,11 @@
 #include "input.hh"
 
-Input::Input(vector<string> data)
-  :data(move(data))
-{}
+Input::Input(vector<string> d)
+  :data(move(d))
+{
+  while(data.rbegin()->size()==0)
+    data.resize(data.size()-1);
+}
 
 bool Input::canMoveFromTo(Coord from, Coord to) const
 {
