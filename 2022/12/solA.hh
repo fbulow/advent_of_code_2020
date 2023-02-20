@@ -40,12 +40,17 @@ public:
 
   bool isUnset(Coord c) const;
 
+  
   void fillAllUnset(Input const &input, Steps current)//TODO
   {
     for(auto & c: input.allCoordinates())
       if(isUnset(c))
-	if(input.isAdjacentTo(c, current-1))
-	  data_.at(c) = current;
+	// all adjacent to see if any is equal to current-1
+	// if so,
+	// set c to current;
+      // if(isUnset(c))
+      // 	if(input.isAdjacentToStepsValue(c, current-1))
+      // 	  data_[c] = current;
   }
   vector<Coord> allUnset() const {assert(not "implemented");}
 };

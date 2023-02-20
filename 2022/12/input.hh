@@ -1,6 +1,7 @@
 #pragma once
-#include <vector>
+#include <set>
 #include <string>
+#include <vector>
 #include "coord.hh"
 
 using namespace std;
@@ -9,17 +10,15 @@ using namespace std;
 class Input: vector<string>
 {
   vector<string> data;
-
+  mutable set<Coord> allCoordinates_;
 public:
   Input(vector<string> data);
 
-  vector<Coord> allCoordinates() const
+  set<Coord> const & allCoordinates() const;
+  bool isAdjacentToStepsValue(Coord c, Steps s) const //STARTED
   {
-    vector<Coord> ret;
-    ret.resize(data.size() * data[0].size());
-    return ret;
+    
   }
-  bool isAdjacentTo(Coord c, Steps s) const {assert(not "implemented");}
   bool onBoard(Coord const & c);
   bool canMoveFromTo(Coord from, Coord to) const;
   vector<Coord> adjacent(Coord c);

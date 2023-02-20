@@ -156,3 +156,22 @@ TEST(Input, allCoordinates)
   auto sut = Input(getAllLines(EXAMPLE)).allCoordinates();
   EXPECT_EQ(40, sut.size());
 }
+
+// TEST(fillIfUnset, example)
+// {
+//   Input input({
+//       "000",
+//       "000",
+//       "000"});
+
+//   StepCount sut;
+  
+//   sut.fillIfUnset(input, {1,1}, 1);
+  
+// }
+
+
+TEST(solA, example)
+{
+  EXPECT_THAT(solA(getAllLines(EXAMPLE)), Eq(31));
+}

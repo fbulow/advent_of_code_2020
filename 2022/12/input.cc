@@ -47,3 +47,11 @@ Coord Input::find(char c) const
     }
   assert(("letter not found", false));
 }
+
+set<Coord> const & Input::allCoordinates() const
+  {
+    for(Row r = 0; r< data.size() ;r++)
+      for(Column c = 0; c< data.begin()->size() ;c++)
+	allCoordinates_.insert({r,c});
+    return allCoordinates_;
+  }
