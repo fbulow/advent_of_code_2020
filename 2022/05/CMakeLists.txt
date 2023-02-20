@@ -11,7 +11,9 @@ Find_package(GTest)
 
 add_executable(${PROJECT_NAME}
   main.cc
-  done.cc
+  stack.cc
+  instruction_processor.cc
+  row_type.cc
 )
 
 target_compile_options(${PROJECT_NAME}
