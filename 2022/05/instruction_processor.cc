@@ -36,9 +36,7 @@ InstructionProcessor& InstructionProcessor::applyRow(std::string const &s)
 	in>>word>>count>>word>>from>>word>>to;
 	--from;
 	--to;
-	while((count--)>0)
-	  data[to].push_top(data[from].pop());
-	break;
+	moveCrates(count, from, to);
       }
     case RowType::Ignore:
       break;
@@ -46,6 +44,19 @@ InstructionProcessor& InstructionProcessor::applyRow(std::string const &s)
   return *this;
 }
 
+void InstructionProcessor::moveCrates(int count, std::size_t from, std::size_t to)
+{
+  while((count--)>0)
+    data[to].push_top(data[from].pop());
+}
+void CraneB::moveCrates(int count, std::size_t from, std::size_t to)
+{
+  Stack tmp;
+  while((count--)>0)
+    tmp.push_top(data[from].pop());
+  while(tmp.top()!=' ')
+    data[to].push_top(tmp.pop());
+}
 
 std::string InstructionProcessor::message() const
 {

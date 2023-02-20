@@ -75,3 +75,36 @@ TEST(Solution, a)
     }
   std::cout<<"ans a: "<<sut.message()<<std::endl;
 }
+
+TEST(example, b)
+{
+  CraneB sut;
+  sut
+    .applyRow("    [D]    ")
+    .applyRow("[N] [C]    ")
+    .applyRow("[Z] [M] [P]")
+    .applyRow(" 1   2   3 ")
+    .applyRow("")
+    .applyRow("move 1 from 2 to 1")
+    .applyRow("move 3 from 1 to 3")
+    .applyRow("move 2 from 2 to 1")
+    .applyRow("move 1 from 1 to 2")
+    ;
+
+  EXPECT_THAT(sut.message(), Eq("MCD"));
+}
+
+TEST(Solution, b)
+{
+  CraneB sut;
+  
+  std::ifstream in(INPUT);
+  std::string row;
+  std::getline(in, row);
+  while(not in.eof())
+    {
+      sut.applyRow(row);
+      std::getline(in, row);
+    }
+  std::cout<<"ans b: "<<sut.message()<<std::endl;
+}
