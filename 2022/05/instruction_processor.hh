@@ -4,8 +4,11 @@
 class Stack;
 
 class InstructionProcessor{
-protected:
   std::vector<Stack> data;
+protected:
+  char pop(std::size_t crate);
+  void push(std::size_t crate, char value);
+  
   virtual void moveCrates(int count, std::size_t from, std::size_t to);
     
 public:
