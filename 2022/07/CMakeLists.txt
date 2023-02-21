@@ -13,6 +13,8 @@ add_executable(${PROJECT_NAME}
   main.cc
   tree.cc
   nav.cc
+  row_type.cc
+  sol_a.cc
 )
 
 target_compile_options(${PROJECT_NAME}

@@ -22,7 +22,24 @@ void Tree::setPath(std::string dir)
   pwd = dir;
 }
   
-  
+std::vector<size_t> Tree::allTotalSizes() const
+{
+  std::vector<size_t> ret;
+  ret.reserve(data.size());
+  std::transform(data.begin(),
+		 data.end(),
+		 std::back_inserter(ret),
+		 [this](auto const & x)
+		 {
+		   return totalSize(x.first);
+		 });
+  return ret;
+}
+
+void Tree::mkdir(std::string const &d)
+{
+  data[d];
+}
 
     
   

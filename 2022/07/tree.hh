@@ -2,6 +2,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 class Tree{
   std::map<std::string, std::size_t> data;
@@ -12,5 +13,6 @@ public:
   void setPath(std::string dir);
   std::size_t size();
   std::size_t totalSize(std::string const & path) const;
-
+  std::vector<size_t> allTotalSizes() const;
+  void mkdir(std::string const &);
 };
