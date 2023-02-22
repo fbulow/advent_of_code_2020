@@ -80,9 +80,8 @@ TEST(Nav, cd_navigation)
   EXPECT_THAT(sut.path(), Eq("/d"));
 }
 
-TEST(SolA, example)
+void applyExample(auto & sut)
 {
-  auto sut = SolA();
   sut
     <<"$ cd /"
     <<"$ ls"
@@ -107,7 +106,13 @@ TEST(SolA, example)
     <<"8033020 d.log"
     <<"5626152 d.ext"
     <<"7214296 k";
-  
+}
+
+
+TEST(SolA, example)
+{
+  auto sut = SolA();
+  applyExample(sut);
   EXPECT_THAT(sut.ans(), Eq(95437));
 }
 
@@ -140,4 +145,13 @@ TEST(SolA, actual)
   auto ans = sut.ans();
   EXPECT_THAT(ans, Gt(1140385));
   cout <<"Solution a: "<<ans<<std::endl;
+  cout <<"Solution b: "<<sut.smallest()<<std::endl;
+}
+
+TEST(SolB, remainder)
+{
+  auto sut = SolA();
+  applyExample(sut);
+  EXPECT_THAT(sut.requiredSpace(), Eq(8381165));
+  EXPECT_THAT(sut.smallest(), Eq(24933642));
 }

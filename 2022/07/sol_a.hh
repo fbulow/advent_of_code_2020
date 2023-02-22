@@ -10,5 +10,7 @@ public:
   SolA & operator<<(std::string const &);
   
   long long int ans() const;
-
+  size_t requiredSpace() const;
+  size_t smallest() const;
+  
 };

@@ -1,6 +1,8 @@
 #include "sol_a.hh"
 #include "row_type.hh"
 #include <sstream>
+#include <limits>
+
 using namespace std;
 SolA & SolA::operator<<(std::string const &row)
 {
@@ -36,3 +38,17 @@ long long int SolA::ans() const
   return ret;
 }
 
+size_t SolA::requiredSpace() const
+{
+  return t.totalSize("/") - 40000000;
+}
+
+size_t SolA::smallest() const
+{
+  auto       ret = std::numeric_limits<std::size_t>::max();
+  auto const rs  = requiredSpace();
+  for(auto a: t.allTotalSizes())
+    if ( (a>=rs) and (a < ret) )
+      ret = a;
+  return ret;
+}
