@@ -14,7 +14,7 @@ add_executable(${PROJECT_NAME}
   tree.cc
   nav.cc
   row_type.cc
-  sol_a.cc
+  solution.cc
 )
 
 target_compile_options(${PROJECT_NAME}

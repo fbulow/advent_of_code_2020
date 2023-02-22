@@ -6,7 +6,7 @@
 #include "tree.hh"
 #include "nav.hh"
 #include "row_type.hh"
-#include "sol_a.hh"
+#include "solution.hh"
 
 
 using namespace testing;
@@ -111,15 +111,15 @@ void applyExample(auto & sut)
 
 TEST(SolA, example)
 {
-  auto sut = SolA();
+  auto sut = Solution();
   applyExample(sut);
   EXPECT_THAT(sut.ans(), Eq(95437));
 }
 
 
-TEST(SolA, empty_dir_doubles)
+TEST(Solution, empty_dir_doubles)
 {
-  auto sut = SolA();
+  auto sut = Solution();
   sut
     <<"$ cd /"
     <<"$ cd a"
@@ -129,9 +129,9 @@ TEST(SolA, empty_dir_doubles)
 }
 
 
-TEST(SolA, actual)
+TEST(Solution, actual)
 {
-  auto sut = SolA();
+  auto sut = Solution();
     
   std::ifstream in(INPUT);
   std::string row;
@@ -150,7 +150,7 @@ TEST(SolA, actual)
 
 TEST(SolB, remainder)
 {
-  auto sut = SolA();
+  auto sut = Solution();
   applyExample(sut);
   EXPECT_THAT(sut.requiredSpace(), Eq(8381165));
   EXPECT_THAT(sut.smallest(), Eq(24933642));

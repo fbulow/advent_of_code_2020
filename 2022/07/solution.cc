@@ -1,10 +1,10 @@
-#include "sol_a.hh"
+#include "solution.hh"
 #include "row_type.hh"
 #include <sstream>
 #include <limits>
 
 using namespace std;
-SolA & SolA::operator<<(std::string const &row)
+Solution & Solution::operator<<(std::string const &row)
 {
   switch(rowType(row))
     {
@@ -29,7 +29,7 @@ SolA & SolA::operator<<(std::string const &row)
   return *this;
 }
 
-long long int SolA::ans() const
+long long int Solution::ans() const
 {
   long long int ret{0};
   for(auto x: t.allTotalSizes())
@@ -38,12 +38,12 @@ long long int SolA::ans() const
   return ret;
 }
 
-size_t SolA::requiredSpace() const
+size_t Solution::requiredSpace() const
 {
   return t.totalSize("/") - 40000000;
 }
 
-size_t SolA::smallest() const
+size_t Solution::smallest() const
 {
   auto       ret = std::numeric_limits<std::size_t>::max();
   auto const rs  = requiredSpace();

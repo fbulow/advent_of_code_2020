@@ -3,11 +3,11 @@
 #include "nav.hh"
 #include "tree.hh"
 
-class SolA{
+class Solution{
   Nav n;
   Tree t;
 public:
-  SolA & operator<<(std::string const &);
+  Solution & operator<<(std::string const &);
   
   long long int ans() const;
   size_t requiredSpace() const;
