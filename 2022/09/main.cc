@@ -57,7 +57,7 @@ TEST(Coord, motion)
 
 TEST(SolutionA, example)
 {
-  SolutionA sut;
+  Solution sut;
   
   sut
     << "R 4";
@@ -81,7 +81,7 @@ TEST(SolutionA, example)
 
 TEST(Solution, a)
 {
-  SolutionA sut;
+  Solution sut;
   std::ifstream in(INPUT);
   std::string row;
   std::getline(in,row);

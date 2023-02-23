@@ -18,7 +18,7 @@ int Solution::ans() const
   return visited.size();
 }
 
-Coord SolutionA::step(char dir)
+Coord Solution::step(char dir)
 {
   return r.step(dir);
 }

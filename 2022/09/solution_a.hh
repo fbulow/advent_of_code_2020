@@ -7,14 +7,14 @@
 
 struct Solution
 {
+  Rope r;
+  Solution(size_t knots=2)
+    :r(2)
+  {}
   std::set<Coord> visited;
   int ans() const; 
 
-  virtual Coord step(char dir) = 0;
+  Coord step(char dir);
   Solution& operator<<(std::string const &s);
 };
 
-struct SolutionA : Solution{
-  Rope r;
-  Coord step(char dir) override;
-};
