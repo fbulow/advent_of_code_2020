@@ -13,6 +13,7 @@ add_executable(${PROJECT_NAME}
   main.cc
   coord.cc
   rope.cc
+  solution_a.cc
 )
 
 target_compile_options(${PROJECT_NAME}

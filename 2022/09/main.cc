@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <fstream>
-
+#include "solution_a.hh"
 #include "rope.hh"
 using namespace testing;
 
@@ -51,39 +51,13 @@ TEST(Coord, motion)
   EXPECT_THAT(sut.step('U'), Eq(Coord(-1,0 )));
 }
 
-#include<set>
-#include<sstream>
-struct Solution
+
+
+
+
+TEST(SolutionA, example)
 {
-  Rope r;
-  std::set<Coord> visited;
-  
-  int ans()
-  {
-    return visited.size();
-  }
-
-  Solution& operator<<(std::string const &s)
-  {
-    if(s.empty()) return *this;
-      
-    int repeat;
-    char dir;
-    std::istringstream in(s);
-    in>>dir>>repeat;
-    while(repeat-- > 0)
-      visited.insert(r.step(dir));
-    return *this;
-  }
-    
-};
-
-
-
-
-TEST(Solution, example)
-{
-  Solution sut;
+  SolutionA sut;
   
   sut
     << "R 4";
@@ -107,7 +81,7 @@ TEST(Solution, example)
 
 TEST(Solution, a)
 {
-  Solution sut;
+  SolutionA sut;
   std::ifstream in(INPUT);
   std::string row;
   std::getline(in,row);
