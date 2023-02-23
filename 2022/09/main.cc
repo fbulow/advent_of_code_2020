@@ -95,3 +95,8 @@ TEST(Solution, a)
   EXPECT_THAT(sut.ans(), Eq(6311));
 }
 
+TEST(Coord, moveTowards)
+{
+  Coord sut;
+  EXPECT_THAT(sut.moveTowards({2,2}), Eq(Coord(1,1)));
+}
