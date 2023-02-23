@@ -9,7 +9,7 @@ struct Solution
 {
   Rope r;
   Solution(size_t knots=2)
-    :r(2)
+    :r(knots)
   {}
   std::set<Coord> visited;
   int ans() const; 

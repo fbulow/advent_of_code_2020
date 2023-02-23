@@ -100,3 +100,18 @@ TEST(Coord, moveTowards)
   Coord sut;
   EXPECT_THAT(sut.moveTowards({2,2}), Eq(Coord(1,1)));
 }
+
+TEST(Solution, b)
+{
+  Solution sut(10);
+  std::ifstream in(INPUT);
+  std::string row;
+  std::getline(in,row);
+  while(not row.empty())
+    {
+      sut<< row;
+      std::getline(in,row);
+    }
+
+  std::cout << "Answer b: "<<sut.ans()<< std::endl;
+}
