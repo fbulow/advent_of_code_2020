@@ -10,9 +10,10 @@ bool isClose(Coord const &a, Coord const &b)
 }
 
 Coord Rope::step(char c)
-  {
-    head = head.step(c);
-    if(not isClose(head, tail))
-      tail = tail.moveTowards( head );
-    return tail;
-  }
+{
+  knots[0]=knots[0].step(c);
+  for(size_t i=1; i<knots.size(); i++)
+    if(not isClose(knots[i], knots[i-1]))
+      knots[i] = knots[i].moveTowards(knots[i-1]);
+  return knots.back();
+}
