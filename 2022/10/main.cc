@@ -112,3 +112,27 @@ TEST(SolutionA, input)
   EXPECT_THAT(solutionA(in), Eq(11820));
 }
 
+void solutionB(std::istream &in)
+{
+  Log log = [](int cycle, int value)
+  {
+    auto pos = (cycle - 1)%40;
+    if(abs(value-pos)<2)
+      std::cout<<'#';
+    else
+      std::cout<<' ';
+    if((cycle%40)==0)
+      std::cout << std::endl;
+  };
+  
+  runCommandLoop(in,
+		 log);
+}
+
+TEST(solutionB, example)
+{
+  std::ifstream in(INPUT);
+  std::cout << std::endl;
+  solutionB(in);
+  std::cout << std::endl;
+}
