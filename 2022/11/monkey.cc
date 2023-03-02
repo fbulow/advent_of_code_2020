@@ -80,12 +80,12 @@ vector<Monkey> Monkey::example()
   };
 }
 
-void round(std::vector<Monkey> & data, Counter &c)
+void round(std::vector<Monkey> & data, Counter &c, WorryManager worryManager)
 {
   for(size_t i=0;i<data.size();i++)
     while(not data[i].empty())
       {
-	auto p = data[i].pop();
+	auto p = data[i].pop(worryManager);
 	data[p.destination].push(p.value);
 	c.tick(i);
       }

@@ -41,9 +41,9 @@ public:
     WorryValue value;
   };
   
-  Pop pop()
+  Pop pop( WorryManager worryManager = [](WorryValue old){return old/3;})
   {
-    auto ret = oper_(fifo_.front())/3;
+    auto ret = worryManager(oper_(fifo_.front()));
     fifo_.pop();
     return {ret%divisor_==0?destTrue_:destFalse_,
 	    ret};
@@ -51,5 +51,5 @@ public:
   
 };
 
-void round(std::vector<Monkey> & data, Counter &c);
+void round(std::vector<Monkey> & data, Counter &c, WorryManager worryManager = [](WorryValue old){return old/3;});
 
