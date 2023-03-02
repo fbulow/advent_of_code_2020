@@ -1,4 +1,6 @@
 #include "monkey.hh"
+#include <numeric>
+
 using namespace std;
 
 vector<Monkey> Monkey::input()
@@ -57,22 +59,22 @@ vector<Monkey> Monkey::input()
 vector<Monkey> Monkey::example()
 {
   return {
-    Monkey([](WorryValue old){return old * 19;},
+    Monkey([](WorryValue old)->WorryValue{return old * 19;},
 	   23,
 	   2,
 	   3,79,98),
-    Monkey([](int old){return old + 6;},
+    Monkey([](WorryValue old)->WorryValue{return old + 6;},
 	   19,
 	   2,
 	   0,
 	   54, 65, 75, 74),
-    Monkey([](int old){return old * old;},
+    Monkey([](WorryValue old)->WorryValue{return old * old;},
 	   13,
 	   1,
 	   3,
 	   79, 60, 97),
     Monkey(
-	   [](int old){return old + 3;},
+	   [](WorryValue old)->WorryValue{return old + 3;},
 	   17,
 	   0,
 	   1,
@@ -89,4 +91,15 @@ void round(std::vector<Monkey> & data, Counter &c, WorryManager worryManager)
 	data[p.destination].push(p.value);
 	c.tick(i);
       }
+}
+
+long int productOfDivisors(std::vector<Monkey> const & vm)
+{
+  return std::accumulate(vm.cbegin(),
+			 vm.cend(),
+			 1,
+			 [](long int s, Monkey const &m)
+			 {
+			   return s*m.getDivisor();
+			 });
 }

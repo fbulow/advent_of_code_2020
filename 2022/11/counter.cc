@@ -9,7 +9,7 @@ void Counter::tick(size_t v)
   data[v]++;
 }
 
-int Counter::monkeyBusines() const
+long long int Counter::monkeyBusines() const
 {
   vector<int> r;
   r.reserve(data.size());
@@ -23,5 +23,5 @@ int Counter::monkeyBusines() const
 	       r.end(),
 	       [](auto const & a, auto const & b){return b<a;});
 
-  return r[0]*r[1];
+  return (long long int)(r[0])*r[1];
 }

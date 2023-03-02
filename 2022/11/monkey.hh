@@ -7,15 +7,14 @@
 #include "counter.hh"
 
 class Monkey{
-  std::queue<int> fifo_;
-  std::function<int(int)> oper_;
+  std::queue<WorryValue> fifo_;
   int divisor_;
   size_t destTrue_;
   size_t destFalse_;
 public:
   template<typename ... T>
-  Monkey(std::function<int(int)> oper, int divisor, size_t destTrue, size_t destFalse, T...arg)
-    :oper_(oper)
+  Monkey(std::function<WorryValue(WorryValue)> oper, int divisor, size_t destTrue, size_t destFalse, T...arg)
+    :oper(oper)
     ,divisor_(divisor)
     ,destTrue_(destTrue)
     ,destFalse_(destFalse)
@@ -23,8 +22,15 @@ public:
     (fifo_.push(arg),...);
   }
 
+  std::function<WorryValue(WorryValue)> oper;
+
   static std::vector<Monkey> example();
   static std::vector<Monkey> input();
+
+  int getDivisor() const
+  {
+    return divisor_;
+  }
   
   bool empty() const
   {
@@ -43,7 +49,9 @@ public:
   
   Pop pop( WorryManager worryManager = [](WorryValue old){return old/3;})
   {
-    auto ret = worryManager(oper_(fifo_.front()));
+    auto a = fifo_.front();
+    auto b = oper(a);
+    auto ret = worryManager(b);
     fifo_.pop();
     return {ret%divisor_==0?destTrue_:destFalse_,
 	    ret};
@@ -53,3 +61,8 @@ public:
 
 void round(std::vector<Monkey> & data, Counter &c, WorryManager worryManager = [](WorryValue old){return old/3;});
 
+long int productOfDivisors(std::vector<Monkey> const & m);
+
+
+
+			   
