@@ -12,6 +12,8 @@ Find_package(GTest)
 add_executable(${PROJECT_NAME}
   main.cc
   counter.cc
+  types.cc
+  monkey.cc
 )
 
 target_compile_options(${PROJECT_NAME}

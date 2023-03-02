@@ -6,6 +6,36 @@ using namespace testing;
 using namespace std;
 
 #include "counter.hh"
+#include "monkey.hh"
+#include "types.hh"
+
+auto solutionA(std::vector<Monkey> &vm)
+{
+  Counter c;
+  for(auto i=0;i<20;i++)
+    round(vm, c);
+  return c.monkeyBusines();
+}
+
+TEST(solutionA, input)
+{
+  auto e = Monkey::input();
+  EXPECT_THAT(solutionA(e), Eq(119715));
+}
+
+TEST(solutionA, example)
+{
+  auto e = Monkey::example();
+  EXPECT_THAT(solutionA(e), Eq(10605));
+}
+
+TEST(Monkey, example)
+{
+  auto data = Monkey::example();
+  auto sut =  data[0].pop();
+  EXPECT_THAT(sut.destination, Eq(3));
+  EXPECT_THAT(sut.value, Eq(500));
+}
 
 TEST(monkeyBusiness, example)
 {
