@@ -1,66 +1,114 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <variant>
-#include <list>
 #include <sstream>
 #include <cassert>
+#include "node.hh"
+#include <sstream>
+#include <fstream>
 
 using namespace testing;
-class Node;
-using Int = int;
-using NodeList = std::list<Node>;
-
-class Node{
-  std::variant<Int, std::list<Node>> data_;
-public:
-  Node():data_{std::list<Node>()}{}
-  Node(Int i):data_(i){}
-  Node(std::istream &in);
-
-  Node const & operator[] (size_t i) const
-  {
-    return *std::next(get<NodeList>(data_).begin(), i);
-  }
-
-  bool isInteger() const{return std::holds_alternative<Int>(data_);}
-  Int getInt() const {return std::get<Int>(data_);}
-  bool empty() const {return std::get<NodeList>(data_).empty();}
-  Node& push(Node &&n) {return std::get<NodeList>(data_).emplace_back(std::move(n));return *this;}
-  size_t size() const {return std::get<NodeList>(data_).size();}
-  Node asList() const
-  {
-    auto clone = *this;
-    auto ret = Node();
-    ret.push(std::move(clone));
-    return ret;
-  }
-};
-
 using namespace std;
 
-
-Node::Node(istream& in)
-  :Node()
+ostream& operator<<(ostream& out, Compare c)
 {
-  char c;
-  in>>c;
-  while(c=='\n')
-      in>>c;
-  assert(c=='[');
-  while(in.peek()!=']')
+  switch(c)
     {
-      if(in.peek()=='[')
-	push(Node(in));
-      else
-	{
-	  Int val;
-	  in>>val;
-	  push({val});
-	}
-      if(in.peek()==',')
-	in>>c;
+    case Compare::Right:
+      return out << "Right";
+    case Compare::Wrong:
+      return out << "Wrong";
+    case Compare::Equal:
+      return out << "Equal";
     }
-  in>>c;//absorb the ]
+  return out<<"ERROR";
+}
+
+Compare compare(Int lhs, Int rhs)
+{
+  if (lhs<rhs)
+    return Compare::Right;
+  else if (lhs==rhs)
+    return Compare::Equal;
+  else
+    return Compare::Wrong;
+}
+
+Compare compare(Node const &lhs, Node const &rhs)
+{
+  if(lhs.isInteger() and rhs.isInteger())
+    return compare(lhs.getInt(), rhs.getInt());
+  else if ((not lhs.isInteger()) and (not rhs.isInteger()))
+    {
+      auto a = lhs.cbegin();
+      auto b = rhs.cbegin();
+
+      auto ret = compare(*a, *b);
+      while(ret == Compare::Equal)
+	{
+	  a++;
+	  b++;
+	  if(a==lhs.cend())
+	    return b==rhs.cend()?Compare::Equal : Compare::Right;
+	  else if (b==rhs.cend())
+	    return Compare::Wrong;
+	  ret = compare(*a, *b);
+	}
+      return ret;
+    }
+  else if (lhs.isInteger())
+    return compare(lhs.asList(), rhs);
+  else
+    {
+      return compare(lhs, rhs.asList());
+    }
+}
+
+struct LeftAndRight{
+  Node left;
+  Node right;
+};
+
+LeftAndRight example(size_t i)
+  {
+  static std::vector<LeftAndRight> ret;
+  if(ret.empty())
+    {
+      ret.reserve(100);
+      ifstream in(EXAMPLE);
+      try{
+	while(true)
+	    ret.emplace_back(LeftAndRight({in}, {in}));
+      }catch(...)
+	{}
+    }
+  return ret[i];
+}
+
+
+TEST(example, first)
+{
+    auto x = example(0);
+    EXPECT_THAT(compare(x.left, x.right), Eq(Compare::Right));
+    EXPECT_THAT(compare(x.right, x.left), Eq(Compare::Wrong));
+}
+
+TEST(example, second)
+{
+    auto x = example(1);
+    EXPECT_THAT(compare(x.left, x.right), Eq(Compare::Right));
+    EXPECT_THAT(compare(x.right, x.left), Eq(Compare::Wrong));
+}
+TEST(example, third)
+{
+    auto x = example(2);
+    EXPECT_THAT(compare(x.left, x.right), Eq(Compare::Wrong));
+    EXPECT_THAT(compare(x.right, x.left), Eq(Compare::Right));
+}
+TEST(example, fourth)
+{
+    auto x = example(3);
+    EXPECT_THAT(compare(x.left, x.right), Eq(Compare::Right));
+    EXPECT_THAT(compare(x.right, x.left), Eq(Compare::Wrong));
 }
 
 

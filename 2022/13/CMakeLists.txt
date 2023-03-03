@@ -11,12 +11,14 @@ Find_package(GTest)
 
 add_executable(${PROJECT_NAME}
   main.cc
+  types.cc
+  node.cc
 )
 
 target_compile_options(${PROJECT_NAME}
   PUBLIC
   -DEXAMPLE="${CMAKE_CURRENT_SOURCE_DIR}/example"
-    -DINPUT="${CMAKE_CURRENT_SOURCE_DIR}/input"
+  -DINPUT="${CMAKE_CURRENT_SOURCE_DIR}/input"
 #    -O2
 )
 target_include_directories(${PROJECT_NAME}
