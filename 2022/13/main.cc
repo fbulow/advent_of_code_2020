@@ -27,6 +27,13 @@ public:
   bool empty() const {return std::get<NodeList>(data_).empty();}
   Node& push(Node &&n) {return std::get<NodeList>(data_).emplace_back(std::move(n));return *this;}
   size_t size() const {return std::get<NodeList>(data_).size();}
+  Node asList() const
+  {
+    auto clone = *this;
+    auto ret = Node();
+    ret.push(std::move(clone));
+    return ret;
+  }
 };
 
 using namespace std;
@@ -56,6 +63,13 @@ Node::Node(istream& in)
   in>>c;//absorb the ]
 }
 
+
+TEST(Node, toList)
+{
+  Node n(1);
+  auto sut = n.asList();
+  EXPECT_THAT(sut[0].getInt(), Eq(1));
+}
 
 TEST(Read, a_list_of_numbers_and_a_list)
 {
