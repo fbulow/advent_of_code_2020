@@ -10,32 +10,37 @@ Compare compare(Int lhs, Int rhs)
     return Compare::Wrong;
 }
 
+Compare compare(auto const &abeg,
+		auto const &aend,
+		auto const &bbeg,
+		auto const &bend)
+{
+  if(abeg==aend)
+    return bbeg==bend?Compare::Equal : Compare::Right;
+  else if (bbeg==bend)
+    return Compare::Wrong;
+  else
+    {
+      auto ret = compare(*abeg, *bbeg);
+      if( ret != Compare::Equal)
+	return ret;
+      else
+	return compare(next(abeg), aend,
+		       next(bbeg), bend);
+    }
+}
+
+
 Compare compare(Node const &lhs, Node const &rhs)
 {
   if(lhs.isInteger() and rhs.isInteger())
     return compare(lhs.getInt(), rhs.getInt());
   else if ((not lhs.isInteger()) and (not rhs.isInteger()))
     {
-      auto a = lhs.cbegin();
-      auto b = rhs.cbegin();
-
-      if(a==lhs.cend())
-	return b==rhs.cend()?Compare::Equal : Compare::Right;
-      else if (b==rhs.cend())
-	return Compare::Wrong;
-      auto ret = compare(*a, *b);
-
-      while(ret == Compare::Equal)
-	{
-	  a++;
-	  b++;
-	  if(a==lhs.cend())
-	    return b==rhs.cend()?Compare::Equal : Compare::Right;
-	  else if (b==rhs.cend())
-	    return Compare::Wrong;
-	  ret = compare(*a, *b);
-	}
-      return ret;
+      return compare(lhs.cbegin(),
+		     lhs.cend(),
+		     rhs.cbegin(),
+		     rhs.cend());
     }
   else if (lhs.isInteger())
     return compare(lhs.asList(), rhs);
