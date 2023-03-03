@@ -13,6 +13,7 @@ add_executable(${PROJECT_NAME}
   main.cc
   types.cc
   node.cc
+  compare.cc
 )
 
 target_compile_options(${PROJECT_NAME}

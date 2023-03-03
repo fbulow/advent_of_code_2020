@@ -5,6 +5,7 @@
 #include "node.hh"
 #include <sstream>
 #include <fstream>
+#include "compare.hh"
 
 using namespace testing;
 using namespace std;
@@ -23,67 +24,57 @@ ostream& operator<<(ostream& out, Compare c)
   return out<<"ERROR";
 }
 
-Compare compare(Int lhs, Int rhs)
-{
-  if (lhs<rhs)
-    return Compare::Right;
-  else if (lhs==rhs)
-    return Compare::Equal;
-  else
-    return Compare::Wrong;
-}
-
-Compare compare(Node const &lhs, Node const &rhs)
-{
-  if(lhs.isInteger() and rhs.isInteger())
-    return compare(lhs.getInt(), rhs.getInt());
-  else if ((not lhs.isInteger()) and (not rhs.isInteger()))
-    {
-      auto a = lhs.cbegin();
-      auto b = rhs.cbegin();
-
-      auto ret = compare(*a, *b);
-      while(ret == Compare::Equal)
-	{
-	  a++;
-	  b++;
-	  if(a==lhs.cend())
-	    return b==rhs.cend()?Compare::Equal : Compare::Right;
-	  else if (b==rhs.cend())
-	    return Compare::Wrong;
-	  ret = compare(*a, *b);
-	}
-      return ret;
-    }
-  else if (lhs.isInteger())
-    return compare(lhs.asList(), rhs);
-  else
-    {
-      return compare(lhs, rhs.asList());
-    }
-}
 
 struct LeftAndRight{
   Node left;
   Node right;
 };
 
-LeftAndRight example(size_t i)
-  {
-  static std::vector<LeftAndRight> ret;
+
+auto getData(auto filename)
+{
+  std::vector<LeftAndRight> ret;
   if(ret.empty())
     {
       ret.reserve(100);
-      ifstream in(EXAMPLE);
+      ifstream in(filename);
       try{
 	while(true)
-	    ret.emplace_back(LeftAndRight({in}, {in}));
+	  ret.emplace_back(LeftAndRight({in}, {in}));
       }catch(...)
 	{}
     }
-  return ret[i];
+  return ret;
 }
 
+auto example()
+{
+  return getData(EXAMPLE);
+}
+LeftAndRight example(size_t i)
+{
+  return example()[i];
+}
+
+int solutionA(vector<LeftAndRight> const &data)
+{
+  int ret{0};
+  for(auto i =0; i<data.size(); i++)
+    if(compare(data[i].left, data[i].right)==Compare::Right)
+      ret+=(i+1);
+  return ret;
+}
+
+TEST(solutionA, input)
+{
+  EXPECT_THAT(solutionA(getData(INPUT)), Eq(6272));
+}
+
+
+TEST(solutionA, example)
+{
+  EXPECT_THAT(solutionA(example()), Eq(13));
+}
 
 TEST(example, first)
 {
@@ -107,6 +98,12 @@ TEST(example, third)
 TEST(example, fourth)
 {
     auto x = example(3);
+    EXPECT_THAT(compare(x.left, x.right), Eq(Compare::Right));
+    EXPECT_THAT(compare(x.right, x.left), Eq(Compare::Wrong));
+}
+TEST(example, six)
+{
+    auto x = example(5);
     EXPECT_THAT(compare(x.left, x.right), Eq(Compare::Right));
     EXPECT_THAT(compare(x.right, x.left), Eq(Compare::Wrong));
 }
