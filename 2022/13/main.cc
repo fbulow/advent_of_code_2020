@@ -31,6 +31,19 @@ struct LeftAndRight{
 };
 
 
+std::vector<Node>  getVector(auto filename)
+{
+  std::vector<Node> ret;
+  ret.reserve(400);
+  ifstream in(filename);
+  try{
+    while(true)
+      ret.emplace_back(Node(in));
+  }catch(...)
+    {}
+  return ret;
+}
+
 auto getData(auto filename)
 {
   std::vector<LeftAndRight> ret;
@@ -63,6 +76,45 @@ int solutionA(vector<LeftAndRight> const &data)
     if(compare(data[i].left, data[i].right)==Compare::Right)
       ret+=(i+1);
   return ret;
+}
+
+int solutionB(std::vector<Node> const &input)
+{
+  Node a = []()
+  {
+    istringstream in("[[2]]");
+    return Node(in);
+  }();
+  Node b = []()
+  {
+    istringstream in("[[6]]");
+    return Node(in);
+  }();
+
+  int beforeA{0}, beforeB{0};
+
+  for(auto const & x: input)
+    if(compare(x, a)==Compare::Right)
+      {beforeA++; beforeB++;}
+    else if(compare(x, b)==Compare::Right)
+      beforeB++;
+
+  return (beforeA+1)*(beforeB+2);
+}
+
+TEST(solutionB, input)
+{
+  auto data = getVector(INPUT);
+  EXPECT_THAT(solutionB(data),
+	      Eq(22288));
+}
+
+
+TEST(solutionB, example)
+{
+  auto data = getVector(EXAMPLE);
+  EXPECT_THAT(solutionB(data),
+	      Eq(140));
 }
 
 TEST(solutionA, input)
