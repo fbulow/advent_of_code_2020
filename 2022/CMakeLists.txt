@@ -5,7 +5,7 @@ enable_testing()
 
 add_subdirectory(AoC)
 add_library(strong INTERFACE)
-target_include_directories(strong INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/strong)
+target_include_directories(strong INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/strong_type)
 
 
 add_subdirectory(01)

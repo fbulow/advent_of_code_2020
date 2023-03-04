@@ -14,7 +14,7 @@ void readInputRec_(vector<string> &ret, istream &in)
     }
 }
 
-vector<string> readInput(istream &in)
+Input readInput(istream &in)
 {
   vector<string> ret;
   readInputRec_(ret, in);

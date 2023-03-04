@@ -2,4 +2,6 @@
 #include <istream>
 #include <vector>
 
-std::vector<std::string> readInput(std::istream &in);
+using Input = std::vector<std::string>;
+
+Input readInput(std::istream &in);
