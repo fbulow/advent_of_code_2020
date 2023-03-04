@@ -4,109 +4,41 @@
 #include <string>
 #include "read_input.hh"
 #include <algorithm>
+#include "height.hh"
+#include "steps.hh"
 
 using namespace testing;
 using namespace std;
 
-int height(char c)
+
+
+int solutionA(Steps s)
 {
-  switch(c)
+  try
     {
-    case 'S':
-      return 'a';
-    case 'E':
-      return 'z';
-    default:
-      return c;
+      int i = 0;
+      while(true)
+	s.stepFrom(i++);
+    }
+  catch(Answer const &a)
+    {
+      return a.value;
     }
 }
 
-class Steps
+TEST(solutionA, input)
 {
-public:
-  Input in;
-  vector<vector<int>> board;
-  size_t nRows;
-  size_t nCols;
+  ifstream in(INPUT);
+  EXPECT_THAT(solutionA(readInput(in)), Eq(408));
 
-  size_t endRow;
-  size_t endCol;
-  
-  Steps(Input &&in_)
-    :in(move(in_))
-    ,nRows(in.size())
-    ,nCols(in[0].size())
-  {
-    board.reserve(nRows);
-    for(auto x: in)
-      board.emplace_back(vector<int>(nCols, numeric_limits<int>::max()));
+}
 
-    for(auto row=0;row<nRows;row++)
-      for(auto col=0;col<nCols;col++)
-	if(in[row][col]=='S')
-	  board[row][col]=0;
-	else if(in[row][col]=='E')
-	  {
-	    endRow = row;
-	    endCol = col;
-	  }
-  }
+TEST(solutionA, example)
+{
+  ifstream in(EXAMPLE);
+  EXPECT_THAT(solutionA(readInput(in)), Eq(31));
 
-  auto operator() (size_t row, size_t col) const
-  {
-    return board[row][col];
-  }
-
-  void push(size_t row, size_t col, int value)
-  {
-    if(row>=nRows) return;
-    if(col>=nCols) return;
-    
-    board[row][col] = min(value, board[row][col]);    
-  }
-
-  auto ans() const
-  {
-    return board[endRow][endCol];
-  }
-
-  bool done() const
-  {
-    return ans() !=numeric_limits<int>::max();
-  }
-
-  
-  void stepFrom(int const value)
-  {
-    for(auto row=0;row<nRows;row++)
-      for(auto col=0;col<nCols;col++)
-	if(board[row][col]==value)
-	  {
-	    auto p = [this, row, col, value]
-	      (int drow, int dcol)
-	    {
-	      if(climbOk(row, col, row+drow, col+dcol))
-		push(row+drow, col+dcol, value+1);
-	    };
-	    p(+1, 0);
-	    p(-1, 0);
-	    p(0, +1);
-	    p(0, -1);
-	  }
-  }
-  
-  bool climbOk(size_t fromRow, size_t fromCol,size_t toRow, size_t toCol) const
-  {
-    if(fromRow>=nRows) return false;
-    if(fromCol>=nCols) return false;
-    if(toRow>=nRows) return false;
-    if(toCol>=nCols) return false;
-    
-    auto after  = height(in[toRow][toCol]);
-    auto before = height(in[fromRow][fromCol]);
-    return (after-before)<=1;
-  }
-};
+}
 
 TEST(Steps, climbOk)
 {
@@ -134,10 +66,7 @@ TEST(Steps, ctor)
   sut.stepFrom(5);
   EXPECT_THAT(sut(0,3), Ne(6));
 
-  EXPECT_FALSE(sut.done());
-  sut.push(5,2,10);
-  EXPECT_FALSE(sut.done());
-  
+  EXPECT_THROW(sut.push(2,5,10), Answer);
 }
 
 

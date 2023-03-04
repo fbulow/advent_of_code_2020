@@ -3,6 +3,10 @@
 #include "read_input.hh"
 using namespace std;
 
+struct Answer{
+  int value;
+};
+
 class Steps
 {
 public:
@@ -19,14 +23,14 @@ public:
   int operator() (size_t row, size_t col) const;
 
   void push(size_t row, size_t col, int value);
-
-  auto ans() const
-  {
-    return board[endRow][endCol];
-  }
-
-  bool done() const;
   
   void stepFrom(int const value);
   bool climbOk(size_t fromRow, size_t fromCol,size_t toRow, size_t toCol) const;
+
+  bool isEnd(char c)
+  {return c == 'E';}
+
+  bool isBeginning(char c)
+  {return c == 'S';}
+  
 };

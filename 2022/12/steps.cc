@@ -7,7 +7,9 @@ void Steps::push(size_t row, size_t col, int value)
   if(row>=nRows) return;
   if(col>=nCols) return;
     
-  board[row][col] = min(value, board[row][col]);    
+  board[row][col] = min(value, board[row][col]);
+  if(isEnd(in[row][col]))
+    throw Answer{value};
 }
 
 int Steps::operator() (size_t row, size_t col) const
@@ -57,16 +59,7 @@ Steps::Steps(Input &&in_)
 
   for(auto row=0;row<nRows;row++)
     for(auto col=0;col<nCols;col++)
-      if(in[row][col]=='S')
+      if(isBeginning(in[row][col]))
 	board[row][col]=0;
-      else if(in[row][col]=='E')
-	{
-	  endRow = row;
-	  endCol = col;
-	}
 }
 
-bool Steps::done() const
-{
-  return ans() !=numeric_limits<int>::max();
-}
