@@ -27,10 +27,10 @@ public:
   void stepFrom(int const value);
   bool climbOk(size_t fromRow, size_t fromCol,size_t toRow, size_t toCol) const;
 
-  bool isEnd(char c)
+  virtual bool isEnd(char c) const
   {return c == 'S';}
 
-  bool isBeginning(char c)
+  bool isBeginning(char c) const
   {return c == 'E';}
   
 };

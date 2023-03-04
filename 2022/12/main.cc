@@ -11,8 +11,17 @@ using namespace testing;
 using namespace std;
 
 
+class StepsB: public Steps{
+public:
+  StepsB(Input &&in_)
+    :Steps(move(in_))
+  {}
+  bool isEnd(char c) const override
+  {return c == 'a';}
 
-int solutionA(Steps s)
+};
+
+int solutionA(Steps &s)
 {
   try
     {
@@ -25,6 +34,29 @@ int solutionA(Steps s)
       return a.value;
     }
 }
+int solutionA(Steps &&s)
+{
+  Steps cache=move(s);
+  return solutionA(cache);
+}
+
+TEST(solutionB, input)
+{
+  ifstream in(INPUT);
+  StepsB data(readInput(in));
+
+  EXPECT_THAT(solutionA(data), Eq(399));
+}
+
+
+TEST(solutionB, example)
+{
+  ifstream in(EXAMPLE);
+  StepsB data(readInput(in));
+
+  EXPECT_THAT(solutionA(data), Eq(29));
+}
+
 
 TEST(solutionA, input)
 {
