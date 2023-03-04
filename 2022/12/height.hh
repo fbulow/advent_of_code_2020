@@ -6,10 +6,10 @@ int height(char c)
   switch(c)
     {
     case 'S':
-      return 'a';
+      return -'a';
     case 'E':
-      return 'z';
+      return -'z';
     default:
-      return c;
+      return -c;
     }
 }

@@ -28,9 +28,9 @@ public:
   bool climbOk(size_t fromRow, size_t fromCol,size_t toRow, size_t toCol) const;
 
   bool isEnd(char c)
-  {return c == 'E';}
+  {return c == 'S';}
 
   bool isBeginning(char c)
-  {return c == 'S';}
+  {return c == 'E';}
   
 };

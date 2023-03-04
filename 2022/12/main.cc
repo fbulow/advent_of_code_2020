@@ -45,30 +45,10 @@ TEST(Steps, climbOk)
   ifstream in(EXAMPLE);
   auto sut = Steps(readInput(in));
 
-  EXPECT_TRUE(sut.climbOk(0,0,1,0));
-  EXPECT_FALSE(sut.climbOk(0,2,0,3));
+  EXPECT_TRUE(sut.climbOk(1,0,0,0));
+  EXPECT_FALSE(sut.climbOk(0,3,0,2));
 
 }
-
-TEST(Steps, ctor)
-{
-  ifstream in(EXAMPLE);
-  auto sut = Steps(readInput(in));
-  EXPECT_THAT(sut(0,0), Eq(0));//Start at S
-  sut.push(1,0,1);
-  EXPECT_THAT(sut(1,0), Eq(1));
-
-  sut.stepFrom(1);
-  
-  EXPECT_THAT(sut(1,1), Eq(2));
-
-  sut.push(0, 2, 5);
-  sut.stepFrom(5);
-  EXPECT_THAT(sut(0,3), Ne(6));
-
-  EXPECT_THROW(sut.push(2,5,10), Answer);
-}
-
 
 TEST(readInput, example)
 {
