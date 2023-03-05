@@ -1,6 +1,12 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <fstream>
+#include <sstream>
+
+#include "space.hh"
+
+
 using namespace std;
 using namespace testing;
 
@@ -17,6 +23,21 @@ void washLine(string &s)
 	{}
       }
 }
+
+TEST(Space, drawLine)
+{
+  Space sut;
+  Coord a(498,4);
+  Coord b(498,6);
+  Coord c(496,6);
+
+  EXPECT_THAT(sut.size(), Eq(0));
+  sut.drawLine(a,b);
+  EXPECT_THAT(sut.size(), Eq(3));
+  sut.drawLine(b,c);
+  EXPECT_THAT(sut.size(), Eq(5));
+}
+  
 TEST(washLine, example)
 {
   string s = "503,4 -> 502,4";
