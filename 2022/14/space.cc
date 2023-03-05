@@ -112,11 +112,15 @@ void Space::dropSnowflake(Coord c)
     {}
 }
 
-void Space::dropSnowflake_(Coord c)
+bool Space::hasHitTheFloor(Coord c) const
 {
   if(c.y()>lowestPoint()) throw Done();
+  return false;
+}
 
-  if(contains(c)) return; //Hit something done here!
+void Space::dropSnowflake_(Coord c)
+{
+  if(hasHitTheFloor(c) or contains(c)) return; //Hit something done here!
 
   dropSnowflake_({c.x(), c.y()+1});
   dropSnowflake_({c.x()-1, c.y()+1});

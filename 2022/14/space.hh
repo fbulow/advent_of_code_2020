@@ -21,6 +21,10 @@ public:
   void drawSequence(vector<Coord> const &s);
   void dropSnowflake(Coord);
   int lowestPoint() const;
+
+protected:
+  bool hasHitTheFloor(Coord c) const;
+  
 private:
   void drawLine(int x0, int y0, int x1, int y1);
   void dropSnowflake_(Coord c);
