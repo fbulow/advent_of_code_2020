@@ -118,6 +118,11 @@ bool Space::hasHitTheFloor(Coord c) const
   return false;
 }
 
+bool SpaceB::hasHitTheFloor(Coord c) const
+{
+  return c.y()>=(lowestPoint()+2);
+}
+
 void Space::dropSnowflake_(Coord c)
 {
   if(hasHitTheFloor(c) or contains(c)) return; //Hit something done here!
@@ -133,10 +138,12 @@ void Space::dropSnowflake_(Coord c)
 
 int Space::lowestPoint() const
 {
-  return max_element(begin(),
-		     end(),
-		     [](Coord const &a, Coord const &b)
-		     {
-		       return a.y()<b.y();
-		     })->y();
+  if(lowestPoint_ == 0)
+    lowestPoint_ = max_element(begin(),
+			       end(),
+			       [](Coord const &a, Coord const &b)
+			       {
+				 return a.y()<b.y();
+			       })->y();
+  return lowestPoint_;
 }

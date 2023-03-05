@@ -23,12 +23,22 @@ public:
   int lowestPoint() const;
 
 protected:
-  bool hasHitTheFloor(Coord c) const;
+  virtual bool hasHitTheFloor(Coord c) const;
   
 private:
   void drawLine(int x0, int y0, int x1, int y1);
   void dropSnowflake_(Coord c);
-  };
+  mutable int lowestPoint_{0};
+};
 
 void washLine(string &s);
 void readInputFile(Space &, istream &in);
+
+class SpaceB: public Space{
+public:
+    SpaceB(string const & filename)
+      :Space(filename)
+  {}
+protected:
+  bool hasHitTheFloor(Coord c) const override;
+};

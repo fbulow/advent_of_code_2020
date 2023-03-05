@@ -10,20 +10,26 @@
 using namespace std;
 using namespace testing;
 
-
-int solutionA(string filename)
+template<class SPACE>
+int solution(string filename)
 {
-  auto empty = Space(filename);
+  auto empty = SPACE(filename);
   auto sut = empty;
   auto before = sut.size();
   sut.dropSnowflake({500,0});
   return sut.size() - before;
 }
 
+TEST(solutionB, example)
+{
+  EXPECT_THAT(solution<SpaceB>(EXAMPLE), Eq(93));
+  EXPECT_THAT(solution<SpaceB>(INPUT),   Eq(24958));
+}
+
 TEST(solutionA, example)
 {
-  EXPECT_THAT(solutionA(EXAMPLE), Eq(24));
-  EXPECT_THAT(solutionA(INPUT),   Eq(674));
+  EXPECT_THAT(solution<Space>(EXAMPLE), Eq(24));
+  EXPECT_THAT(solution<Space>(INPUT),   Eq(674));
 }
 
 TEST(Space, lowestPoint)
