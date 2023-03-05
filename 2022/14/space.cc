@@ -24,3 +24,21 @@ void Space::drawLine(Coord const &from, Coord const &to)
 {
   drawLine(from.x(), from.y(), to.x(), to.y());
 }
+
+void rec(Space &s, Coord const & head, auto beg, auto end)
+{
+  if(beg!=end)
+    {
+      s.drawLine(head, *beg);
+      rec(s, *beg, next(beg), end);
+    }
+}
+
+
+void Space::drawSequence(vector<Coord> const &s)
+{
+  auto beg = s.begin();
+  auto end = s.end();
+  assert(beg!=end);
+  rec(*this, *beg, next(beg), end);
+}

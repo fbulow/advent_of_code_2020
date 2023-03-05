@@ -24,6 +24,17 @@ void washLine(string &s)
       }
 }
 
+TEST(Space, drawSequence)
+{
+  vector<Coord> data{{498,4},
+		     {498,6},
+		     {496,6}};
+  Space sut;
+  sut.drawSequence(data);
+  EXPECT_THAT(sut.size(), Eq(5));
+}
+
+
 TEST(Space, drawLine)
 {
   Space sut;
