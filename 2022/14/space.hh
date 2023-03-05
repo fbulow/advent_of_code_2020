@@ -7,6 +7,8 @@
 
 using namespace std;
 
+class Done: std::exception{};
+
 
 class Space : public set<Coord>
 {
@@ -17,10 +19,12 @@ public:
 
   void drawLine(Coord const &from, Coord const &to);
   void drawSequence(vector<Coord> const &s);
+  void dropSnowflake(Coord);
   int lowestPoint() const;
 private:
   void drawLine(int x0, int y0, int x1, int y1);
-};
+  void dropSnowflake_(Coord c);
+  };
 
 void washLine(string &s);
 void readInputFile(Space &, istream &in);

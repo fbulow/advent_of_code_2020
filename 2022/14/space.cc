@@ -103,6 +103,30 @@ void readInputFile(Space &s, istream &in)
 
   readInputFile(s, in);
 }
+
+void Space::dropSnowflake(Coord c)
+{
+  try{
+    dropSnowflake_(c);
+  }catch(Done)
+    {}
+}
+
+void Space::dropSnowflake_(Coord c)
+{
+  if(c.y()>lowestPoint()) throw Done();
+
+  if(contains(c)) return; //Hit something done here!
+
+  dropSnowflake_({c.x(), c.y()+1});
+  dropSnowflake_({c.x()-1, c.y()+1});
+  dropSnowflake_({c.x()+1, c.y()+1});
+
+  //ok, we are on solid ground here.
+  insert(c);
+  return;
+}
+
 int Space::lowestPoint() const
 {
   return max_element(begin(),

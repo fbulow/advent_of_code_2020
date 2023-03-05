@@ -11,11 +11,27 @@ using namespace std;
 using namespace testing;
 
 
+int solutionA(string filename)
+{
+  auto empty = Space(filename);
+  auto sut = empty;
+  auto before = sut.size();
+  sut.dropSnowflake({500,0});
+  return sut.size() - before;
+}
+
+TEST(solutionA, example)
+{
+  EXPECT_THAT(solutionA(EXAMPLE), Eq(24));
+  EXPECT_THAT(solutionA(INPUT),   Eq(674));
+}
+
 TEST(Space, lowestPoint)
 {
   auto sut = Space(EXAMPLE);
   EXPECT_THAT(sut.lowestPoint(), Eq(9));
 }
+
 TEST(Space_ctor, drawSequence)
 {
   auto sut = Space(EXAMPLE);
