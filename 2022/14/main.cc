@@ -10,18 +10,28 @@
 using namespace std;
 using namespace testing;
 
-void washLine(string &s)
+
+TEST(Space_ctor, drawSequence)
 {
-  for(char &c:s)
-    switch(c)
-      {
-      case '-':
-      case '>':
-      case ',':
-	c=' ';
-      default:
-	{}
-      }
+  auto sut = Space(EXAMPLE);
+  ostringstream out;
+  for(int y=0; y<=9; y++)
+    {
+      for(int x=494; x<=503; x++)
+	out<<char( sut.contains({x,y})?'#':'.' );
+      out << endl;
+    }
+
+  EXPECT_THAT(out.str(), Eq("..........\n"
+			    "..........\n"
+			    "..........\n"
+			    "..........\n"
+			    "....#...##\n"
+			    "....#...#.\n"
+			    "..###...#.\n"
+			    "........#.\n"
+			    "........#.\n"
+			    "#########.\n"));
 }
 
 TEST(Space, drawSequence)
