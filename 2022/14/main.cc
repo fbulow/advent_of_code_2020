@@ -11,6 +11,11 @@ using namespace std;
 using namespace testing;
 
 
+TEST(Space, lowestPoint)
+{
+  auto sut = Space(EXAMPLE);
+  EXPECT_THAT(sut.lowestPoint(), Eq(9));
+}
 TEST(Space_ctor, drawSequence)
 {
   auto sut = Space(EXAMPLE);

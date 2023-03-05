@@ -2,6 +2,7 @@
 #include <cassert>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 
 void washLine(string &s)
@@ -101,4 +102,13 @@ void readInputFile(Space &s, istream &in)
   s.drawSequence( getSequence(row) );
 
   readInputFile(s, in);
+}
+int Space::lowestPoint() const
+{
+  return max_element(begin(),
+		     end(),
+		     [](Coord const &a, Coord const &b)
+		     {
+		       return a.y()<b.y();
+		     })->y();
 }
