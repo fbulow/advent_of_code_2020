@@ -5,6 +5,8 @@
 #include <cmath>
 #include <vector>
 #include <cassert>
+#include <algorithm>
+#include <numeric>
 
 using namespace std;
 using namespace testing;
@@ -21,20 +23,24 @@ Int getInt(istream &in)
   return ret;
 }
 
-
-
 struct Sensor{
   Int x;
   Int y;
+  Int bx;
+  Int by;
+
   Int r;
+
   Sensor(istream &in)
-    :x{getInt(in)}
-    ,y{getInt(in)}
-    ,r{abs(getInt(in)-x)+abs(getInt(in)-y)}
+    :x(getInt(in))
+    ,y(getInt(in))
+    ,bx(getInt(in))
+    ,by(getInt(in))
+    ,r(abs(x-bx) + abs(y-by))
   {
+    assert(r>=0);
     if(in.eof())
       throw exception();
-    assert(r>=0);
   }
 };
 
@@ -93,6 +99,15 @@ Int beaconsOnRow(vector<Sensor> const &sensors, Int row)
 		  });
 }
 
+Int crapOnRow(vector<Sensor> const &sensors, Int row)
+{
+  set<array<int,2>> beacons;
+  for(auto const &s: sensors)
+    if(s.by==row)
+      beacons.insert({s.bx, s.by});
+  return beacons.size();
+}
+
 Int watchedLocationsCount(vector<Sensor> const &sensors, Int row)
 {
   map<Int, int> onOff;
@@ -106,7 +121,7 @@ Int watchedLocationsCount(vector<Sensor> const &sensors, Int row)
 	}
     }
 
-  return countOn(onOff);
+  return countOn(onOff) - crapOnRow(sensors, row);
 }
 
 Int solutionA(string filename, Int row)
@@ -114,6 +129,17 @@ Int solutionA(string filename, Int row)
   return watchedLocationsCount(getData(filename), row)
     ;
 }
+
+TEST(crapOnRow, example)
+{
+  EXPECT_THAT(crapOnRow(getData(EXAMPLE), 10), Eq(1));
+}
+
+TEST(solutionA, input)
+{
+  EXPECT_THAT(solutionA(INPUT, 2000000), Eq(26));
+}
+
 
 TEST(solutionA, example)
 {
