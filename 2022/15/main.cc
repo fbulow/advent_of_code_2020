@@ -137,7 +137,7 @@ TEST(crapOnRow, example)
 
 TEST(solutionA, input)
 {
-  EXPECT_THAT(solutionA(INPUT, 2000000), Eq(26));
+  EXPECT_THAT(solutionA(INPUT, 2000000), Eq(5335787));
 }
 
 
