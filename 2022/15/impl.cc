@@ -73,7 +73,7 @@ Int crapOnRow(vector<Sensor> const &sensors, Int row)
   return beacons.size();
 }
 
-Int watchedLocationsCount(vector<Sensor> const &sensors, Int row)
+map<Int, int> getOnOff(vector<Sensor> const &sensors, Int row)
 {
   map<Int, int> onOff;
   for(auto const & s: sensors)
@@ -85,8 +85,13 @@ Int watchedLocationsCount(vector<Sensor> const &sensors, Int row)
 	  onOff[s.x+halfLength+1]--; //Turn off
 	}
     }
+  return onOff;
+}
 
-  return countOn(onOff) - crapOnRow(sensors, row);
+Int watchedLocationsCount(vector<Sensor> const &sensors, Int row)
+{
+
+  return countOn(getOnOff(sensors, row)) - crapOnRow(sensors, row);
 }
 
 Int solutionA(string filename, Int row)

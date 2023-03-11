@@ -52,3 +52,6 @@ Int crapOnRow(vector<Sensor> const &sensors, Int row);
 Int watchedLocationsCount(vector<Sensor> const &sensors, Int row);
 
 Int solutionA(string filename, Int row);
+
+map<Int, int> getOnOff(vector<Sensor> const &sensors, Int row);
+  
