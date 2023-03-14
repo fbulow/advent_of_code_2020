@@ -10,7 +10,7 @@
 using namespace std;
 
 using Int = int;
-
+using OnOff = map<Int, int>;
 
 Int getInt(istream &in);
 struct Sensor{
@@ -34,7 +34,6 @@ struct Sensor{
   }
 };
 
-
 vector<Sensor> getData(string filename);
 
 Int countOn(Int const activeSensors,
@@ -43,7 +42,7 @@ Int countOn(Int const activeSensors,
 	    auto const end);
 
 
-Int countOn(map<Int, int> const &onOff);
+Int countOn(OnOff const &onOff);
 
 Int beaconsOnRow(vector<Sensor> const &sensors, Int row);
 
@@ -53,5 +52,5 @@ Int watchedLocationsCount(vector<Sensor> const &sensors, Int row);
 
 Int solutionA(string filename, Int row);
 
-map<Int, int> getOnOff(vector<Sensor> const &sensors, Int row);
+OnOff getOnOff(vector<Sensor> const &sensors, Int row);
   
