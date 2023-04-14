@@ -11,6 +11,8 @@ Find_package(GTest)
 
 add_executable(${PROJECT_NAME}
   main.cc
+  read_input.cc
+  row.cc
 )
 
 target_compile_options(${PROJECT_NAME}

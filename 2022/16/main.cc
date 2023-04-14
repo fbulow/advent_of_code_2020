@@ -1,68 +1,12 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <vector>
-#include <fstream>
+#include "read_input.hh"
+#include "row.hh"
 
 using namespace testing;
 using namespace std;
 
-vector<string> readInput(istream &in)
-{
-  vector<string> ret;
-  try
-    {
-      while(true)
-	{
-	  ret.emplace_back(
-			   [&ret, &in]()
-			   {
-			     string row;
-			     getline(in, row);
-			     if(row.empty())
-			       throw exception();
-			     return row;
-			   }());
-	}
-    }
-  catch(...)
-    {
-    }
-  return ret;
-}
-
-auto readInput(string const &filename)
-{
-  ifstream in(filename);
-  return readInput(in);
-}
-
-struct Row{
-  std::string from;
-  int rate{1};
-  vector<std::string> to;
-  Row(std::string row)
-  {
-    istringstream in(row);
-    in>>from>>from;
-
-    std::string slask;
-    in>>slask>>slask>>slask;
-    for(int i=0;i<5;i++)
-      slask[i]=' ';
-    (*slask.rbegin())=' ';
-    istringstream inInt(slask);
-    inInt>>rate;
-    in>>slask>>slask>>slask>>slask;
-
-    in>>slask;
-    while(*slask.rbegin() == ',')
-      {
-	to.emplace_back(std::string(slask.begin(), prev(slask.end())));
-	in>>slask;
-      }
-    to.emplace_back(std::move(slask));
-  }
-};
 
 
 TEST(scrubbed, example)
