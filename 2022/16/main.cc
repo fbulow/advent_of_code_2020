@@ -11,12 +11,20 @@ using namespace std;
 namespace A{
   class Navigator{
     Destinations destinations;
+    Valve location;
   public:
     Navigator()=default;
-    Navigator w(Destinations d)
+    
+    Navigator w(Destinations d) const
     {
       auto ret = *this;
       ret.destinations = move(d);
+      return ret;
+    }
+    Navigator w(Valve v) const 
+    {
+      auto ret = *this;
+      ret.location = move(v);
       return ret;
     }
       
@@ -25,17 +33,26 @@ namespace A{
 
     ::Navigator get () const
     {
-      return ::Navigator(destinations);
+      return ::Navigator(destinations, location);
     }
-
+    
     
   };
 };
 
+TEST(Navigator, goTo_changes_location)
+{
+  auto sut = A::Navigator().w(Destinations{"AA", "BB"}).get();
+  EXPECT_THAT(
+	      sut.goTo("AA").getLocation(),
+	      Eq("AA")
+	      );
+}
+
 
 TEST(Navigator, destination_removed_when_goto_is_reached)
 {
-  auto sut = A::Navigator().w({"AA", "BB"}).get();
+  auto sut = A::Navigator().w(Destinations{"AA", "BB"}).get();
   EXPECT_THAT(
 	      sut.goTo("AA").getDestinations(),
 	      ElementsAre("BB")
@@ -44,9 +61,12 @@ TEST(Navigator, destination_removed_when_goto_is_reached)
 
 TEST(Navigator, ctor)
 {
-  Navigator sut({"AA", "BB"});
+  Navigator sut({"BB", "CC"}, "AA");
   EXPECT_THAT(sut.getDestinations(),
-	      ElementsAre("AA","BB"));
+	      ElementsAre("BB","CC"));
+  EXPECT_THAT(sut.getLocation(),
+	      Eq("AA"));
+  
 }
 
 TEST(scrubbed, example)

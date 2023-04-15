@@ -13,5 +13,7 @@ Navigator Navigator::goTo(Valve v) const
 		     ret.reserve(destinations_.size()-1);
 		     ranges::copy_if(destinations_, back_inserter(ret), [v](auto x){return x!=v;});
 		     return ret;
-		   }());
+		   }(),
+		   v
+		   );
 }
