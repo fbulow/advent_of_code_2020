@@ -5,50 +5,28 @@
 #include "row.hh"
 #include "navigator.hh"
 
+#include "object_mother.hpp"
 using namespace testing;
 using namespace std;
 
 namespace A{
-  class Navigator{
-    Destinations destinations;
-    Valve location;
-  public:
-    Navigator()=default;
-    
-    Navigator w(Destinations d) const
-    {
-      auto ret = *this;
-      ret.destinations = move(d);
-      return ret;
-    }
-    Navigator w(Valve v) const 
-    {
-      auto ret = *this;
-      ret.location = move(v);
-      return ret;
-    }
-      
-    operator ::Navigator () const
-    {return get();}
-
-    ::Navigator get () const
-    {
-      return ::Navigator(destinations, location);
-    }
-    
-    
+  struct Navigator : public Mother<::Navigator, Destinations, Valve>
+  {
+    Navigator()
+      :Parent(Destinations{}, Valve(""))
+    {}
   };
 };
 
 TEST(Navigator, goTo_changes_location)
 {
-  auto sut = A::Navigator().w(Destinations{"AA", "BB"}).get();
+  auto sut = A::Navigator().w<Destinations>(Destinations{"AA", "BB"})
+    .get();
   EXPECT_THAT(
 	      sut.goTo("AA").getLocation(),
 	      Eq("AA")
 	      );
 }
-
 
 TEST(Navigator, destination_removed_when_goto_is_reached)
 {
