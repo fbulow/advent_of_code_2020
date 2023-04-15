@@ -3,57 +3,51 @@
 #include <vector>
 #include "read_input.hh"
 #include "row.hh"
-#include <ranges>
-#include <algorithm>
+#include "navigator.hh"
 
 using namespace testing;
 using namespace std;
 
-using Valve = string;
-using Destinations = vector<Valve>;
+namespace A{
+  class Navigator{
+    Destinations destinations;
+  public:
+    Navigator()=default;
+    Navigator w(Destinations d)
+    {
+      auto ret = *this;
+      ret.destinations = move(d);
+      return ret;
+    }
+      
+    operator ::Navigator () const
+    {return get();}
 
-class Navigator{
-  Destinations destinations_;
-public:
-  Navigator(Destinations destinations)
-    :destinations_(move(destinations))
-  {}
-  Destinations const & getDestinations() const
-  {return destinations_;}
-  Navigator goTo(Valve v) const
-  {
-    return Navigator(
-		     [this, v] //Evaluated immediately!
-		     {
-		       assert( ! destinations_.empty() );
-		       Destinations ret;
-		       ret.reserve(destinations_.size()-1);
-		       ranges::copy_if(destinations_, back_inserter(ret), [v](auto x){return x!=v;});
-		       return ret;
-		     }());
+    ::Navigator get () const
+    {
+      return ::Navigator(destinations);
+    }
 
-  }
+    
+  };
 };
+
+
+TEST(Navigator, destination_removed_when_goto_is_reached)
+{
+  auto sut = A::Navigator().w({"AA", "BB"}).get();
+  EXPECT_THAT(
+	      sut.goTo("AA").getDestinations(),
+	      ElementsAre("BB")
+	      );
+}
 
 TEST(Navigator, ctor)
 {
   Navigator sut({"AA", "BB"});
   EXPECT_THAT(sut.getDestinations(),
 	      ElementsAre("AA","BB"));
-
-  EXPECT_THAT(sut.goTo("AA").getDestinations(),
-	      ElementsAre("BB"));
 }
-
-TEST(Navigator, destination_removed_when_goto_is_reached)
-{
-  
-  EXPECT_THAT(
-	      Navigator({"AA", "BB"}).goTo("AA").getDestinations(),
-	      ElementsAre("BB")
-	      );
-}
-
 
 TEST(scrubbed, example)
 {

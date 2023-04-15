@@ -13,6 +13,8 @@ add_executable(${PROJECT_NAME}
   main.cc
   read_input.cc
   row.cc
+  navigator.cc
+  types.cc
 )
 
 target_compile_options(${PROJECT_NAME}
