@@ -10,13 +10,28 @@ using namespace testing;
 using namespace std;
 
 namespace A{
-  struct Navigator : public Mother<::Navigator, Destinations, Valve>
+  struct Navigator : public Mother<::Navigator, Destinations, Valve, Steps>
   {
     Navigator()
-      :Parent(Destinations{}, Valve(""))
+      :Parent(Destinations{}, Valve(""), Steps(0))
     {}
   };
 };
+
+TEST(Navigator, goTo_reduces_steps_left)
+{
+  auto sut = A::Navigator()
+    .w<Destinations>({"BB"})
+    .w<Valve>("AA")
+    .w<Steps>(10)
+    .get();
+
+  sut.add(Distance("AA", "BB", 2));
+
+  EXPECT_THAT(sut.goTo("AA").getSteps(),
+	      Eq(10-2-1) // Two for the move and one to open valve
+	      );
+}
 
 TEST(Navigator, goTo_changes_location)
 {
@@ -39,11 +54,13 @@ TEST(Navigator, destination_removed_when_goto_is_reached)
 
 TEST(Navigator, ctor)
 {
-  Navigator sut({"BB", "CC"}, "AA");
+  Navigator sut({"BB", "CC"}, "AA", Steps(11));
   EXPECT_THAT(sut.getDestinations(),
 	      ElementsAre("BB","CC"));
   EXPECT_THAT(sut.getLocation(),
 	      Eq("AA"));
+  EXPECT_THAT(sut.getSteps(),
+	      Eq(11));
   
 }
 

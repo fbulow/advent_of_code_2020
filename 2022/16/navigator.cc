@@ -14,6 +14,7 @@ Navigator Navigator::goTo(Valve v) const
 		     ranges::copy_if(destinations_, back_inserter(ret), [v](auto x){return x!=v;});
 		     return ret;
 		   }(),
-		   v
+		   v,
+		   getSteps()-distance_-1
 		   );
 }

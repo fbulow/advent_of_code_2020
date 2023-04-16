@@ -15,6 +15,7 @@ add_executable(${PROJECT_NAME}
   row.cc
   navigator.cc
   types.cc
+  distance.cc
 )
 
 target_compile_options(${PROJECT_NAME}
@@ -29,6 +30,7 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
   AoC
+  strong
   GTest::GTest
   GTest::Main
 )
