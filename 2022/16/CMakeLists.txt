@@ -16,6 +16,7 @@ add_executable(${PROJECT_NAME}
   navigator.cc
   types.cc
   distance.cc
+  distance_list.cc
 )
 
 target_compile_options(${PROJECT_NAME}

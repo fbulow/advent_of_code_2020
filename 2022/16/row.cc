@@ -1,10 +1,11 @@
 #include "row.hh"
 #include <sstream>
 
-Row::Row(std::string row)
+Row Row::fromString(std::string row)
 {
+  Row ret;
   istringstream in(row);
-  in>>from>>from;
+  in>>ret.from>>ret.from;
 
   std::string slask;
   in>>slask>>slask>>slask;
@@ -12,14 +13,15 @@ Row::Row(std::string row)
     slask[i]=' ';
   (*slask.rbegin())=' ';
   istringstream inInt(slask);
-  inInt>>rate;
+  inInt>>ret.rate;
   in>>slask>>slask>>slask>>slask;
 
   in>>slask;
   while(*slask.rbegin() == ',')
     {
-      to.emplace_back(std::string(slask.begin(), prev(slask.end())));
+      ret.to.emplace_back(std::string(slask.begin(), prev(slask.end())));
       in>>slask;
     }
-  to.emplace_back(std::move(slask));
+  ret.to.emplace_back(std::move(slask));
+  return ret;
 }

@@ -4,7 +4,7 @@
 #include "read_input.hh"
 #include "row.hh"
 #include "navigator.hh"
-
+#include "distance_list.hh"
 #include "object_mother.hpp"
 using namespace testing;
 using namespace std;
@@ -21,7 +21,39 @@ namespace A{
 				     Valve(""),
 				     Steps(0));
   };
+
+  auto Row = []
+  {
+    struct Row_: ObjectMother<Row_,
+			      ::Row,
+			      std::string, 
+			      vector<std::string>,
+			      int>
+    {
+      Row_ addDest(std::string s)
+      {
+	auto ret = clone();
+	std::get<vector<string>>(ret.arg).emplace_back(std::move(s));
+	return ret;
+      }
+    };
+    return Row_::defaultValues(string(""), vector<std::string>{}, 0);
+  };
 };
+
+TEST(DistanceList, a_to_b_is_one)
+{
+  auto sut = DistanceList( vector<Row>{A::Row()
+				       .w(string("a"))
+				       .addDest("b")
+				       .addDest("c")
+				       .get()
+    });
+  EXPECT_EQ( 0, sut.steps("a", "a") );
+  EXPECT_EQ( 1, sut.steps("a", "b") );
+  EXPECT_EQ( 1, sut.steps("b", "a") );
+  //  EXPECT_EQ( 2, sut.steps("b", "c") );
+}
 
 
 TEST(Navigator, goTo_reduces_steps_left)
@@ -73,7 +105,7 @@ TEST(Navigator, ctor)
 TEST(scrubbed, example)
 {
   {
-    Row sut("Valve AA has flow rate=0; tunnels lead to valves DD, II, BB");
+    auto sut = Row::fromString("Valve AA has flow rate=0; tunnels lead to valves DD, II, BB");
     EXPECT_THAT(sut.from, Eq("AA"));
     EXPECT_THAT(sut.rate, Eq(0));
     EXPECT_THAT(sut.to, Contains("DD"));
@@ -82,7 +114,7 @@ TEST(scrubbed, example)
     EXPECT_THAT(sut.to.size(), Eq(3));
   }
   {
-    Row sut("Valve HH has flow rate=22; tunnel leads to valve GG");
+    auto sut = Row::fromString("Valve HH has flow rate=22; tunnel leads to valve GG");
     EXPECT_THAT(sut.from, Eq("HH"));
     EXPECT_THAT(sut.rate, Eq(22));
     EXPECT_THAT(sut.to, Contains("GG"));
