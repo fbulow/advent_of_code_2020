@@ -10,13 +10,19 @@ using namespace testing;
 using namespace std;
 
 namespace A{
-  struct Navigator : public Mother<::Navigator, Destinations, Valve, Steps>
+  auto Navigator = []()
   {
-    Navigator()
-      :Parent(Destinations{}, Valve(""), Steps(0))
-    {}
+    struct Navigator_ : ObjectMother<Navigator_, ::Navigator, ::Destinations, ::Valve, ::Steps>
+    {
+      Navigator_ wValve(Valve v){ return w(v); }
+    };
+    return Navigator_::defaultValues(
+				     Destinations{},
+				     Valve(""),
+				     Steps(0));
   };
 };
+
 
 TEST(Navigator, goTo_reduces_steps_left)
 {
