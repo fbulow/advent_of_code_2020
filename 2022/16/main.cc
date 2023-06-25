@@ -30,7 +30,14 @@ namespace A{
 			      vector<std::string>,
 			      int>
     {
-      Row_ addDest(std::string s)
+      Row_ wFrom(string s) const
+      {
+	auto ret = clone();
+	std::get<string>(ret.arg) = std::move(s);
+	return ret;
+      }
+      
+      Row_ addDest(std::string s) const
       {
 	auto ret = clone();
 	std::get<vector<string>>(ret.arg).emplace_back(std::move(s));
@@ -40,6 +47,17 @@ namespace A{
     return Row_::defaultValues(string(""), vector<std::string>{}, 0);
   };
 };
+
+TEST(Row, allValves)
+{
+  auto sut = A::Row()
+    .wFrom("a")
+    .addDest("b")
+    .addDest("c")
+    .get().allValves();
+
+  EXPECT_THAT(sut.size(), Eq(3));
+}
 
 TEST(DistanceList, a_to_b_is_one)
 {

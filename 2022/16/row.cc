@@ -25,3 +25,10 @@ Row Row::fromString(std::string row)
   ret.to.emplace_back(std::move(slask));
   return ret;
 }
+
+vector<string> Row::allValves() const
+{
+  vector<string> ret{to};
+  ret.push_back(from);
+  return ret;
+}

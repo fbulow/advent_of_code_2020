@@ -9,4 +9,5 @@ struct Row{
   vector<std::string> to;
   int rate{1};
   static Row fromString(std::string row);
+  vector<string> allValves() const;
 };
