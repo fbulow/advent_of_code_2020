@@ -4,7 +4,8 @@
 #include "distances.hh"
 #include "example.hh"
 #include "valve_connection.hh"
-
+#include <numeric>
+#include <vector>
 
 using namespace testing;
 
@@ -66,7 +67,111 @@ TEST(ValveConnection, not_same)
     EXPECT_TRUE((a<b) || (b<a));
 }
 
+struct Event{
+  Minutes timePassed;
+  Valve open;
+};
 
+using Path = std::vector<Event>;
+using FlowRates = std::map<Valve, Flow>;
+
+Flow totalFlow(Path const & p, FlowRates const & flowRates, Minutes remaining = 30)
+{
+  return std::accumulate(p.begin(),
+			 p.end(),
+			 Flow(0),
+			 [flowRates, remaining](Flow acc, Event const & a)
+			 {
+			   return acc+flowRates.at(a.open)*(remaining - a.timePassed) ;
+			 });
+}
+
+
+TEST(totalFlow, example_valves)
+{
+  Path p{
+    {2,  "DD"},
+    {5,  "BB"},
+    {9,  "JJ"},
+    {17, "HH"},
+    {21, "EE"},
+    {24, "CC"}};
+  
+  std::map<Valve, Flow> flowRates{
+    {"AA", 0},
+    {"BB", 13},
+    {"CC", 2},
+    {"DD", 20},
+    {"EE", 3},
+    {"FF", 0},
+    {"GG", 0},
+    {"HH", 22},
+    {"II", 0},
+    {"JJ", 21}
+  };
+
+  EXPECT_THAT(totalFlow(p, flowRates),
+	      1651);
+  
+}
+
+
+class PathGenerator{
+public:
+  virtual std::optional<Path> next() = 0;
+};
+
+Flow SolA(auto const &totalFlow, PathGenerator & pathGenerator)
+{
+  Flow ret{0};
+  auto path = pathGenerator.next();
+  while(path)
+    {
+      ret = std::max(ret, totalFlow(path));
+      path = pathGenerator.next();
+    }
+  return ret;
+}
+
+
+
+TEST(SolA, zero_if_no_path)
+{
+  class : public PathGenerator{
+    std::optional<Path> next() {return {};}
+  } pg;
+
+  EXPECT_EQ(0,
+	    SolA(
+		 [](auto const&){return 5;},
+		 pg));
+}
+
+TEST(SolA, largest_value)
+{
+  class : public PathGenerator{
+    int i{0};
+    
+  public:
+    std::optional<Path> next() {
+      switch(i++)
+	{
+	case 0:
+	  return Path();
+	case 1:
+	  return Path();
+	default:
+	  return std::nullopt;
+	}
+    }
+  } pg;
+
+  int i{5};
+  EXPECT_EQ(5,
+	    SolA(
+		 [&i](auto const&){return i--;},
+		 pg));
+}
 
 // TEST(distance_cache, jj_to_ii)
 // {
@@ -80,13 +185,13 @@ TEST(ValveConnection, not_same)
 //     auto ans = sut.from(Valve("JJ"), Steps(1));
 
 //     EXPECT_EQ(ans.size(), 1);
-//     EXPECT_TRUE(ans.contains(ValveAndSteps("II", 1)));
+//     EXPECT_TRUE(ans.contains(ValveConnection("JJ", "II", 1)));
 //   }
 //   {
 //     auto ans = sut.from(Valve("JJ"), Steps(2));
 
 //     EXPECT_EQ(ans.size(), 2);
-//     EXPECT_TRUE(ans.contains(ValveAndSteps("II", 1)));
-//     EXPECT_TRUE(ans.contains(ValveAndSteps("AA", 2)));
+//     EXPECT_TRUE(ans.contains(ValveConnection("JJ", "II", 1)));
+//     EXPECT_TRUE(ans.contains(ValveConnection("JJ", "AA", 2)));
 //   }
 // }
