@@ -4,9 +4,9 @@
 #include "distances.hh"
 #include "example.hh"
 #include "valve_connection.hh"
-#include <numeric>
 #include <vector>
-
+#include "solA.hh"
+#include "total_volume.hh"
 using namespace testing;
 
 TEST(score, eval)
@@ -67,26 +67,6 @@ TEST(ValveConnection, not_same)
     EXPECT_TRUE((a<b) || (b<a));
 }
 
-struct Event{
-  Minutes timePassed;
-  Valve open;
-};
-
-using Path = std::vector<Event>;
-using FlowRates = std::map<Valve, Flow>;
-
-Flow totalFlow(Path const & p, FlowRates const & flowRates, Minutes remaining = 30)
-{
-  return std::accumulate(p.begin(),
-			 p.end(),
-			 Flow(0),
-			 [flowRates, remaining](Flow acc, Event const & a)
-			 {
-			   return acc+flowRates.at(a.open)*(remaining - a.timePassed) ;
-			 });
-}
-
-
 TEST(totalFlow, example_valves)
 {
   Path p{
@@ -110,28 +90,13 @@ TEST(totalFlow, example_valves)
     {"JJ", 21}
   };
 
-  EXPECT_THAT(totalFlow(p, flowRates),
+  EXPECT_THAT(totalVolume(p, flowRates),
 	      1651);
   
 }
 
 
-class PathGenerator{
-public:
-  virtual std::optional<Path> next() = 0;
-};
 
-Flow SolA(auto const &totalFlow, PathGenerator & pathGenerator)
-{
-  Flow ret{0};
-  auto path = pathGenerator.next();
-  while(path)
-    {
-      ret = std::max(ret, totalFlow(path));
-      path = pathGenerator.next();
-    }
-  return ret;
-}
 
 
 

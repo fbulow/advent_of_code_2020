@@ -5,11 +5,15 @@ project(2216)
 Find_package(GTest)
 
 add_executable(${PROJECT_NAME}
-  main.cc
-  example.cc
-  types.cc
   distances.cc
+  example.cc
   input.cc
+  main.cc
+  path.cc
+  path_generator.cc
+  solA.cc
+  total_volume.cc
+  types.cc
   valve_connection.cc
 )
 
