@@ -120,7 +120,7 @@ TEST(getData, example)
 
 TEST(read, example_dots)
 {
-  ifstream in(EXAMPLE);
+  ifstream in((EXAMPLE));
   auto sut = Sensor(in);
 
   EXPECT_THAT(sut.x, Eq(2));

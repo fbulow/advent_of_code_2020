@@ -4,23 +4,12 @@
 #include <tuple>
 #include <utility>
 #include <string>
+#include "types.hh"
 #include <cassert>
-
-
-using Flow = int;
-using Valve = std::string;
-using Time = int;
-
+#include "input.hh"
 class Input;
 Input  example();
 
-class Input : std::map<Valve, std::pair<Flow, std::set<Valve>>>
-{
-  friend Input example();
-  friend int distance(Input const &inp, std::set<Valve> from, Valve to, int steps);
-public:
-  Flow flow(Valve v) const;
-};
 
 class Score{
 public:

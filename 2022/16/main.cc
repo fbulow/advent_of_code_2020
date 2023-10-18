@@ -1,7 +1,9 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include "distances.hh"
 #include "example.hh"
+#include "valve_connection.hh"
 
 
 using namespace testing;
@@ -30,3 +32,61 @@ TEST(distance, example)
   EXPECT_THAT(distance(example(), "CC", "AA" ),
 	      Eq(2));
 }
+
+TEST(ValveConnection, from_is_less_than_to_right_order_in_ctor)
+{
+  ValveConnection const sut("AA", "BB", 55);
+  EXPECT_THAT(sut.from (), Eq("AA"));
+  EXPECT_THAT(sut.to   (), Eq("BB"));
+  EXPECT_THAT(sut.steps(), Eq(55));
+  
+}
+
+TEST(ValveConnection, from_is_less_than_to_wrong_order_in_ctor)
+{
+  ValveConnection const sut("BB", "AA", 55);
+  EXPECT_THAT(sut.from (), Eq("AA"));
+  EXPECT_THAT(sut.to   (), Eq("BB"));
+  EXPECT_THAT(sut.steps(), Eq(55));
+  
+}
+
+TEST(ValveConnection, less)
+{
+    ValveConnection a("BB", "AA", 55);
+    ValveConnection b("BB", "AA", 55);
+    EXPECT_FALSE(a<b);
+    EXPECT_FALSE(b<a);
+}
+
+TEST(ValveConnection, not_same)
+{
+    ValveConnection a("BB", "AA", 55);
+    ValveConnection b("BB", "A", 55);
+    EXPECT_TRUE((a<b) || (b<a));
+}
+
+
+
+// TEST(distance_cache, jj_to_ii)
+// {
+//   auto sut = 
+//     Distance( example(),
+// 	      "JJ",
+// 	      3
+// 	      );
+  
+//   {
+//     auto ans = sut.from(Valve("JJ"), Steps(1));
+
+//     EXPECT_EQ(ans.size(), 1);
+//     EXPECT_TRUE(ans.contains(ValveAndSteps("II", 1)));
+//   }
+//   {
+//     auto ans = sut.from(Valve("JJ"), Steps(2));
+
+//     EXPECT_EQ(ans.size(), 2);
+//     EXPECT_TRUE(ans.contains(ValveAndSteps("II", 1)));
+//     EXPECT_TRUE(ans.contains(ValveAndSteps("AA", 2)));
+//   }
+// }
