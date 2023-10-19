@@ -9,8 +9,10 @@ add_executable(${PROJECT_NAME}
   example.cc
   input.cc
   main.cc
+  path_iteration.cc
   path.cc
   path_generator.cc
+  regions.cc
   solA.cc
   total_volume.cc
   types.cc

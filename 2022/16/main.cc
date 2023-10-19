@@ -7,6 +7,9 @@
 #include <vector>
 #include "solA.hh"
 #include "total_volume.hh"
+#include "regions.hh"
+#include "path_iteration.hh"
+
 using namespace testing;
 
 TEST(score, eval)
@@ -137,6 +140,78 @@ TEST(SolA, largest_value)
 		 [&i](auto const&){return i--;},
 		 pg));
 }
+
+
+
+TEST(Regions, starts_as_outer)
+{
+  auto const ret  = Regions({"b", "c"}).outer();
+  EXPECT_THAT(ret.size(), Eq(2));
+  EXPECT_TRUE(ret.contains("b"));
+  EXPECT_TRUE(ret.contains("c"));
+}
+
+TEST(Regions, starts_as_outer_start_at_b)
+{
+  auto const sut  = Regions({"b", "c"})
+    .startAt("b");
+  
+  EXPECT_THAT(sut.edge().size(), Eq(1));
+  EXPECT_TRUE(sut.edge().contains("b"));
+  EXPECT_THAT(sut.outer().size(), Eq(1));
+  EXPECT_TRUE(sut.outer().contains("c"));
+}
+
+TEST(pathIteration, isDone_no_regions_left)
+{
+  int callCount{0};
+  pathIteration([&callCount](auto){callCount++;},
+		0,
+		[](auto, auto){return 1;},
+		Regions ({"a"}).startAt("b"));
+  EXPECT_THAT(callCount, Eq(1));
+}
+
+TEST(pathIteration, isDone_all_steps_are_too_long)
+{
+  int callCount{0};
+  pathIteration([&callCount](auto){callCount++;},
+		1,
+		[](auto, auto){return 2;},
+		Regions ({
+		    "a",
+		    "b",
+		    "c"
+		  }
+		  ).startAt("b"));
+  EXPECT_THAT(callCount, Eq(1));
+}
+
+
+
+// #include<iterator>
+
+// class AllPaths
+// {
+//   std::set<Path> paths_;
+// public:
+//   using Iterator = std::set<Path>::iterator;
+
+//   Iterator begin() const { return paths_.begin(); }
+//   Iterator end()   const { return paths_.end(); }
+  
+//   AllPaths(Valve start, std::function<Minutes(Valve const &, Valve const &)> distance, Minutes total=30)
+//   {
+//     pathIteration(std::inserter(paths_, paths_.end()),
+// 		  total,
+// 		  distance,
+// 		  {start},
+// 		  {});
+//   }
+// };
+  
+
+
 
 // TEST(distance_cache, jj_to_ii)
 // {
