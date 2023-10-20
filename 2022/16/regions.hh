@@ -21,9 +21,22 @@ public:
     
     return ret;
   }
-  
+  Regions moveTo(Valve const &v) const
+  {
+    Regions ret({});
+    for(auto const &x: inner_)
+      ret.inner_.insert(x);
+    for(auto const &x: edge())
+      ret.inner_.insert(x);
+    ret.edge_.insert(v);
+    for(auto const &x: outer())
+      if(x!=v)
+	ret.outer_.insert(x);
+    
+    return ret;
+  }
 
   Set outer() const {return outer_;}
-  Set edge() const {return edge_;}
-  
+  Set edge()  const {return edge_;}
+  Set inner() const {return inner_;}
 };

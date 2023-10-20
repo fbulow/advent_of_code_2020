@@ -168,7 +168,8 @@ TEST(pathIteration, isDone_no_regions_left)
   pathIteration([&callCount](auto){callCount++;},
 		0,
 		[](auto, auto){return 1;},
-		Regions ({"a"}).startAt("b"));
+		Regions ({"a"}).startAt("b"),
+		Path().moveTo(0, "c"));
   EXPECT_THAT(callCount, Eq(1));
 }
 
@@ -182,8 +183,9 @@ TEST(pathIteration, isDone_all_steps_are_too_long)
 		    "a",
 		    "b",
 		    "c"
-		  }
-		  ).startAt("b"));
+		  }),
+		"b"
+		);
   EXPECT_THAT(callCount, Eq(1));
 }
 
@@ -204,6 +206,76 @@ TEST(Path, moveTo_aa_and_then_bb)
   EXPECT_THAT(sut[1].open, Eq("BB"));
   EXPECT_THAT(sut[1].timePassed, Eq(7));//3+2+(2* one minute for opening the vault)
 }
+
+TEST(Regions, moveTo)
+{
+  auto const ret = 
+  Regions({"a", "b", "c"})
+    .startAt("a")
+    .moveTo("b");
+
+  EXPECT_THAT(ret.outer().size(), Eq(1));
+  EXPECT_THAT(ret.edge().size(), Eq(1));
+  EXPECT_THAT(ret.inner().size(), Eq(1));
+  
+}
+
+TEST(pathIteration, can_go_to_a)
+{
+  /*  Possible paths {{1, b}, {3, a}} and {{3, a}}
+   */
+  std::vector<Path> vp;
+  
+  pathIteration([&vp](auto ret){vp.emplace_back(std::move(ret));},
+		2,
+		[](Valve a, Valve b){
+		  if(a==b)
+		    return 0;
+		  if(((a=="b") and (b=="a"))
+		     or
+		     ((a=="a") and (b=="b")))
+		    return 1;
+		  else
+		    return 2000;
+		},
+		Regions ({
+		    "a",
+		    "b",
+		    "c"
+		  }
+		  ),
+		"b");
+  EXPECT_THAT(vp.size(), Eq(2));
+  //  EXPECT_THAT(vp[0].size(), Eq(2));
+}
+TEST(pathIteration, just_move_to_a)
+{
+  std::vector<Path> vp;
+  
+  pathIteration([&vp](auto ret){vp.emplace_back(std::move(ret));},
+		2,
+		[](Valve a, Valve b){
+		  if(a==b)
+		    return 0;
+		  if(((a=="b") and (b=="a"))
+		     or
+		     ((a=="a") and (b=="b")))
+		    return 1;
+		  else
+		    return 2000;
+		},
+		Regions ({
+		    "a",
+		    "b",
+		    "c"
+		  }).startAt("b"),
+		Path());
+  EXPECT_THAT(vp.size(), Eq(1));
+  EXPECT_THAT(vp[0].size(), Eq(1));
+  EXPECT_THAT(vp[0][0].open , Eq("a"));
+  EXPECT_THAT(vp[0][0].timePassed , Eq(2));
+}
+
 
 
 // #include<iterator>
