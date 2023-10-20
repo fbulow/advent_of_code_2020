@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "distances.hh"
 #include "example.hh"
 #include "valve_connection.hh"
 #include <vector>
@@ -222,7 +221,7 @@ TEST(Regions, moveTo)
 
 TEST(pathIteration, can_go_to_a)
 {
-  /*  Possible paths {{1, b}, {3, a}} and {{3, a}}
+  /*  Possible paths {{1, b}} and {{2, a}}
    */
   std::vector<Path> vp;
   
@@ -246,8 +245,8 @@ TEST(pathIteration, can_go_to_a)
 		  ),
 		"b");
   EXPECT_THAT(vp.size(), Eq(2));
-  //  EXPECT_THAT(vp[0].size(), Eq(2));
 }
+
 TEST(pathIteration, just_move_to_a)
 {
   std::vector<Path> vp;

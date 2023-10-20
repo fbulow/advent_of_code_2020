@@ -5,7 +5,6 @@ project(2216)
 Find_package(GTest)
 
 add_executable(${PROJECT_NAME}
-  distances.cc
   example.cc
   input.cc
   main.cc
