@@ -72,13 +72,13 @@ TEST(ValveConnection, not_same)
 
 TEST(totalFlow, example_valves)
 {
-  Path p{
+  Path p({
     {2,  "DD"},
     {5,  "BB"},
     {9,  "JJ"},
     {17, "HH"},
     {21, "EE"},
-    {24, "CC"}};
+    {24, "CC"}});
   
   std::map<Valve, Flow> flowRates{
     {"AA", 0},
@@ -187,6 +187,23 @@ TEST(pathIteration, isDone_all_steps_are_too_long)
   EXPECT_THAT(callCount, Eq(1));
 }
 
+TEST(Path, moveTo_aa_distance_is_3_minutes_and_one_minute)
+{
+  auto sut = Path().moveTo(Minutes(3), "AA");
+  EXPECT_THAT(sut.size(), 1);
+  EXPECT_THAT(sut[0].open, Eq("AA"));
+  EXPECT_THAT(sut[0].timePassed, Eq(4));//3+ one minute for opening the vault
+}
+
+TEST(Path, moveTo_aa_and_then_bb)
+{
+  auto sut = Path()
+    .moveTo(Minutes(3), "AA")
+    .moveTo(Minutes(2), "BB");
+  EXPECT_THAT(sut.size(), 2);
+  EXPECT_THAT(sut[1].open, Eq("BB"));
+  EXPECT_THAT(sut[1].timePassed, Eq(7));//3+2+(2* one minute for opening the vault)
+}
 
 
 // #include<iterator>

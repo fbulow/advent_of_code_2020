@@ -7,15 +7,14 @@
 struct FromAndTo{
   Valve from;
   Valve to;
+  Minutes distance;
 };  
   
-
-
 void pathIteration(auto ret,
 		   Minutes remaining,
 		   auto distance,
 		   Regions r,
-		   Path &p
+		   Path p={}
 		   )
 {
   if(remaining==0)
@@ -25,18 +24,11 @@ void pathIteration(auto ret,
   
   for(Valve const &  e: r.edge())
     for(Valve const &  o: r.outer())
-      if(distance(o,e)<=remaining)
-	fromAndTo.push_back({o,e});
+      {
+	auto d = distance(o,e);
+	if(d<remaining)
+	  fromAndTo.push_back({o, e, d});
+      }
   if(fromAndTo.empty())
     return ret(p);
-}
-
-void pathIteration(auto ret,
-		   Minutes remaining,
-		   auto distance,
-		   Regions r
-		   )
-{
-  Path p;
-  pathIteration(ret, remaining, distance, r, p);
 }
