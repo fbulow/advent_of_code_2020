@@ -2,32 +2,44 @@
 
 
 Regions::Regions(Set all)
-  :outer_(std::move(all))
-{}
+{
+  for(auto const & v: all)
+    data_[v]=Region::outer;
+}
 
 Regions Regions::startAt(Valve const &v) const
 {
   auto ret = *this;
-  ret.outer_.erase(v);
-  ret.edge_.insert(v);
+
+  ret.data_[v]=Region::edge;
     
   return ret;
 }
 Regions Regions::moveTo(Valve const &v) const
 {
-  Regions ret({});
-  for(auto const &x: inner_)
-    ret.inner_.insert(x);
-  for(auto const &x: edge())
-    ret.inner_.insert(x);
-  ret.edge_.insert(v);
-  for(auto const &x: outer())
-    if(x!=v)
-      ret.outer_.insert(x);
-    
+  auto ret = *this;
+  for(auto &x:ret.data_)
+    if(x.second==Region::edge)
+      x.second=Region::inner;
+  ret.data_[v] = Region::edge;
   return ret;
 }
 
-Regions::Set Regions::outer() const {return outer_;}
-Regions::Set Regions::edge()  const {return edge_;}
-Regions::Set Regions::inner() const {return inner_;}
+Regions::Set filter(std::map<Valve, Regions::Region> const &d,
+		    Regions::Region r)
+{
+  Regions::Set ret;
+  for(auto const &x: d)
+    if(x.second == r)
+      ret.insert(x.first);
+  return ret;
+
+}
+
+Regions::Set Regions::outer() const
+{return filter(data_, Region::outer);}
+Regions::Set Regions::edge()  const
+{return filter(data_, Region::edge);}
+Regions::Set Regions::inner() const
+{return filter(data_, Region::inner);}
+

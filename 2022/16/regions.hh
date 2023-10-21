@@ -1,13 +1,12 @@
 #pragma once
 #include"types.hh"
 #include<set>
+#include<map>
 
 class Regions{
-  using Set = std::set<Valve>;
-  Set outer_;
-  Set edge_;
-  Set inner_;
 public:
+  using Set = std::set<Valve>;
+  enum class Region {inner, edge, outer};
 
   Regions(Set all);
   
@@ -17,4 +16,8 @@ public:
   Set outer() const;
   Set edge()  const;
   Set inner() const;
+
+private:
+  std::map<Valve, Region> data_;
+
 };
