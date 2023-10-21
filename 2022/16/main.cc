@@ -69,6 +69,13 @@ TEST(ValveConnection, not_same)
     EXPECT_TRUE((a<b) || (b<a));
 }
 
+TEST(Path, exmaple)
+{
+  auto sut = Path().moveTo(1, "DD");
+  EXPECT_THAT(sut.size(), Eq(1));
+  EXPECT_THAT(sut[0].timePassed, Eq(2));
+}
+
 TEST(totalFlow, example_valves)
 {
   Path p({
@@ -277,30 +284,6 @@ TEST(pathIteration, just_move_to_a)
 
 
 
-// #include<iterator>
-
-// class AllPaths
-// {
-//   std::set<Path> paths_;
-// public:
-//   using Iterator = std::set<Path>::iterator;
-
-//   Iterator begin() const { return paths_.begin(); }
-//   Iterator end()   const { return paths_.end(); }
-  
-//   AllPaths(Valve start, std::function<Minutes(Valve const &, Valve const &)> distance, Minutes total=30)
-//   {
-//     pathIteration(std::inserter(paths_, paths_.end()),
-// 		  total,
-// 		  distance,
-// 		  {start},
-// 		  {});
-//   }
-// };
-  
-
-
-
 // TEST(distance_cache, jj_to_ii)
 // {
 //   auto sut = 
@@ -315,6 +298,7 @@ TEST(pathIteration, just_move_to_a)
 //     EXPECT_EQ(ans.size(), 1);
 //     EXPECT_TRUE(ans.contains(ValveConnection("JJ", "II", 1)));
 //   }
+// }
 //   {
 //     auto ans = sut.from(Valve("JJ"), Steps(2));
 

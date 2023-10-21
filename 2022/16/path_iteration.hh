@@ -28,5 +28,5 @@ void pathIteration(Callback  ret,
 		   Minutes remaining,
 		   Distance distance,
 		   Regions r,
-		   Valve const &v
+		   Valve const &v = "AA"
 		   );
