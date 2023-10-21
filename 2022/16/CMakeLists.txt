@@ -11,6 +11,7 @@ add_executable(${PROJECT_NAME}
   path_iteration.cc
   path.cc
   path_generator.cc
+  path_generator_impl.cc
   regions.cc
   solA.cc
   total_volume.cc

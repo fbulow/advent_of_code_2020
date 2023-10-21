@@ -112,7 +112,9 @@ TEST(totalFlow, example_valves)
 TEST(SolA, zero_if_no_path)
 {
   class : public PathGenerator{
-    std::optional<Path> next() {return {};}
+    void callWithEach(Callback&) override
+    {
+    }
   } pg;
 
   EXPECT_EQ(0,
@@ -127,23 +129,20 @@ TEST(SolA, largest_value)
     int i{0};
     
   public:
-    std::optional<Path> next() {
-      switch(i++)
-	{
-	case 0:
-	  return Path();
-	case 1:
-	  return Path();
-	default:
-	  return std::nullopt;
-	}
+    void callWithEach(Callback& fcn) override
+    {
+      fcn(Path({{1, ""}}));
+      fcn(Path({{5, ""}}));
+      fcn(Path({{2, ""}}));
     }
   } pg;
 
   int i{5};
   EXPECT_EQ(5,
 	    SolA(
-		 [&i](auto const&){return i--;},
+		 [](Path const &p){
+		   return p[0].timePassed;
+		 },
 		 pg));
 }
 

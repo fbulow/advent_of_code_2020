@@ -1,10 +1,12 @@
 #pragma once
 
-#include<optional>
+#include<functional>
 #include "path.hh"
 
 class PathGenerator{
 public:
-  virtual std::optional<Path> next() = 0;
+  using Callback = std::function<void(Path const &)>;
+  virtual
+  void callWithEach(Callback&) = 0;
 };
 

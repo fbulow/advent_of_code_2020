@@ -3,4 +3,4 @@
 #include "types.hh"
 #include <functional>
 
-Flow SolA(std::function<Flow(Path)> totalFlow, PathGenerator & pathGenerator);
+Flow SolA(std::function<Flow(Path)> const& totalFlow, PathGenerator & pathGenerator);

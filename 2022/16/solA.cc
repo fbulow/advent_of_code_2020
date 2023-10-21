@@ -1,13 +1,16 @@
 #include "solA.hh"
 
-Flow SolA(std::function<Flow(Path)>  totalFlow, PathGenerator & pathGenerator)
+Flow SolA(std::function<Flow(Path)> const&  totalFlow, PathGenerator & pathGenerator)
 {
   Flow ret{0};
-  auto path = pathGenerator.next();
-  while(path)
-    {
-      ret = std::max(ret, totalFlow(path.value()));
-      path = pathGenerator.next();
-    }
+  PathGenerator::Callback fcn = [&ret, &totalFlow]
+		  (Path const &p)
+		  {
+		    auto x = totalFlow(p);
+		    ret = std::max(ret, x);
+		  };
+  
+  pathGenerator
+    .callWithEach(fcn);
   return ret;
 }
