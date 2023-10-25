@@ -281,7 +281,11 @@ TEST(pathIteration, just_move_to_a)
   EXPECT_THAT(vp[0][0].timePassed , Eq(2));
 }
 
-
+TEST(Input, adjacent)
+{
+  auto const ref = Valves({"DD", "II", "BB"});
+  EXPECT_EQ(example().adjacent("AA"), ref);
+}
 
 
 // TEST(PathGeneratorImpl, example_DD_or_BB)
