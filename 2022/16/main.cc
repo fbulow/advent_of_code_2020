@@ -281,10 +281,13 @@ TEST(pathIteration, just_move_to_a)
   EXPECT_THAT(vp[0][0].timePassed , Eq(2));
 }
 
-TEST(PathGeneratorImpl, example_DD_or_BB)
-{
-  //PathGeneratorImpl(example())
-}
+
+
+
+// TEST(PathGeneratorImpl, example_DD_or_BB)
+// {
+//   //  PathGeneratorImpl(example())
+// }
 
 // TEST(distance_cache, jj_to_ii)
 // {

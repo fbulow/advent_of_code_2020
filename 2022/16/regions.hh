@@ -17,6 +17,8 @@ public:
   Set edge()  const;
   Set inner() const;
 
+  [[nodiscard]]
+  std::set<Valve> allValves() const;
 private:
   std::map<Valve, Region> data_;
 
