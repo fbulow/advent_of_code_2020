@@ -287,6 +287,13 @@ TEST(Input, adjacent)
   EXPECT_EQ(example().adjacent("AA"), ref);
 }
 
+TEST(Input, nonzero)
+{
+  auto const ret = example().nonzero();
+  EXPECT_TRUE (ret.contains("BB"));
+  EXPECT_FALSE(ret.contains("GG"));
+}
+
 
 // TEST(PathGeneratorImpl, example_DD_or_BB)
 // {
