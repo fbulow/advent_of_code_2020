@@ -12,7 +12,8 @@ public:
   
   Regions startAt(Valve const &v) const;
   Regions moveTo(Valve const &v) const;
-
+  Regions moveTos(std::set<Valve> const &v) const;
+  
   Set outer() const;
   Set edge()  const;
   Set inner() const;

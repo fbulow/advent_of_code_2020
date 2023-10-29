@@ -21,3 +21,11 @@ Valves Input::adjacent(Valve const & v) const
       return std::get<Valves>(x.second);
   assert(false);
 }
+
+Valves Input::allValves() const
+{
+  Valves ret;
+  for(auto const & x : *this)
+    ret.insert(x.first);
+  return ret;
+}

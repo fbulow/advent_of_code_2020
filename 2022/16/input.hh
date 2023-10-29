@@ -3,8 +3,6 @@
 #include <set>
 #include "types.hh"
 
-using Valves = std::set<Valve>;
-
 class Input : std::map<Valve, std::pair<Flow, std::set<Valve>>>
 {
   friend Input example();
@@ -18,4 +16,7 @@ public:
 
   [[nodiscard]]
   Valves nonzero() const;
+
+  [[nodiscard]]
+  Valves allValves() const;
 };

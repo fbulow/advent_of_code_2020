@@ -15,6 +15,7 @@ Regions Regions::startAt(Valve const &v) const
     
   return ret;
 }
+
 Regions Regions::moveTo(Valve const &v) const
 {
   auto ret = *this;
@@ -24,6 +25,19 @@ Regions Regions::moveTo(Valve const &v) const
   ret.data_[v] = Region::edge;
   return ret;
 }
+
+Regions Regions::moveTos(std::set<Valve> const &sv) const
+{
+  auto ret = *this;
+  for(auto &x:ret.data_)
+    if(x.second==Region::edge)
+      x.second=Region::inner;
+  for(auto &v: sv)
+    ret.data_[v] = Region::edge;
+  return ret;
+  
+}
+
 
 Regions::Set filter(std::map<Valve, Regions::Region> const &d,
 		    Regions::Region r)

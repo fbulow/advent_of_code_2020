@@ -7,6 +7,7 @@ Find_package(GTest)
 add_executable(${PROJECT_NAME}
   distance.cc
   example.cc
+  flood_fill.cc
   input.cc
   main.cc
   path.cc
@@ -15,6 +16,7 @@ add_executable(${PROJECT_NAME}
   path_iteration.cc
   regions.cc
   solA.cc
+  test.cc
   total_volume.cc
   types.cc
   valve_connection.cc
