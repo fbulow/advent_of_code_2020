@@ -1,3 +1,4 @@
+#include "for_each_path.hh"
 #include"include.hh"
 
 TEST(score, eval)
@@ -95,39 +96,25 @@ TEST(totalFlow, example_valves)
 
 TEST(SolA, zero_if_no_path)
 {
-  class : public PathGenerator{
-    void callWithEach(Callback&) override
-    {
-    }
-  } pg;
-
   EXPECT_EQ(0,
 	    SolA(
 		 [](auto const&){return 5;},
-		 pg));
+		 [](PathCallback){}));
 }
 
 TEST(SolA, largest_value)
 {
-  class : public PathGenerator{
-    int i{0};
-    
-  public:
-    void callWithEach(Callback& fcn) override
-    {
-      fcn(Path({{1, ""}}));
-      fcn(Path({{5, ""}}));
-      fcn(Path({{2, ""}}));
-    }
-  } pg;
-
-  int i{5};
   EXPECT_EQ(5,
 	    SolA(
 		 [](Path const &p){
 		   return p[0].timePassed;
 		 },
-		 pg));
+		 [](PathCallback fcn)
+		 {
+		   fcn(Path({{1, ""}}));
+		   fcn(Path({{5, ""}}));
+		   fcn(Path({{2, ""}}));
+		 }));
 }
 
 

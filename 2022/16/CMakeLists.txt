@@ -11,8 +11,7 @@ add_executable(${PROJECT_NAME}
   input.cc
   main.cc
   path.cc
-  path_generator.cc
-  path_generator_impl.cc
+  for_each_path.cc
   path_iteration.cc
   regions.cc
   solA.cc

@@ -1,6 +1,6 @@
 #pragma once
-#include "path_generator.hh"
+#include "for_each_path.hh"
 #include "types.hh"
 #include <functional>
 
-Flow SolA(std::function<Flow(Path)> const& totalFlow, PathGenerator & pathGenerator);
+Flow SolA(std::function<Flow(Path)> const& totalFlow, ForEachPath);

@@ -24,22 +24,3 @@ void floodFillRec(std::function<void(Valve, Minutes)> destAndRemaining,
       remaining-1);
 }
 
-void floodFill(FromToMinutesCallback ret,
-	       Input const &data,
-	       Valve const &startAt,
-	       Minutes const total
-	       )
-{
-  floodFillRec(
-     [startAt, &ret, total]
-     (Valve v, Minutes m)
-     {
-       ret(startAt, v, 1+total - m);
-     },
-     [data]
-     (Valve const &v)
-     {return data.adjacent(v);},
-     Regions(data.allValves()).moveTo(startAt),
-     total
-     );
-}
