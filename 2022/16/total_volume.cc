@@ -8,6 +8,6 @@ Flow totalVolume(Path const & p, FlowRates const & flowRates, Minutes remaining)
 			 Flow(0),
 			 [flowRates, remaining](Flow acc, Event const & a)
 			 {
-			   return acc+flowRates.at(a.open)*(remaining - a.timePassed) ;
+			   return acc+flowRates(a.open)*(remaining - a.timePassed) ;
 			 });
 }

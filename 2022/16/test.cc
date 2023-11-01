@@ -76,17 +76,19 @@ TEST(totalFlow, example_valves)
     {21, "EE"},
     {24, "CC"}});
   
-  std::map<Valve, Flow> flowRates{
-    {"AA", 0},
-    {"BB", 13},
-    {"CC", 2},
-    {"DD", 20},
-    {"EE", 3},
-    {"FF", 0},
-    {"GG", 0},
-    {"HH", 22},
-    {"II", 0},
-    {"JJ", 21}
+  auto flowRates =
+    [](Valve const &v){
+      if(v=="AA") return 0;
+      else if(v=="BB") return 13;
+      else if(v=="CC") return 2;
+      else if(v=="DD") return 20;
+      else if(v=="EE") return 3;
+      else if(v=="FF") return 0;
+      else if(v=="GG") return 0;
+      else if(v=="HH") return 22;
+      else if(v=="II") return 0;
+      else if(v=="JJ") return 21;
+      else assert(false);
   };
 
   EXPECT_THAT(totalVolume(p, flowRates),
