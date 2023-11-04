@@ -1,6 +1,14 @@
 #include "for_each_path.hh"
 #include"include.hh"
 
+TEST(SolA, example)
+{
+  EXPECT_THAT(SolA(example()),
+	      Eq(1651));
+
+}
+
+
 TEST(score, eval)
 {
   auto input = example();
@@ -323,3 +331,4 @@ TEST(floodFill, fromAA_one)
     1);
   EXPECT_THAT(count, Eq(3));
 }    
+
