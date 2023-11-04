@@ -3,7 +3,18 @@
 
 Flow SolA(Input const & inp)
 {
-  return 1651;
+  constexpr Minutes totalTime = 30;
+  Flow ret = 0;
+
+  Flow ret{0};
+  allSequenceOfOpenings([&ret, &totalFlow]
+	      (Path const &p)
+	      {
+		auto x = totalFlow(p);
+		ret = std::max(ret, x);
+	      });
+  
+  return ret;
 }
 
 Flow SolA(std::function<Flow(Path)> const&  totalFlow, ForEachPath forEachPath)
