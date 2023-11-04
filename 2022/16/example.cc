@@ -41,3 +41,16 @@ Flow Input::flow(Valve v) const
 {
   return at(v).first;
 }
+
+Path examplePath()
+{
+  Path p({
+    {2,  "DD"},
+    {5,  "BB"},
+    {9,  "JJ"},
+    {17, "HH"},
+    {21, "EE"},
+    {24, "CC"}});
+
+  return p;
+}

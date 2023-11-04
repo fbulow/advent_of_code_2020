@@ -4,6 +4,7 @@
 #include <tuple>
 #include <utility>
 #include <string>
+#include "path.hh"
 #include "types.hh"
 #include <cassert>
 #include "input.hh"
@@ -46,3 +47,5 @@ int distance(Input const &inp, Valve from, Valve to)
 {
   return distance(inp, {from}, to, 0);
 }
+
+Path examplePath();
