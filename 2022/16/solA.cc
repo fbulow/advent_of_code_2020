@@ -1,5 +1,6 @@
 #include "solA.hh"
 
+
 Flow SolA(std::function<Flow(Path)> const&  totalFlow, ForEachPath forEachPath)
 {
   Flow ret{0};
