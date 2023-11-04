@@ -1,11 +1,7 @@
-#include"include.hh"
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
-TEST(allSequencesOfOpenings, example)
-{
-  bool calledWithExamplePath = false;
-  allSequenceOfOpenings([&calledWithExamplePath](Path const &p)
-  {
-    calledWithExamplePath |= (p == examplePath());
-  });
-  EXPECT_TRUE(calledWithExamplePath);
-}
+using namespace testing;
+
+
+
