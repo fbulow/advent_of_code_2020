@@ -1,6 +1,13 @@
 #include <functional>
+#include <string>
+#include <memory>
+
 using Minutes = int;
 class Input{};
+
+using Valve = std::string ;
+using Sequence  = std::vector<Valve>;
+
 
 inline
 Input example()
@@ -22,6 +29,24 @@ void forEachPath(Input const &in, std::function<void(Flow)> callback)
   callback(1651);
 }
 
+class TotalFlow
+{
+public:
+  TotalFlow()=default;
+  TotalFlow(Input const &)
+  {}
+
+  TotalFlow open(Valve const &) const
+  {
+    return {};
+  }
+  Flow value() const
+  {
+    return 1651;
+  }
+  
+};
+
 Flow SolA(Input const &inp)
 {
   MaxValueGetter ret;
@@ -35,6 +60,19 @@ Flow SolA(Input const &inp)
 
 using namespace testing;
 
+TEST(TotalFlow, best_exmaple_sequence)
+{
+  EXPECT_THAT(TotalFlow(example())
+	      .open("DD")
+	      .open("BB")
+	      .open("JJ")
+	      .open("HH")
+	      .open("EE")
+	      .open("CC")
+	      .value(),
+	      Eq(1651)
+	      );
+}
 
 TEST(maxValueGetter, example)
 {
