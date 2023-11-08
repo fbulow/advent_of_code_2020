@@ -24,6 +24,8 @@ public:
   int value() const { return ret;}
 };
 
+
+
 void forEachPath(Input const &in, std::function<void(Flow)> callback)
 {
   callback(1651);
@@ -31,18 +33,23 @@ void forEachPath(Input const &in, std::function<void(Flow)> callback)
 
 class TotalFlow
 {
+  Flow value_;
 public:
-  TotalFlow()=default;
+  TotalFlow(Flow v=0)
+    :value_(v)
+  {}
   TotalFlow(Input const &)
   {}
 
-  TotalFlow open(Valve const &) const
+  TotalFlow open(Minutes time, Flow flow) const
   {
-    return {};
+    static constexpr Minutes totalTime = 30;
+    return TotalFlow(value_ + (totalTime - time)*flow);
+
   }
   Flow value() const
   {
-    return 1651;
+    return value_;
   }
   
 };
@@ -63,12 +70,12 @@ using namespace testing;
 TEST(TotalFlow, best_exmaple_sequence)
 {
   EXPECT_THAT(TotalFlow(example())
-	      .open("DD")
-	      .open("BB")
-	      .open("JJ")
-	      .open("HH")
-	      .open("EE")
-	      .open("CC")
+	      .open(2 , 20)	//DD
+	      .open(5 , 13)	//BB
+	      .open(9 , 21)	//JJ
+	      .open(17, 22)	//HH
+	      .open(21, 3 )	//EE
+	      .open(24, 2 )	//CC
 	      .value(),
 	      Eq(1651)
 	      );
