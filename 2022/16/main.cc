@@ -2,19 +2,85 @@
 #include <set>
 #include <string>
 #include <memory>
+#include <sstream>
+#include <optional>
 
 using Minutes = int;
-class Input{};
-
 using Valve = std::string ;
+using Flow = int;
+
+
+class RelevantValveGetter
+{
+  using Cb = std::function<void(Valve const & v, Flow const &f)>;
+  
+  Cb cb;
+  enum class State { Dark, GotValve, };
+  State s = State::Dark;
+  Valve v;
+  std::optional<Flow> flow;
+  std::set<std::string> adjacent;
+public:
+  RelevantValveGetter(Cb &&f)
+    :cb(std::move(f))
+  {}
+  
+  RelevantValveGetter& operator<<(std::string const & word)
+  {
+    static const std::set<std::string> ignore{"Valve", "has", "flow", "tunnels", "tunnel", "lead", "to", "valves"};
+    
+    if(ignore.contains(word))
+       return *this;
+
+    if(v.empty())
+      v = word;
+    else if(!flow)
+      flow = 0;
+    else if(! word.empty())
+      adjacent.insert(word);
+    else
+      cb("",0);
+    return *this;
+  }
+  
+};
+
+class Input
+{
+  std::set<Valve> notVisited_;
+public:
+  Input(std::istream &in)
+  {
+    std::string ret;
+    in>>ret;
+    // while(!ret.empty())
+    //   {
+	
+    //   }
+  }
+
+  static
+  Input example()
+  {
+    auto in = std::istringstream(EXAMPLE);
+    return {in};
+  }
+
+  std::set<Valve> notVisited() const
+  {
+    return {"DD", "BB", "JJ", "HH", "EE", "CC"};
+  }
+};
+
 using Sequence  = std::vector<Valve>;
 
 
 inline
 Input example()
-{return {};}
-
-using Flow = int;
+{
+  std::istringstream in(EXAMPLE);
+  return {in};
+}
 
 class MaxValueGetter
 {
@@ -77,6 +143,7 @@ public:
     :value_(v)
   {}
   TotalFlow(Input const &)
+    :TotalFlow()
   {}
 
   TotalFlow open(Minutes remainingTime, Flow flow) const
@@ -93,16 +160,10 @@ public:
 
 struct State
 {
-  static State initial()
+  static State initial(std::set<Valve> notVisited)
   {
     return {"AA", 30, 0,
-	    {
-	      "DD",
-	      "BB",
-	      "JJ",
-	      "HH",
-	      "EE",
-	      "CC"}};
+	    std::move(notVisited)};
   }
   
   Valve position = "";
@@ -150,8 +211,8 @@ Flow SolA(Input const &inp)
   {
     ret(x);
   });
-  
-  forEachPath(callback, Topology(inp), State::initial());
+  auto s = State::initial(inp.notVisited());
+  forEachPath(callback, Topology(inp), s);
 
   return ret.value();
 }
@@ -162,9 +223,35 @@ Flow SolA(Input const &inp)
 
 using namespace testing;
 
+TEST(RelevantValveGetter, add)
+{
+  int callCount{0};
+
+  auto sut = RelevantValveGetter([&callCount](Valve const&, Flow const&){callCount++;});
+  sut<<"Valve"<< "BB"<< "has"<< "flow"<< "rate=13;"<< "tunnels"<< "lead"<< "to"<< "valves"<< "CC<<"<< "AA"
+     <<"";
+  EXPECT_THAT(callCount, Eq(1));
+}
+
+TEST(Input, example)
+{
+  auto ref = std::set<Valve>
+    {
+      "BB",
+      "CC",
+      "DD",
+      "EE",
+      "HH",
+      "JJ"
+    };
+  
+  EXPECT_THAT(example().notVisited(), Eq(ref));
+
+}
+
 TEST(State, goTo)
 {
-  auto const sut = State::initial().goTo("JJ", 28, 20);
+  auto const sut = State::initial({"JJ","DD"}).goTo("JJ", 28, 20);
   EXPECT_THAT(sut.position, Eq("JJ"));
   EXPECT_THAT(sut.timeLeft, Eq(28));
   EXPECT_THAT(sut.flow.value(), Eq(28*20));
@@ -179,7 +266,7 @@ TEST(forEachPath, do_nothing_if_remaining_time_is_less_than_one)
 
   std::function<void(Flow)> callback = [&called](Flow f){called=true;};
   forEachPath(callback,
-	      Topology(Input()),
+	      Topology(Input::example()),
 	      State("",
 		    0,
 		    22,
@@ -196,7 +283,7 @@ TEST(forEachPath, return_if_you_cant_do_anything)
   int callCount{0};
   std::function<void(Flow)> callback = [&ret, &callCount](Flow f){ret=f;callCount++;};
   forEachPath(callback,
-	      Topology(Input()),
+	      Topology(Input::example()),
 	      State("",
 		    1,
 		    22,

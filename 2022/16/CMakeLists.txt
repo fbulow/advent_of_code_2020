@@ -11,6 +11,12 @@ main.cc
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_EXTENSTIONS FALSE)
 
+target_compile_options(${PROJECT_NAME}
+  PUBLIC
+  -DEXAMPLE="${CMAKE_CURRENT_SOURCE_DIR}/example"
+  -DINPUT="${CMAKE_CURRENT_SOURCE_DIR}/input"
+)
+
 
 target_link_libraries(${PROJECT_NAME}
     GTest::GTest
