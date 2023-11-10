@@ -19,13 +19,22 @@ T example()
   return {in};
 }
 
+std::string stripComma(std::string const &s)
+{
+  if(','!=*s.rbegin())
+    return s;
+  else
+    return {s.begin(), std::next(s.end(), -1)};
+}
+
 class RelevantGetter
 {
-  using Cb = std::function<void(Valve const & v, Flow const &f)>;
+  using Cb = std::function<void(Valve const & v, Flow const &f, std::set<Valve> &&)>;
   
   Cb cb;
   Valve v;
   std::optional<Flow> flow;
+  std::set<Valve>  adjacent;
 public:
   RelevantGetter(Cb &&f)
     :cb(std::move(f))
@@ -50,9 +59,10 @@ public:
       {
 	if(!v.empty())
 	  {
-	    cb(v, flow.value());
+	    cb(v, flow.value(), std::move(adjacent));
 	    v.clear();
 	    flow.reset();
+	    adjacent = {};
 	  }
       }
     else if(v.empty())
@@ -60,7 +70,7 @@ public:
     else if(!flow)
       flow = getRate(word);
     else
-      {}
+      adjacent.insert(stripComma(word));
     return *this;
   }
   
@@ -70,7 +80,7 @@ class Input
 {
   std::set<Valve> notVisited_;
   std::map<Valve,Flow> flowRate_{};
-
+  std::map<Valve,std::set<Valve>> adjacent_;
 public:
   [[nodiscard]]
   Flow flowRate(Valve const &v) const 
@@ -79,12 +89,21 @@ public:
     assert(it != flowRate_.end());
     return it->second;
   }
+
+  [[nodiscard]]
+  std::set<Valve> adjacent(Valve const &v) const
+  {
+    auto it = adjacent_.find(v);
+    assert(it!=adjacent_.end());
+    return it->second;
+  }
   
   Input(std::istream &in)
   {
     RelevantGetter rg(
-		      [this](Valve const &v, Flow f)
+		      [this](Valve const &v, Flow f, std::set<Valve> &&a)
 		      {
+			adjacent_[v]=std::move(a);
 			flowRate_[v]=f;
 			if(f>0)
 			  notVisited_.insert(v);
@@ -236,6 +255,11 @@ Flow SolA(Topology const &t)
 
 using namespace testing;
 
+TEST(Input, adjacent)
+{
+  EXPECT_THAT(example<Input>().adjacent("AA"), Eq(std::set<Valve>{"DD", "II", "BB"}));
+}
+
 TEST(Input, flowRate_example)
 {
   auto sut = example<Input>();
@@ -261,7 +285,7 @@ TEST(RelevantValveGetter, getRate)
 TEST(RelevantValveGetter, dont_flush_if_blow_is_empty)
 {
   int callCount{0};
-  auto sut = RelevantGetter([&callCount](Valve const&, Flow const&){callCount++;});
+  auto sut = RelevantGetter([&callCount](Valve const&, Flow const&, auto){callCount++;});
   sut<<"";
   EXPECT_THAT(callCount, Eq(0));  
 }
@@ -272,7 +296,7 @@ TEST(RelevantValveGetter, add_multiple_rows )
   Valve v;
   Flow f;
   auto sut = RelevantGetter(
-				 [&callCount, &v, &f](Valve const& v_, Flow const& f_)
+			    [&callCount, &v, &f](Valve const& v_, Flow const& f_, auto)
 				 {
 				   callCount++;
 				   v = v_;
@@ -295,7 +319,7 @@ TEST(RelevantValveGetter, add_single_row )
   Valve v;
   Flow f;
   auto sut = RelevantGetter(
-				 [&callCount, &v, &f](Valve const& v_, Flow const& f_)
+			    [&callCount, &v, &f](Valve const& v_, Flow const& f_, auto)
 				 {
 				   callCount++;
 				   v = v_;
