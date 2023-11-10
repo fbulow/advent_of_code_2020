@@ -12,6 +12,12 @@ using Minutes = int;
 using Valve = std::string ;
 using Flow = int;
 
+template<class T>
+T example()
+{
+  auto in = std::ifstream(EXAMPLE);
+  return {in};
+}
 
 class RelevantGetter
 {
@@ -94,13 +100,6 @@ public:
     rg<<""; // flush
   }
 
-  static
-  Input example()
-  {
-    auto in = std::ifstream(EXAMPLE);
-    return {in};
-  }
-
   std::set<Valve> notVisited() const
   {
     return notVisited_;
@@ -126,42 +125,13 @@ public:
   int value() const { return ret;}
 };
 
-class Topology
+class Topology : public Input
 {
-  Input const & inp_;
 public:
   Topology() = default;
-  Topology(Input const & inp)
-    :inp_(inp)
+  Topology(std::istream &in)
+    :Input(in)
   {}
-  
-  Flow flowRate(Valve const &v) const
-  {
-    return inp_.flowRate(v);
-    
-    if(v == "AA")
-      return 0;
-    if(v == "BB")
-      return 13;
-    if(v == "CC")
-      return 2;
-    if(v == "DD")
-      return 20;
-    if(v == "EE")
-      return 3;
-    if(v == "FF")
-      return 0;
-    if(v == "GG")
-      return 0;
-    if(v == "HH")
-      return 22;
-    if(v == "II")
-      return 0;
-    if(v == "JJ")
-      return 21;
-
-    return 0;
-  }
   
   Minutes costToOpen(Valve const & p, Valve const & t) const
   {
@@ -247,15 +217,15 @@ void forEachPath(std::function<void(Flow)> &callback, Topology const & t, State 
 }
 
 
-Flow SolA(Input const &inp)
+Flow SolA(Topology const &t)
 {
   MaxValueGetter ret;
   auto callback = std::function<void(Flow)>([&ret](auto x)
   {
     ret(x);
   });
-  auto s = State::initial(inp.notVisited());
-  forEachPath(callback, Topology(inp), s);
+  auto s = State::initial(t.notVisited());
+  forEachPath(callback, t, s);
 
   return ret.value();
 }
@@ -268,7 +238,7 @@ using namespace testing;
 
 TEST(Input, flowRate_example)
 {
-  auto sut = Input::example();
+  auto sut = example<Input>();
 
   EXPECT_THAT(sut.flowRate("AA"), Eq( 0 ));
   EXPECT_THAT(sut.flowRate("BB"), Eq( 13 ));
@@ -374,7 +344,7 @@ TEST(forEachPath, do_nothing_if_remaining_time_is_less_than_one)
 
   std::function<void(Flow)> callback = [&called](Flow f){called=true;};
   forEachPath(callback,
-	      Topology(Input::example()),
+	      example<Topology>(),
 	      State("",
 		    0,
 		    22,
@@ -391,7 +361,7 @@ TEST(forEachPath, return_if_you_cant_do_anything)
   int callCount{0};
   std::function<void(Flow)> callback = [&ret, &callCount](Flow f){ret=f;callCount++;};
   forEachPath(callback,
-	      Topology(Input::example()),
+	      example<Topology>(),
 	      State("",
 		    1,
 		    22,
@@ -431,5 +401,5 @@ TEST(maxValueGetter, example)
 
 TEST(SolA, example)
 {
-  EXPECT_THAT(SolA(example()), Eq(1651));
+  EXPECT_THAT(SolA(example<Topology>()), Eq(1651));
 }
