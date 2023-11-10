@@ -255,6 +255,19 @@ Flow SolA(Topology const &t)
 
 using namespace testing;
 
+TEST(Topology, costToOpen)
+{
+  auto sut = example<Topology>();
+  
+    EXPECT_THAT(sut.costToOpen("AA", "DD"), Eq(2  - 0	));
+    EXPECT_THAT(sut.costToOpen("DD", "BB"), Eq(5  - 2	)); 
+    EXPECT_THAT(sut.costToOpen("BB", "JJ"), Eq(9  - 5	));
+    EXPECT_THAT(sut.costToOpen("JJ", "HH"), Eq(17 - 9	));
+    EXPECT_THAT(sut.costToOpen("HH", "EE"), Eq(21 - 17	));
+    EXPECT_THAT(sut.costToOpen("EE", "CC"), Eq(24 - 21	));
+
+}
+
 TEST(Input, adjacent)
 {
   EXPECT_THAT(example<Input>().adjacent("AA"), Eq(std::set<Valve>{"DD", "II", "BB"}));
