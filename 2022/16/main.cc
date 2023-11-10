@@ -263,11 +263,6 @@ Flow SolA(Topology const &t)
 
 using namespace testing;
 
-TEST(Input, allNodes)
-{
-  EXPECT_THAT(example<Input>().allNodes().size(), Eq(10));
-}
-
 TEST(Topology, costToOpen)
 {
   auto sut = example<Topology>();
@@ -279,6 +274,11 @@ TEST(Topology, costToOpen)
     EXPECT_THAT(sut.costToOpen("HH", "EE"), Eq(21 - 17	));
     EXPECT_THAT(sut.costToOpen("EE", "CC"), Eq(24 - 21	));
 
+}
+
+TEST(Input, allNodes)
+{
+  EXPECT_THAT(example<Input>().allNodes().size(), Eq(10));
 }
 
 TEST(Input, adjacent)
