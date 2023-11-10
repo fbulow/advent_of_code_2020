@@ -78,10 +78,17 @@ public:
 
 class Input
 {
+  std::set<Valve> allNodes_;
   std::set<Valve> notVisited_;
   std::map<Valve,Flow> flowRate_{};
   std::map<Valve,std::set<Valve>> adjacent_;
 public:
+  [[nodiscard]]
+  std::set<Valve> const & allNodes() const
+  {
+    return allNodes_;
+  }
+
   [[nodiscard]]
   Flow flowRate(Valve const &v) const 
   {
@@ -103,6 +110,7 @@ public:
     RelevantGetter rg(
 		      [this](Valve const &v, Flow f, std::set<Valve> &&a)
 		      {
+			allNodes_.insert(v);
 			adjacent_[v]=std::move(a);
 			flowRate_[v]=f;
 			if(f>0)
@@ -254,6 +262,11 @@ Flow SolA(Topology const &t)
 #include <gmock/gmock.h>
 
 using namespace testing;
+
+TEST(Input, allNodes)
+{
+  EXPECT_THAT(example<Input>().allNodes().size(), Eq(10));
+}
 
 TEST(Topology, costToOpen)
 {
