@@ -116,6 +116,7 @@ public:
 class Topology
 {
 public:
+  Topology() = default;
   Topology(Input const & inp){}
 
   Flow flowRate(Valve const &v) const
@@ -146,6 +147,8 @@ public:
   
   Minutes costToOpen(Valve const & p, Valve const & t) const
   {
+    if(p==t) return 1;
+
     if((p == "AA") && (t == "DD"))return 2  - 0		;
     if((p == "DD") && (t == "BB"))return 5  - 2		; 
     if((p == "BB") && (t == "JJ"))return 9  - 5		;
