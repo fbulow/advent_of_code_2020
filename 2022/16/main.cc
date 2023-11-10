@@ -1,4 +1,5 @@
 #include <functional>
+#include <map>
 #include <set>
 #include <string>
 #include <memory>
@@ -62,13 +63,25 @@ public:
 class Input
 {
   std::set<Valve> notVisited_;
+  std::map<Valve,Flow> flowRate_{};
+
 public:
+  [[nodiscard]]
+  Flow flowRate(Valve const &v) const 
+  {
+    auto it = flowRate_.find(v);
+    assert(it != flowRate_.end());
+    return it->second;
+  }
+  
   Input(std::istream &in)
   {
     RelevantGetter rg(
-		      [this](Valve const &v, auto ...x)
+		      [this](Valve const &v, Flow f)
 		      {
-
+			flowRate_[v]=f;
+			if(f>0)
+			  notVisited_.insert(v);
 		      });
     std::string s;
     in>>s;
@@ -90,7 +103,7 @@ public:
 
   std::set<Valve> notVisited() const
   {
-    return {"DD", "BB", "JJ", "HH", "EE", "CC"};
+    return notVisited_;
   }
 };
 
@@ -115,12 +128,17 @@ public:
 
 class Topology
 {
+  Input const & inp_;
 public:
   Topology() = default;
-  Topology(Input const & inp){}
-
+  Topology(Input const & inp)
+    :inp_(inp)
+  {}
+  
   Flow flowRate(Valve const &v) const
   {
+    return inp_.flowRate(v);
+    
     if(v == "AA")
       return 0;
     if(v == "BB")
@@ -247,6 +265,22 @@ Flow SolA(Input const &inp)
 #include <gmock/gmock.h>
 
 using namespace testing;
+
+TEST(Input, flowRate_example)
+{
+  auto sut = Input::example();
+
+  EXPECT_THAT(sut.flowRate("AA"), Eq( 0 ));
+  EXPECT_THAT(sut.flowRate("BB"), Eq( 13 ));
+  EXPECT_THAT(sut.flowRate("CC"), Eq( 2 ));
+  EXPECT_THAT(sut.flowRate("DD"), Eq( 20 ));
+  EXPECT_THAT(sut.flowRate("EE"), Eq( 3 ));
+  EXPECT_THAT(sut.flowRate("FF"), Eq( 0 ));
+  EXPECT_THAT(sut.flowRate("GG"), Eq( 0 ));
+  EXPECT_THAT(sut.flowRate("HH"), Eq( 22 ));
+  EXPECT_THAT(sut.flowRate("II"), Eq( 0 ));
+  EXPECT_THAT(sut.flowRate("JJ"), Eq( 21 ));
+}
 
 TEST(RelevantValveGetter, getRate)
 {
