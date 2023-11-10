@@ -4,6 +4,7 @@
 #include <memory>
 #include <sstream>
 #include <optional>
+#include <cassert>
 
 using Minutes = int;
 using Valve = std::string ;
@@ -19,27 +20,41 @@ class RelevantValveGetter
   State s = State::Dark;
   Valve v;
   std::optional<Flow> flow;
-  std::set<std::string> adjacent;
 public:
   RelevantValveGetter(Cb &&f)
     :cb(std::move(f))
   {}
+
+  static Flow getRate(std::string const &s)
+  {
+    std::istringstream in({next(s.begin(),5), s.end()});
+    Flow ret{-1};
+    in>>ret;
+    assert(ret!=-1);
+    return ret;
+  }
   
   RelevantValveGetter& operator<<(std::string const & word)
   {
-    static const std::set<std::string> ignore{"Valve", "has", "flow", "tunnels", "tunnel", "lead", "to", "valves"};
+    static const std::set<std::string> ignore{"has", "flow", "tunnels", "tunnel", "lead", "to", "valves"};
     
     if(ignore.contains(word))
        return *this;
-
-    if(v.empty())
+    else if((word=="Valve") or word.empty())
+      {
+	if(!v.empty())
+	  {
+	    cb(v, flow.value());
+	    v.clear();
+	    flow.reset();
+	  }
+      }
+    else if(v.empty())
       v = word;
     else if(!flow)
-      flow = 0;
-    else if(! word.empty())
-      adjacent.insert(word);
+      flow = getRate(word);
     else
-      cb("",0);
+      {}
     return *this;
   }
   
@@ -223,15 +238,64 @@ Flow SolA(Input const &inp)
 
 using namespace testing;
 
-TEST(RelevantValveGetter, add)
+TEST(RelevantValveGetter, getRate)
+{
+  EXPECT_THAT(RelevantValveGetter::getRate("rate=13;"),
+	      Eq(13));
+}
+
+TEST(RelevantValveGetter, dont_flush_if_blow_is_empty)
 {
   int callCount{0};
-
   auto sut = RelevantValveGetter([&callCount](Valve const&, Flow const&){callCount++;});
-  sut<<"Valve"<< "BB"<< "has"<< "flow"<< "rate=13;"<< "tunnels"<< "lead"<< "to"<< "valves"<< "CC<<"<< "AA"
-     <<"";
-  EXPECT_THAT(callCount, Eq(1));
+  sut<<"";
+  EXPECT_THAT(callCount, Eq(0));  
 }
+
+TEST(RelevantValveGetter, add_multiple_rows )
+{
+  int callCount{0};
+  Valve v;
+  Flow f;
+  auto sut = RelevantValveGetter(
+				 [&callCount, &v, &f](Valve const& v_, Flow const& f_)
+				 {
+				   callCount++;
+				   v = v_;
+				   f = f_;
+				 });
+  sut<<"Valve"<< "BB"<< "has"<< "flow"<< "rate=13;"<< "tunnels"<< "lead"<< "to"<< "valves"<< "CC";
+  EXPECT_THAT(callCount, Eq(0));
+  sut<<"Valve";
+  EXPECT_THAT(callCount, Eq(1));
+  EXPECT_THAT(f, Eq(13));
+  sut << "BB"<< "has"<< "flow"<< "rate=14;"<< "tunnels"<< "lead"<< "to"<< "valves"<< "CC"
+     <<"";
+  EXPECT_THAT(callCount, Eq(2));
+  EXPECT_THAT(f, Eq(14));
+}
+
+TEST(RelevantValveGetter, add_single_row )
+{
+  int callCount{0};
+  Valve v;
+  Flow f;
+  auto sut = RelevantValveGetter(
+				 [&callCount, &v, &f](Valve const& v_, Flow const& f_)
+				 {
+				   callCount++;
+				   v = v_;
+				   f = f_;
+				 });
+  
+  sut<<"Valve";
+  sut<< "BB"<< "has"<< "flow"<< "rate=13;"<< "tunnels"<< "lead"<< "to"<< "valves"<< "CC";
+  sut<<"";
+  ASSERT_THAT(callCount, Eq(1));
+  EXPECT_THAT(v, Eq("BB"));
+  EXPECT_THAT(f, Eq(13));
+}
+
 
 TEST(Input, example)
 {
