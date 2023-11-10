@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include <sstream>
+#include <fstream>
 #include <optional>
 #include <cassert>
 
@@ -11,17 +12,15 @@ using Valve = std::string ;
 using Flow = int;
 
 
-class RelevantValveGetter
+class RelevantGetter
 {
   using Cb = std::function<void(Valve const & v, Flow const &f)>;
   
   Cb cb;
-  enum class State { Dark, GotValve, };
-  State s = State::Dark;
   Valve v;
   std::optional<Flow> flow;
 public:
-  RelevantValveGetter(Cb &&f)
+  RelevantGetter(Cb &&f)
     :cb(std::move(f))
   {}
 
@@ -34,7 +33,7 @@ public:
     return ret;
   }
   
-  RelevantValveGetter& operator<<(std::string const & word)
+  RelevantGetter& operator<<(std::string const & word)
   {
     static const std::set<std::string> ignore{"has", "flow", "tunnels", "tunnel", "lead", "to", "valves"};
     
@@ -66,18 +65,26 @@ class Input
 public:
   Input(std::istream &in)
   {
-    std::string ret;
-    in>>ret;
-    // while(!ret.empty())
-    //   {
-	
-    //   }
+    RelevantGetter rg(
+		      [this](Valve const &v, auto ...x)
+		      {
+
+		      });
+    std::string s;
+    in>>s;
+    while(!s.empty())
+      {
+	rg<<s;
+	s.clear();
+	in>>s;
+      }
+    rg<<""; // flush
   }
 
   static
   Input example()
   {
-    auto in = std::istringstream(EXAMPLE);
+    auto in = std::ifstream(EXAMPLE);
     return {in};
   }
 
@@ -93,7 +100,7 @@ using Sequence  = std::vector<Valve>;
 inline
 Input example()
 {
-  std::istringstream in(EXAMPLE);
+  std::ifstream in(EXAMPLE);
   return {in};
 }
 
@@ -240,14 +247,14 @@ using namespace testing;
 
 TEST(RelevantValveGetter, getRate)
 {
-  EXPECT_THAT(RelevantValveGetter::getRate("rate=13;"),
+  EXPECT_THAT(RelevantGetter::getRate("rate=13;"),
 	      Eq(13));
 }
 
 TEST(RelevantValveGetter, dont_flush_if_blow_is_empty)
 {
   int callCount{0};
-  auto sut = RelevantValveGetter([&callCount](Valve const&, Flow const&){callCount++;});
+  auto sut = RelevantGetter([&callCount](Valve const&, Flow const&){callCount++;});
   sut<<"";
   EXPECT_THAT(callCount, Eq(0));  
 }
@@ -257,7 +264,7 @@ TEST(RelevantValveGetter, add_multiple_rows )
   int callCount{0};
   Valve v;
   Flow f;
-  auto sut = RelevantValveGetter(
+  auto sut = RelevantGetter(
 				 [&callCount, &v, &f](Valve const& v_, Flow const& f_)
 				 {
 				   callCount++;
@@ -280,7 +287,7 @@ TEST(RelevantValveGetter, add_single_row )
   int callCount{0};
   Valve v;
   Flow f;
-  auto sut = RelevantValveGetter(
+  auto sut = RelevantGetter(
 				 [&callCount, &v, &f](Valve const& v_, Flow const& f_)
 				 {
 				   callCount++;
