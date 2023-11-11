@@ -11,6 +11,8 @@
 using Minutes = int;
 using Valve = std::string ;
 using Flow = int;
+using ForEachDistanceCallback = std::function<void(Valve const & start, Valve const & end, Minutes costToOpen)>;
+
 
 template<class T>
 T example()
@@ -152,28 +154,71 @@ public:
   int value() const { return ret;}
 };
 
+void forEachDistance(ForEachDistanceCallback& ret,
+		     Input const &i, Valve start, Minutes time);
+
+
+
 class Topology : public Input
 {
-
+  struct TargetAndCost
+  {
+    Valve target;
+    Minutes cost;
+  };
+  std::map<Valve, std::vector<TargetAndCost>> data_;
+  
+  
 public:
   Topology() = default;
-  Topology(std::istream &in)
+  Topology(std::istream &in, Valve const & startAt="AA", Minutes totalTime=30)
     :Input(in)
   {
+    struct SecondaryStartingPoint{
+      Valve start;
+      Minutes timeLeft;
+    };
+    std::vector<SecondaryStartingPoint> secondaryStarts;
+    
+    ForEachDistanceCallback populate =
+      [this](Valve const & start, Valve const & end, Minutes costToOpen)
+      {
+	data_[start].emplace_back(end, costToOpen);
+      };
+
+    ForEachDistanceCallback popAndAdd =
+      [&populate, &secondaryStarts, totalTime]
+      (Valve const & start, Valve const & end, Minutes costToOpen)
+      {
+	populate(start, end, costToOpen);
+	secondaryStarts.emplace_back(end, totalTime-costToOpen);
+      };
+
+    
+    forEachDistance(popAndAdd,
+		    *this, startAt, totalTime);
+
+    for(auto const &ss : secondaryStarts)
+      {
+	forEachDistance(populate,
+			*this, ss.start, ss.timeLeft);
+	
+      }
+      
   }
   
   Minutes costToOpen(Valve const & p, Valve const & t) const
   {
-    if(p==t) return 1;
+    static constexpr Minutes never = 100000;
+    
+    auto it = data_.find(p);
+    if(it==data_.end()) return never;
 
-    if((p == "AA") && (t == "DD"))return 2  - 0		;
-    if((p == "DD") && (t == "BB"))return 5  - 2		; 
-    if((p == "BB") && (t == "JJ"))return 9  - 5		;
-    if((p == "JJ") && (t == "HH"))return 17 - 9		;
-    if((p == "HH") && (t == "EE"))return 21 - 17	;
-    if((p == "EE") && (t == "CC"))return 24 - 21	;
-
-    return 1000;
+    auto const &v = it->second;
+    
+    auto iit = std::find_if(v.begin(), v.end(), [t](auto const &x){return x.target==t;});
+    if(iit == v.end()) return never;
+    else return iit->cost;
   }
 };
 
@@ -312,8 +357,6 @@ public:
     return ret;
   }
 };
-
-using ForEachDistanceCallback = std::function<void(Valve const & start, Valve const & end, Minutes costToOpen)>;
 
 void forEachDistance(ForEachDistanceCallback& ret,
 		     Input const &i, Valve start, Minutes time)
