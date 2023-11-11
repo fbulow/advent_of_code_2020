@@ -290,7 +290,8 @@ public:
   }
 };
 
-void forEachPath(std::function<void(Flow)> &callback, Topology const & t, StateA const &s)
+template<class STATE>
+void forEachPath(std::function<void(Flow)> &callback, Topology const & t, STATE const &s)
 {
   if(s.timeLeft() < 1) return;
   
