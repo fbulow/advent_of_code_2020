@@ -154,11 +154,13 @@ public:
 
 class Topology : public Input
 {
+
 public:
   Topology() = default;
   Topology(std::istream &in)
     :Input(in)
-  {}
+  {
+  }
   
   Minutes costToOpen(Valve const & p, Valve const & t) const
   {
@@ -258,10 +260,131 @@ Flow SolA(Topology const &t)
 }
 
 
+
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
 using namespace testing;
+
+using ValveSet = std::set<Valve>;
+
+enum class Region { Outside, Edge, Inside };
+
+class Regions{
+  std::map<Valve, Region> data;
+public:
+  Regions(ValveSet const &outer)
+  {
+    for(Valve const &v: outer)
+      data[v]=Region::Outside;
+  }
+  static Region step(Region before)
+  {
+    switch(before)
+      {
+      case Region::Outside:
+	return Region::Outside;
+      case Region::Edge:
+	return Region::Inside;
+      case Region::Inside:
+	return Region::Inside;
+      }
+    assert(false);
+  }
+  void moveEdge(ValveSet const&v)
+  {
+    for(auto &x: data)
+      {
+	if(v.contains(x.first))
+	  x.second = Region::Edge;
+	else
+	  x.second = step( x.second );
+      }
+  }
+
+  [[nodiscard]]
+  ValveSet region(Region r) const
+  {
+    ValveSet ret;
+    for(auto const &x: data)
+      if(x.second==r)
+	ret.insert(x.first);
+    return ret;
+  }
+};
+
+using ForEachDistanceCallback = std::function<void(Valve const & start, Valve const & end, Minutes costToOpen)>;
+
+void forEachDistance(ForEachDistanceCallback& ret,
+		     Input const &i, Valve start, Minutes time)
+{
+  Regions r(i.allNodes());
+  r.moveEdge({start});
+
+  Minutes cost=1;
+  while((++cost)<time)
+    {
+      ValveSet newEdge;
+      for(Valve const &e: r.region(Region::Edge))
+	{
+	  for(Valve const & x: i.adjacent(e))
+	    if(!r.region(Region::Inside).contains(x))
+	      newEdge.insert(x);
+	}
+      for(auto const& x: newEdge)
+	ret(start, x, cost);
+      r.moveEdge(newEdge);
+    }
+  
+}
+
+TEST(forEachDistance, call_with_a_j)
+{
+  Minutes cost{-1};
+
+  ForEachDistanceCallback callback = [&cost](auto a, auto b, auto c){if((a=="AA") and (b=="JJ")) cost=c;};
+  
+  forEachDistance(callback,
+		  example<Input>(),
+		  "AA",
+		  5);
+  EXPECT_THAT(cost, Eq(3));
+}
+
+
+TEST(forEachDistance, call_with_a_d)
+{
+  Minutes costAaDd{-1};
+
+  ForEachDistanceCallback callback =
+    [&costAaDd]
+    (auto a, auto b, auto cost)
+    {
+      if((a=="AA") and (b=="DD"))
+	costAaDd=cost;
+    };
+  
+  forEachDistance(callback,
+		  example<Input>(),
+		  "AA",
+		  5);
+  EXPECT_THAT(costAaDd, Eq(2));
+}
+
+
+TEST(Regions_, moveEdge_)
+{
+  auto sut = Regions({"A", "B", "C"});
+  sut.moveEdge({"A"});
+  EXPECT_THAT(sut.region(Region::Inside), Eq(ValveSet{}));
+  EXPECT_THAT(sut.region(Region::Outside), Eq(ValveSet{"B", "C"}));
+  EXPECT_THAT(sut.region(Region::Edge), Eq(ValveSet{"A"}));
+
+  sut.moveEdge({"B"});
+  EXPECT_THAT(sut.region(Region::Inside), Eq(ValveSet{"A"}));
+  EXPECT_THAT(sut.region(Region::Outside), Eq(ValveSet{"C"}));
+  EXPECT_THAT(sut.region(Region::Edge), Eq(ValveSet{"B"}));
+}
 
 TEST(Topology, costToOpen)
 {
