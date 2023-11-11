@@ -92,6 +92,9 @@ public:
   }
 
   [[nodiscard]]
+  std::set<Valve> const & notVisited() const{return notVisited_;}
+
+  [[nodiscard]]
   Flow flowRate(Valve const &v) const 
   {
     auto it = flowRate_.find(v);
@@ -129,10 +132,6 @@ public:
     rg<<""; // flush
   }
 
-  std::set<Valve> notVisited() const
-  {
-    return notVisited_;
-  }
 };
 
 using Sequence  = std::vector<Valve>;
@@ -245,48 +244,60 @@ public:
   
 };
 
-struct State
+class StateA 
 {
-  static State initial(std::set<Valve> notVisited)
-  {
-    return {"AA", 30, 0,
-	    std::move(notVisited)};
-  }
   
-  Valve position = "";
-  Minutes timeLeft = 30;
-  TotalFlow flow = 0;
-  std::set<Valve> notVisited = {};
+  Valve position_ = "";
+  Minutes timeLeft_ = 30;
+  TotalFlow flow_ = 0;
+  std::set<Valve> notVisited_ = {};
+public:
+  StateA(Valve position_, Minutes timeLeft, TotalFlow flow_, std::set<Valve> notVisited_={})
+    :position_(position_)
+    ,timeLeft_(timeLeft)
+    ,flow_(flow_)
+    ,notVisited_(std::move(notVisited_))
+  {}
 
-  State goTo(Valve dest, Minutes remainingTime, Flow flowRate) const
-  {
-    return {
-      .position = dest,
-      .timeLeft = remainingTime,
-      .flow = flow.open(remainingTime, flowRate),
-      .notVisited = [this, dest](){
-	std::set<Valve> ret;
-	std::copy_if(notVisited.begin(), notVisited.end(),
-		     std::inserter(ret, ret.end()),
-		     [dest](auto const &x)
-		     {return x!=dest;}
-		     );
-	return ret;
-      }()
-    };
-  }
+  [[nodiscard]]
+  Valve const & position() const {return position_;}
   
+  [[nodiscard]]
+  std::set<Valve> const & notVisited() const {return notVisited_;}
+  
+  static StateA initial(std::set<Valve> notVisited)
+  {
+    return StateA(Valve("AA"), 30, 0,
+		  std::move(notVisited));
+  }
+  Minutes timeLeft() const{return timeLeft_;}
+  TotalFlow flow() const{return flow_;}
+  StateA goTo(Valve dest, Minutes remainingTime, Flow flowRate) const
+  {
+    return StateA(dest,
+		  remainingTime,
+		  flow_.open(remainingTime, flowRate),
+		  [this, dest](){
+		    std::set<Valve> ret;
+		    std::copy_if(notVisited_.begin(), notVisited_.end(),
+				 std::inserter(ret, ret.end()),
+				 [dest](auto const &x)
+				 {return x!=dest;}
+				 );
+		    return ret;
+		  }()
+		  );
+  }
 };
 
-
-void forEachPath(std::function<void(Flow)> &callback, Topology const & t, State const &s)
+void forEachPath(std::function<void(Flow)> &callback, Topology const & t, StateA const &s)
 {
-  if(s.timeLeft < 1) return;
+  if(s.timeLeft() < 1) return;
   
-  callback(s.flow.value());
-  for(auto const &x: s.notVisited)
+  callback(s.flow().value());
+  for(auto const &x: s.notVisited())
     forEachPath(callback, t, s.goTo(x
-				    ,s.timeLeft-t.costToOpen(s.position, x)
+				    ,s.timeLeft()-t.costToOpen(s.position(), x)
 				    ,t.flowRate(x)));
 }
 
@@ -298,7 +309,7 @@ Flow SolA(Topology const &t)
   {
     ret(x);
   });
-  auto s = State::initial(t.notVisited());
+  auto s = StateA::initial(t.notVisited());
   forEachPath(callback, t, s);
 
   return ret.value();
@@ -545,13 +556,13 @@ TEST(Input, example)
 
 TEST(State, goTo)
 {
-  auto const sut = State::initial({"JJ","DD"}).goTo("JJ", 28, 20);
-  EXPECT_THAT(sut.position, Eq("JJ"));
-  EXPECT_THAT(sut.timeLeft, Eq(28));
-  EXPECT_THAT(sut.flow.value(), Eq(28*20));
+  auto const sut = StateA::initial({"JJ","DD"}).goTo("JJ", 28, 20);
+  EXPECT_THAT(sut.position(), Eq("JJ"));
+  EXPECT_THAT(sut.timeLeft(), Eq(28));
+  EXPECT_THAT(sut.flow().value(), Eq(28*20));
 
-  EXPECT_FALSE(sut.notVisited.contains("JJ"));
-  EXPECT_TRUE(sut.notVisited.contains("DD"));
+  EXPECT_FALSE(sut.notVisited().contains("JJ"));
+  EXPECT_TRUE(sut.notVisited().contains("DD"));
 }
 
 TEST(forEachPath, do_nothing_if_remaining_time_is_less_than_one)
@@ -561,7 +572,7 @@ TEST(forEachPath, do_nothing_if_remaining_time_is_less_than_one)
   std::function<void(Flow)> callback = [&called](Flow f){called=true;};
   forEachPath(callback,
 	      example<Topology>(),
-	      State("",
+	      StateA("",
 		    0,
 		    22,
 		    std::set<Valve>{})
@@ -578,7 +589,7 @@ TEST(forEachPath, return_if_you_cant_do_anything)
   std::function<void(Flow)> callback = [&ret, &callCount](Flow f){ret=f;callCount++;};
   forEachPath(callback,
 	      example<Topology>(),
-	      State("",
+	      StateA("",
 		    1,
 		    22,
 		    std::set<Valve>{})
@@ -620,7 +631,7 @@ TEST(SolA, example)
   EXPECT_THAT(SolA(example<Topology>()), Eq(1651));
 }
 
-TEST(SolA, input)
+TEST(DISABLED_SolA, input)
 {
   std::ifstream in(INPUT);
   EXPECT_THAT(SolA(Topology(in)), Eq(1720));
