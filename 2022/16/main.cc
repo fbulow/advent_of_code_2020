@@ -619,3 +619,10 @@ TEST(SolA, example)
 {
   EXPECT_THAT(SolA(example<Topology>()), Eq(1651));
 }
+
+TEST(SolA, input)
+{
+  std::ifstream in(INPUT);
+  EXPECT_THAT(SolA(Topology(in)), Eq(1720));
+}
+
