@@ -290,16 +290,21 @@ public:
   }
 };
 
-class Positions : std::set<std::tuple<Minutes, Valve>>
+using Player = std::tuple<Minutes, Valve>;
+
+class Positions : std::set<Player>
 {
  public:
   Positions() = default;
-  Positions(std::set<std::tuple<Minutes, Valve>> inp) :std::set<std::tuple<Minutes, Valve>>(std::move(inp))
+  Positions(std::set<Player> inp) :std::set<Player>(std::move(inp))
   {}
   static Positions initial(){return Positions({{26, "AA"}});};
 
   [[nodiscard]]
   Valve position() const {return std::get<Valve>(*rbegin());}
+
+  [[nodiscard]]
+  Player currentPlayer() const {return *rbegin();} 
   
   [[nodiscard]]
   Positions goTo(Valve dest, Minutes remainingTime) const
@@ -311,23 +316,58 @@ class Positions : std::set<std::tuple<Minutes, Valve>>
   }
 };
 
-class StateB:public StateA
+class StateB
 {
-  std::set<std::tuple<Minutes, Valve>> data{std::tuple<Minutes, Valve>(26, "AA")};
-public:
-  StateB(Valve position_, Minutes timeLeft, TotalFlow flow_, std::set<Valve> notVisited_={})
-    :StateA(position_, timeLeft, flow_, std::move(notVisited_))
+  Positions p;
+  TotalFlow flow_ = 0;
+  std::set<Valve> notVisited_ = {};
+  public:
+  StateB(Positions position, TotalFlow flow, std::set<Valve> notVisited={})
+    :p(std::move(position))
+    ,flow_(std::move(flow))
+    ,notVisited_(std::move(notVisited))
+
   {}
-  Valve position() const {return std::get<Valve>(*data.begin());}
+
+  [[nodiscard]]
+  auto const & notVisited() const {return notVisited_;}
+
+  
+  [[nodiscard]]
+  TotalFlow const& flow() const {return flow_;}
+  
+  [[nodiscard]]
+  Valve position() const {return std::get<Valve>(p.currentPlayer());}
+
   StateB goTo(Valve dest, Minutes remainingTime, Flow flowRate) const
   {
+    return StateB(p.goTo(dest, remainingTime),
+		  flow_.open(remainingTime, flowRate),
+		  [this, dest](){
+		    std::set<Valve> ret;
+		    std::copy_if(notVisited_.begin(), notVisited_.end(),
+				 std::inserter(ret, ret.end()),
+				 [dest](auto const &x)
+				 {return x!=dest;}
+				 );
+		    return ret;
+		  }());
     
   }
   
   static StateB initial(std::set<Valve> notVisited) 
   {
-    return StateB(Valve("AA"), 26, 0,
-		  std::move(notVisited));
+    std::set<Player> s;
+    s.insert(Player{26, Valve("AA")});
+    return StateB(s,
+		  0,
+		  notVisited);
+  }
+
+  [[nodiscard]]
+  Minutes timeLeft() const
+  {
+    return std::get<Minutes>(p.currentPlayer());
   }
 };
 
@@ -733,14 +773,21 @@ TEST(SolA, example)
   EXPECT_THAT(SolA(example<Topology>()), Eq(1651));
 }
 
-TEST(DISABLED_SolB, example)
+TEST(SolB, example)
 {
   EXPECT_THAT(SolB(example<Topology>()), Eq(1707));
 }
 
 
-TEST(DISABLED_SolA, input)
+TEST(SolA, input)
 {
   std::ifstream in(INPUT);
   EXPECT_THAT(SolA(Topology(in)), Eq(1720));
+}
+
+TEST(SolB, input)
+{
+  std::ifstream in(INPUT);
+  auto ret = SolB(Topology(in));
+  EXPECT_THAT(ret, Gt(2389))
 }
