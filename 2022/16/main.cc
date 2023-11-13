@@ -290,6 +290,48 @@ public:
   }
 };
 
+class Positions : std::set<std::tuple<Minutes, Valve>>
+{
+ public:
+  Positions() = default;
+  Positions(std::set<std::tuple<Minutes, Valve>> inp) :std::set<std::tuple<Minutes, Valve>>(std::move(inp))
+  {}
+  static Positions initial(){return Positions({{26, "AA"}});};
+
+  [[nodiscard]]
+  Valve position() const {return std::get<Valve>(*rbegin());}
+  
+  [[nodiscard]]
+  Positions goTo(Valve dest, Minutes remainingTime) const
+  {
+    Positions ret;
+    ret.insert(*begin());
+    ret.insert({remainingTime, dest});
+    return ret;
+  }
+};
+
+class StateB:public StateA
+{
+  std::set<std::tuple<Minutes, Valve>> data{std::tuple<Minutes, Valve>(26, "AA")};
+public:
+  StateB(Valve position_, Minutes timeLeft, TotalFlow flow_, std::set<Valve> notVisited_={})
+    :StateA(position_, timeLeft, flow_, std::move(notVisited_))
+  {}
+  Valve position() const {return std::get<Valve>(*data.begin());}
+  StateB goTo(Valve dest, Minutes remainingTime, Flow flowRate) const
+  {
+    
+  }
+  
+  static StateB initial(std::set<Valve> notVisited) 
+  {
+    return StateB(Valve("AA"), 26, 0,
+		  std::move(notVisited));
+  }
+};
+
+
 template<class STATE>
 void forEachPath(std::function<void(Flow)> &callback, Topology const & t, STATE const &s)
 {
@@ -316,12 +358,17 @@ Flow SolA(Topology const &t)
   return ret.value();
 }
 
+Flow SolB(Topology const &t)
+{
+  MaxValueGetter ret;
+  auto callback = std::function<void(Flow)>([&ret](auto x)
+  {
+    ret(x);
+  });
+  forEachPath(callback, t, StateB::initial(t.notVisited()));
+  return ret.value();
+}
 
-
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
-
-using namespace testing;
 
 using ValveSet = std::set<Valve>;
 
@@ -392,6 +439,60 @@ void forEachDistance(ForEachDistanceCallback& ret,
     }
   
 }
+
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
+
+using namespace testing;
+
+TEST(StateB, Ordered_inital)
+{
+  auto sut = Positions::initial();
+  
+  // auto sut = StateB::initial({"AA","B","C"});
+  EXPECT_THAT(sut.position(), Eq("AA"));
+}
+TEST(StateB, Ordered)
+{
+  auto sut = Positions::initial();
+  EXPECT_THAT(sut
+	      .goTo("B", 24)
+	      .position(),
+	      Eq("AA")); // Player with most time left is still at AA
+}
+
+TEST(StateB, Ordered_b)
+{
+  auto sut = Positions::initial();
+  EXPECT_THAT(sut
+	      .goTo("B", 24)
+	      .goTo("C", 20)
+	      .position(),
+	      Eq("B")); // Player with most time left is at B
+}
+
+TEST(StateB, Ordered_b_reverse_order) //just to be sure
+{
+  {
+    auto sut = Positions::initial();
+    EXPECT_THAT(sut
+		.goTo("B", 24)
+		.goTo("C", 25)
+		.position(),
+		Eq("C")); // Player with most time left is C
+  }
+  {
+    auto sut = Positions::initial();
+    EXPECT_THAT(sut
+		.goTo("B", 24)
+		.goTo("C", 24)
+		.position(),
+		Eq("C")); // Player with largest Valve id is handled
+			  // first. Only care about that order is well
+			  // defined which it has to be since set is sorted
+  }
+}
+
 
 TEST(forEachDistance, call_with_a_j)
 {
@@ -632,9 +733,14 @@ TEST(SolA, example)
   EXPECT_THAT(SolA(example<Topology>()), Eq(1651));
 }
 
+TEST(DISABLED_SolB, example)
+{
+  EXPECT_THAT(SolB(example<Topology>()), Eq(1707));
+}
+
+
 TEST(DISABLED_SolA, input)
 {
   std::ifstream in(INPUT);
   EXPECT_THAT(SolA(Topology(in)), Eq(1720));
 }
-
