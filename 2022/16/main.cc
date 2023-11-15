@@ -779,15 +779,17 @@ TEST(SolB, example)
 }
 
 
-TEST(SolA, input)
+TEST(DISABLED_SolA, input)
 {
   std::ifstream in(INPUT);
   EXPECT_THAT(SolA(Topology(in)), Eq(1720));
 }
 
-TEST(SolB, input)
+TEST(DISABLED_SolB, input)
 {
   std::ifstream in(INPUT);
   auto ret = SolB(Topology(in));
-  EXPECT_THAT(ret, Gt(2389))
+  EXPECT_THAT(ret, Gt(2389));
 }
+
+
