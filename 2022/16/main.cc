@@ -7,6 +7,7 @@
 #include <fstream>
 #include <optional>
 #include <cassert>
+#include <algorithm>
 
 using Minutes = int;
 using Valve = std::string ;
@@ -372,6 +373,7 @@ class StateB
 };
 
 
+
 template<class STATE>
 void forEachPath(std::function<void(Flow)> &callback, Topology const & t, STATE const &s)
 {
@@ -480,10 +482,75 @@ void forEachDistance(ForEachDistanceCallback& ret,
   
 }
 
+
+class Checklist
+{
+  Topology const &t;
+  Valve pos_{"AA"};
+
+ public:
+  Checklist(Topology const &_t)
+    :t(_t)
+  {}
+  
+  [[nodiscard]]
+  std::vector<Valve> options(Minutes timeLeft) const
+  {
+    std::vector<Valve> ret;
+    ret.reserve(t.notVisited().size());
+    std::ranges::copy_if(t.notVisited(),
+			 std::back_inserter(ret),
+			 [this, timeLeft](Valve const& v)
+			 {
+			   return t.costToOpen(pos_, v) <= timeLeft;
+			 });
+    return ret;
+  }
+
+  [[nodiscard]]
+  Checklist tic(Valve const & v) const
+    {
+      auto ret = *this;
+      ret.pos_ = v;
+      return ret;
+    }
+
+};
+
+
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
 using namespace testing;
+
+TEST(Checklist, example_check_DD)
+{
+  auto t = example<Topology>();
+  
+  EXPECT_THAT(Checklist(t).tic("BB").options(2),
+	      UnorderedElementsAre("CC"));
+}
+
+
+TEST(Checklist, example)
+{
+  auto t = example<Topology>();
+  auto sut = Checklist(t);
+
+  EXPECT_THAT(sut.options(1).size(), Eq(0));
+}
+
+TEST(Checklist, example_2)
+{
+  auto t = example<Topology>();
+
+  ASSERT_FALSE(t.notVisited().contains("II"));
+  
+  auto sut = Checklist(t).options(2);
+
+  EXPECT_THAT(sut.size(), Eq(2));
+  EXPECT_THAT(sut, UnorderedElementsAre("DD","BB"));
+}
 
 TEST(StateB, Ordered_inital)
 {

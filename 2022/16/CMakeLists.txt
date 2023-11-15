@@ -21,6 +21,7 @@ target_compile_options(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     GTest::GTest
     GTest::Main
+    gmock
 )
 
   
