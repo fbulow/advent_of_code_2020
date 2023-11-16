@@ -15,6 +15,8 @@ using Flow = int;
 using ForEachDistanceCallback = std::function<void(Valve const & start, Valve const & end, Minutes costToOpen)>;
 
 
+//TODO modules
+
 template<class T>
 T example()
 {
@@ -387,18 +389,6 @@ void forEachPath(std::function<void(Flow)> &callback, Topology const & t, STATE 
 }
 
 
-Flow SolA(Topology const &t)
-{
-  MaxValueGetter ret;
-  auto callback = std::function<void(Flow)>([&ret](auto x)
-  {
-    ret(x);
-  });
-  auto s = StateA::initial(t.notVisited());
-  forEachPath(callback, t, s);
-
-  return ret.value();
-}
 
 Flow SolB(Topology const &t)
 {
@@ -485,37 +475,121 @@ void forEachDistance(ForEachDistanceCallback& ret,
 
 class Checklist
 {
-  Topology const &t;
-  Valve pos_{"AA"};
 
+  Topology t_;
+  Valve pos_{"AA"};
+  Minutes timeLeft_;
+  std::set<Valve> notVisited_;
  public:
-  Checklist(Topology const &_t)
-    :t(_t)
+  Minutes timeLeft() const {return timeLeft_;}
+  Topology const & t() const {return t_;}
+  Checklist(Topology const &_t, Minutes minutesLeft)
+    :timeLeft_(minutesLeft)
+    ,notVisited_(_t.notVisited())
+    ,t_(_t)
+  {}
+
+  Checklist(Checklist const &other)
+    :t_(other.t_)
+    ,notVisited_(other.notVisited_)
+    ,timeLeft_(other.timeLeft_)
+  {}
+
+  Checklist& operator=(Checklist &&other)    
+  {
+    t_=other.t_;
+    timeLeft_=other.timeLeft_;
+    notVisited_ = std::move(other.notVisited_);
+    return *this;
+  }
+  
+  Checklist(Checklist const &other, Valve const &dest)
+    :pos_(dest)
+    ,timeLeft_(other.timeLeft_-other.costToOpen(dest))
+    ,notVisited_([other, dest]//evaluated immediately
+		 {
+		   decltype(notVisited_) ret;//(other.notVisited_.size()-1);
+		   std::ranges::copy_if(other.notVisited_.begin(),
+					other.notVisited_.end(),
+					std::inserter(ret, ret.end()),
+					[dest](Valve const &v)
+					{return dest!=v;});
+		   return ret;
+		 }())
+    ,t_(other.t_)
   {}
   
   [[nodiscard]]
-  std::vector<Valve> options(Minutes timeLeft) const
+  std::vector<Valve> options() const
   {
     std::vector<Valve> ret;
-    ret.reserve(t.notVisited().size());
-    std::ranges::copy_if(t.notVisited(),
-			 std::back_inserter(ret),
-			 [this, timeLeft](Valve const& v)
-			 {
-			   return t.costToOpen(pos_, v) <= timeLeft;
-			 });
+    ret.reserve(t_.notVisited().size());
+    auto nv = t_.notVisited();
+    copy_if(nv.begin(), nv.end(),
+	    std::back_inserter(ret),
+	    [this](Valve const& v)
+	    {
+	      return valueOfOpening(v)>0 ;
+	    });
     return ret;
   }
 
   [[nodiscard]]
+  Flow valueOfOpening(Valve const &v) const
+  {
+    return (timeLeft()- t_.costToOpen(pos_, v)) * t_.flowRate(v);
+  }
+  
+  [[nodiscard]]
+  Valve const & pos() const {return pos_;}
+
+
+  [[nodiscard]]
+  Minutes costToOpen(Valve const & v) const 
+  {
+    return t().costToOpen(pos(), v);
+  }
+    
+  
+  [[nodiscard]]
   Checklist tic(Valve const & v) const
+  {
+    return Checklist(*this, v);
+  }
+};
+
+auto evaluate(auto const & checklist) //TODO concepts!
+{
+  auto opt = checklist.options();
+  if(opt.empty())
+    return 0;
+  else
     {
-      auto ret = *this;
-      ret.pos_ = v;
+      Flow ret{0};
+      for(auto const &o:opt)
+	ret = std::max(ret,
+		       checklist.valueOfOpening(o)
+		       +evaluate(checklist.tic(o)));
       return ret;
     }
+}
 
-};
+Flow SolA(Topology const &t)
+{
+  //New solution
+  return evaluate(Checklist(t,30));
+
+  //Old solution
+  MaxValueGetter ret;
+  auto callback = std::function<void(Flow)>([&ret](auto x)
+  {
+    ret(x);
+  });
+  auto s = StateA::initial(t.notVisited());
+  forEachPath(callback, t, s);
+
+  return ret.value();
+}
 
 
 #include <gtest/gtest.h>
@@ -523,21 +597,118 @@ class Checklist
 
 using namespace testing;
 
-TEST(Checklist, example_check_DD)
+
+TEST(Checklist_valueOfOpening, example)
 {
   auto t = example<Topology>();
-  
-  EXPECT_THAT(Checklist(t).tic("BB").options(2),
-	      UnorderedElementsAre("CC"));
+  auto sut = Checklist(t, 30);
+
+  EXPECT_THAT(sut.valueOfOpening("DD"), Eq(28*20));
+  EXPECT_THAT(sut.costToOpen("DD"), Eq(2));
+}
+
+TEST(Checklist_valueOfOpening, example_fail)
+{
+  auto t = example<Topology>();
+  auto sut = Checklist(t, 30);
+  EXPECT_THAT(sut.tic("DD").timeLeft(), Eq(28));
 }
 
 
 TEST(Checklist, example)
 {
-  auto t = example<Topology>();
-  auto sut = Checklist(t);
+  auto sut = Checklist(example<Topology>(), 30);
+  Flow sum = 0;
+  Valve v = "AA";
 
-  EXPECT_THAT(sut.options(1).size(), Eq(0));
+
+  EXPECT_THAT(sut.timeLeft(), Eq(30));
+  v = "DD";
+  sum+= sut.valueOfOpening(v);
+  sut = sut.tic(v);
+
+  EXPECT_THAT(sut.timeLeft(), Eq(28));
+  EXPECT_THAT(sum, Eq(27*20));
+  
+  v = "BB";
+  sum+= sut.valueOfOpening(v);
+  sut = sut.tic(v);
+  
+  v = "JJ";
+  sum+= sut.valueOfOpening(v);
+  sut = sut.tic(v);
+
+  v = "JJ";
+  sum+= sut.valueOfOpening(v);
+  sut = sut.tic(v);
+
+  v = "HH";
+  sum+= sut.valueOfOpening(v);
+  sut = sut.tic(v);
+
+  v = "EE";
+  sum+= sut.valueOfOpening(v);
+  sut = sut.tic(v);
+
+  v = "CC";
+  sum+= sut.valueOfOpening(v);
+  sut = sut.tic(v);
+  
+  EXPECT_THAT(sum, Eq(1651));
+  
+}
+
+TEST(evaluate, example_but_only_two_steps)
+{
+  auto t = example<Topology>();
+  EXPECT_THAT(Checklist(t, 3).options(), UnorderedElementsAre("BB","DD"));
+  
+  EXPECT_THAT(evaluate(Checklist(t, 3)), Eq(20)); //Go to DD and open it
+}
+
+
+TEST(Checklist, no_minutes_equals_no_options)
+{
+  {
+    auto t = example<Topology>();
+    ASSERT_THAT(t.costToOpen("AA", "BB"), Eq(2));
+  }
+
+  {
+    auto sut = Checklist(example<Topology>(), 3);
+    EXPECT_THAT(sut.tic("BB").options(), UnorderedElementsAre());
+  }
+}
+
+TEST(evaluate, no_more_options)
+{
+  struct
+  {
+    std::vector<Valve> options() const {return {};}
+    Minutes valueOfOpening(Valve const &) const
+    {
+      return 1;//i.e. not 0
+    }
+    Checklist tic(Valve v) const {assert(false);};
+  } sut;
+  
+  EXPECT_THAT(evaluate(sut), Eq(0));
+}
+
+TEST(Checklist, example_check_BB)
+{
+  auto t = example<Topology>();
+  EXPECT_THAT(Checklist(t, 5).tic("BB").options(),
+	      UnorderedElementsAre("CC"));
+}
+
+
+TEST(Checklist, example_options)
+{
+  auto t = example<Topology>();
+  auto sut = Checklist(t, 1);
+
+  EXPECT_THAT(sut.options().size(), Eq(0));
 }
 
 TEST(Checklist, example_2)
@@ -545,11 +716,6 @@ TEST(Checklist, example_2)
   auto t = example<Topology>();
 
   ASSERT_FALSE(t.notVisited().contains("II"));
-  
-  auto sut = Checklist(t).options(2);
-
-  EXPECT_THAT(sut.size(), Eq(2));
-  EXPECT_THAT(sut, UnorderedElementsAre("DD","BB"));
 }
 
 TEST(StateB, Ordered_inital)
