@@ -206,21 +206,20 @@ public:
 			*this, ss.start, ss.timeLeft);
 	
       }
-      
   }
   
   Minutes costToOpen(Valve const & p, Valve const & t) const
   {
-    static constexpr Minutes never = 100000;
-    
     auto it = data_.find(p);
-    if(it==data_.end()) return never;
+    assert(it!=data_.end());
 
     auto const &v = it->second;
     
     auto iit = std::find_if(v.begin(), v.end(), [t](auto const &x){return x.target==t;});
-    if(iit == v.end()) return never;
-    else return iit->cost;
+    if(iit != v.end())
+      return iit->cost;
+    else
+      return 10000;
   }
 };
 
@@ -473,20 +472,21 @@ void forEachDistance(ForEachDistanceCallback& ret,
 }
 
 
+
 class Checklist
 {
+  mutable std::shared_ptr<Topology> t_;
 
-  Topology t_;
   Valve pos_{"AA"};
   Minutes timeLeft_;
   std::set<Valve> notVisited_;
  public:
   Minutes timeLeft() const {return timeLeft_;}
-  Topology const & t() const {return t_;}
+  Topology const & t() const {return *t_;}
   Checklist(Topology const &_t, Minutes minutesLeft)
     :timeLeft_(minutesLeft)
     ,notVisited_(_t.notVisited())
-    ,t_(_t)
+    ,t_(std::make_shared<Topology>(_t))
   {}
 
   Checklist(Checklist const &other)
@@ -500,6 +500,7 @@ class Checklist
     t_=other.t_;
     timeLeft_=other.timeLeft_;
     notVisited_ = std::move(other.notVisited_);
+    pos_ = other.pos();
     return *this;
   }
   
@@ -517,15 +518,30 @@ class Checklist
 		   return ret;
 		 }())
     ,t_(other.t_)
-  {}
+  {
+    assert(pos_==dest);
+  }
+
+  [[nodiscard]]
+  std::size_t hash() const
+  {
+    std::hash<Valve> hv{};
+    std::size_t ret = timeLeft_ + (hv(pos_)<<1);
+    for(auto const & v: notVisited_)
+      ret+=hv(v);
+    return ret;
+  }
+
+  [[nodiscard]]
+  auto costOfOpening(Valve const & v) const {return t_->costToOpen(pos(), v);}
+
   
   [[nodiscard]]
   std::vector<Valve> options() const
   {
     std::vector<Valve> ret;
-    ret.reserve(t_.notVisited().size());
-    auto nv = t_.notVisited();
-    copy_if(nv.begin(), nv.end(),
+    ret.reserve(notVisited_.size());
+    copy_if(notVisited_.begin(), notVisited_.end(),
 	    std::back_inserter(ret),
 	    [this](Valve const& v)
 	    {
@@ -537,7 +553,7 @@ class Checklist
   [[nodiscard]]
   Flow valueOfOpening(Valve const &v) const
   {
-    return (timeLeft()- t_.costToOpen(pos_, v)) * t_.flowRate(v);
+    return (timeLeft()- t_->costToOpen(pos_, v)) * t_->flowRate(v);
   }
   
   [[nodiscard]]
@@ -558,8 +574,14 @@ class Checklist
   }
 };
 
-auto evaluate(auto const & checklist) //TODO concepts!
+
+using Cache = std::map<size_t, Minutes>;
+auto evaluate(auto const & checklist, Cache &cache) //TODO concepts!
 {
+  auto h = checklist.hash();
+  auto it = cache.find(h);
+  if(it !=cache.end()) return it->second;
+  
   auto opt = checklist.options();
   if(opt.empty())
     return 0;
@@ -569,7 +591,8 @@ auto evaluate(auto const & checklist) //TODO concepts!
       for(auto const &o:opt)
 	ret = std::max(ret,
 		       checklist.valueOfOpening(o)
-		       +evaluate(checklist.tic(o)));
+		       +evaluate(checklist.tic(o), cache));
+      cache[h]=ret;
       return ret;
     }
 }
@@ -577,7 +600,8 @@ auto evaluate(auto const & checklist) //TODO concepts!
 Flow SolA(Topology const &t)
 {
   //New solution
-  return evaluate(Checklist(t,30));
+  Cache cache;
+  return evaluate(Checklist(t,30), cache);
 
   //Old solution
   MaxValueGetter ret;
@@ -614,6 +638,14 @@ TEST(Checklist_valueOfOpening, example_fail)
   EXPECT_THAT(sut.tic("DD").timeLeft(), Eq(28));
 }
 
+TEST(Checklist_example, costToOpen_BB)
+{
+  EXPECT_THAT(
+	      Checklist(example<Topology>(), 30)
+	      .tic("DD")
+	      .costOfOpening("BB"),
+	      Eq(3));
+}
 
 TEST(Checklist, example)
 {
@@ -626,18 +658,17 @@ TEST(Checklist, example)
   v = "DD";
   sum+= sut.valueOfOpening(v);
   sut = sut.tic(v);
-
+  EXPECT_THAT(sut.pos(), Eq("DD"));
   EXPECT_THAT(sut.timeLeft(), Eq(28));
-  EXPECT_THAT(sum, Eq(27*20));
+  EXPECT_THAT(sum, Eq(28*20));
   
   v = "BB";
+  EXPECT_THAT(
+	      sut.costOfOpening(v),
+	      Eq(3));
   sum+= sut.valueOfOpening(v);
   sut = sut.tic(v);
   
-  v = "JJ";
-  sum+= sut.valueOfOpening(v);
-  sut = sut.tic(v);
-
   v = "JJ";
   sum+= sut.valueOfOpening(v);
   sut = sut.tic(v);
@@ -662,8 +693,9 @@ TEST(evaluate, example_but_only_two_steps)
 {
   auto t = example<Topology>();
   EXPECT_THAT(Checklist(t, 3).options(), UnorderedElementsAre("BB","DD"));
-  
-  EXPECT_THAT(evaluate(Checklist(t, 3)), Eq(20)); //Go to DD and open it
+
+  Cache c;
+  EXPECT_THAT(evaluate(Checklist(t, 3), c), Eq(20)); //Go to DD and open it
 }
 
 
@@ -680,20 +712,6 @@ TEST(Checklist, no_minutes_equals_no_options)
   }
 }
 
-TEST(evaluate, no_more_options)
-{
-  struct
-  {
-    std::vector<Valve> options() const {return {};}
-    Minutes valueOfOpening(Valve const &) const
-    {
-      return 1;//i.e. not 0
-    }
-    Checklist tic(Valve v) const {assert(false);};
-  } sut;
-  
-  EXPECT_THAT(evaluate(sut), Eq(0));
-}
 
 TEST(Checklist, example_check_BB)
 {
@@ -1000,7 +1018,6 @@ TEST(maxValueGetter, example)
   EXPECT_THAT(sut.value(), Eq(7));  
 }
 
-
 TEST(SolA, example)
 {
   EXPECT_THAT(SolA(example<Topology>()), Eq(1651));
@@ -1012,7 +1029,7 @@ TEST(SolB, example)
 }
 
 
-TEST(DISABLED_SolA, input)
+TEST(SolA, input)
 {
   std::ifstream in(INPUT);
   EXPECT_THAT(SolA(Topology(in)), Eq(1720));
@@ -1024,5 +1041,3 @@ TEST(DISABLED_SolB, input)
   auto ret = SolB(Topology(in));
   EXPECT_THAT(ret, Gt(2389));
 }
-
-
