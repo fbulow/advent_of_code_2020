@@ -476,38 +476,34 @@ void forEachDistance(ForEachDistanceCallback& ret,
 class Checklist
 {
   mutable std::shared_ptr<Topology> t_;
-
-  Valve pos_{"AA"};
-  Minutes timeLeft_;
+  std::set<Player> players_;
   std::set<Valve> notVisited_;
- public:
-  Minutes timeLeft() const {return timeLeft_;}
+
+public:
   Topology const & t() const {return *t_;}
   Checklist(Topology const &_t, Minutes minutesLeft)
-    :timeLeft_(minutesLeft)
+    :t_(std::make_shared<Topology>(_t))
     ,notVisited_(_t.notVisited())
-    ,t_(std::make_shared<Topology>(_t))
-  {}
+  {
+    addPlayer(minutesLeft, "AA");
+  }
 
   Checklist(Checklist const &other)
     :t_(other.t_)
     ,notVisited_(other.notVisited_)
-    ,timeLeft_(other.timeLeft_)
+    ,players_(other.players_)
   {}
 
   Checklist& operator=(Checklist &&other)    
   {
     t_=other.t_;
-    timeLeft_=other.timeLeft_;
+    players_=std::move(other.players_);
     notVisited_ = std::move(other.notVisited_);
-    pos_ = other.pos();
     return *this;
   }
   
   Checklist(Checklist const &other, Valve const &dest)
-    :pos_(dest)
-    ,timeLeft_(other.timeLeft_-other.costToOpen(dest))
-    ,notVisited_([other, dest]//evaluated immediately
+    :notVisited_([other, dest]//evaluated immediately
 		 {
 		   decltype(notVisited_) ret;//(other.notVisited_.size()-1);
 		   std::ranges::copy_if(other.notVisited_.begin(),
@@ -519,14 +515,25 @@ class Checklist
 		 }())
     ,t_(other.t_)
   {
-    assert(pos_==dest);
+    addPlayer(other.timeLeft()-other.costToOpen(dest), dest);
   }
+
+  [[nodiscard]]
+  Valve const& pos() const
+  {return std::get<Valve>(*players_.begin());}
+
+  [[nodiscard]]
+  Minutes timeLeft() const
+  {return std::get<Minutes>(*players_.begin());}
+
+  void addPlayer(Minutes const &m, Valve const &v)
+  {players_.insert({m, v});}
 
   [[nodiscard]]
   std::size_t hash() const
   {
     std::hash<Valve> hv{};
-    std::size_t ret = timeLeft_ + (hv(pos_)<<1);
+    std::size_t ret = timeLeft() + (hv(pos())<<1);
     for(auto const & v: notVisited_)
       ret+=hv(v);
     return ret;
@@ -535,7 +542,6 @@ class Checklist
   [[nodiscard]]
   auto costOfOpening(Valve const & v) const {return t_->costToOpen(pos(), v);}
 
-  
   [[nodiscard]]
   std::vector<Valve> options() const
   {
@@ -553,11 +559,8 @@ class Checklist
   [[nodiscard]]
   Flow valueOfOpening(Valve const &v) const
   {
-    return (timeLeft()- t_->costToOpen(pos_, v)) * t_->flowRate(v);
+    return (timeLeft()- t_->costToOpen(pos(), v)) * t_->flowRate(v);
   }
-  
-  [[nodiscard]]
-  Valve const & pos() const {return pos_;}
 
 
   [[nodiscard]]
