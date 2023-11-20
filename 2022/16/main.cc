@@ -479,8 +479,8 @@ class Checklist
   std::set<Valve> notVisited_;
 
 public:
-  Checklist& setPlayers(std::set<Player> v)
-  {players_ = std::move(v); return *this;}
+  void setPlayers(std::set<Player> v)
+  {players_ = std::move(v);}
   Topology const & t() const {return *t_;}
   Checklist(Topology const &_t, Minutes minutesLeft)
     :t_(std::make_shared<Topology>(_t))
@@ -656,18 +656,17 @@ TEST(Checklist, hash_players_dont_communte_in_hash)
   // AA is zero
 
   // BB first
-  auto ba = Checklist(example<Topology>(),30)
-    .setPlayers({{1, "AA"},
-		 {2, "BB"}})
-    .hash();
+  auto ba = Checklist(example<Topology>(),30);
+  ba.setPlayers({{1, "AA"},
+		 {2, "BB"}});
 
   // AA first
-  auto ab = Checklist(example<Topology>(),30)
-    .setPlayers({{2, "AA"},
-		 {1, "BB"}})
-    .hash();
+  auto ab = Checklist(example<Topology>(),30);
+  ab.setPlayers({{2, "AA"},
+		 {1, "BB"}});
   
-  EXPECT_THAT(ab, Ne(ba));
+  
+  EXPECT_THAT(ab.hash(), Ne(ba.hash()));
 }
 
 TEST(Checklist, current_player_is_the_one_with_the_most_time_left)
