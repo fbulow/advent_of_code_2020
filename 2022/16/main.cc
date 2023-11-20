@@ -386,20 +386,6 @@ void forEachPath(std::function<void(Flow)> &callback, Topology const & t, STATE 
 				    ,t.flowRate(x)));
 }
 
-
-
-Flow SolB(Topology const &t)
-{
-  MaxValueGetter ret;
-  auto callback = std::function<void(Flow)>([&ret](auto x)
-  {
-    ret(x);
-  });
-  forEachPath(callback, t, StateB::initial(t.notVisited()));
-  return ret.value();
-}
-
-
 using ValveSet = std::set<Valve>;
 
 enum class Region { Outside, Edge, Inside };
@@ -667,6 +653,16 @@ Flow SolA(Topology const &t)
   return ret.value();
 }
 
+Flow SolB(Topology const &t)
+{
+  MaxValueGetter ret;
+  auto callback = std::function<void(Flow)>([&ret](auto x)
+  {
+    ret(x);
+  });
+  forEachPath(callback, t, StateB::initial(t.notVisited()));
+  return ret.value();
+}
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
