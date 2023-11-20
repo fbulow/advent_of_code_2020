@@ -523,6 +523,12 @@ public:
   [[nodiscard]]
   Player currentPlayer() const {return *players_.rbegin();}
 
+protected:
+  [[nodiscard]]
+  Player lastPlayer() const { return *players_.begin();}
+  
+public:
+  
   [[nodiscard]]
   Valve pos() const
   {
@@ -600,6 +606,26 @@ public:
   }
 };
 
+struct ChecklistB : public Checklist
+{
+public:
+  template<class ... ARG>
+  ChecklistB(ARG&& ... arg)
+    : Checklist(std::forward<ARG>(arg)...)
+  {}
+  [[nodiscard]]
+  ChecklistB tic(Valve const & v) const
+  {
+    auto ret = ChecklistB(*this, v);
+    ret.setPlayers({
+	{timeLeft() - costToOpen(v), pos()}, //The one that moved
+	lastPlayer()
+      });
+    return ret;
+  }
+};
+
+
 
 using Cache = std::map<size_t, Minutes>;
 auto evaluate(auto const & checklist, Cache &cache) //TODO concepts!
@@ -646,6 +672,22 @@ Flow SolA(Topology const &t)
 #include <gmock/gmock.h>
 
 using namespace testing;
+
+TEST(ChecklistB, tic)
+{
+  //Regardless of topology
+  auto sut = ChecklistB(example<Topology>(),26);
+  sut.setPlayers({{8, "AA"}, {9, "BB"}});
+
+  //Player on BB
+  ASSERT_THAT(sut.pos(), Eq("BB"));
+
+  //Moves to EE. Then, player on AA is next to move
+  EXPECT_THAT(sut.tic("EE").pos(), Eq("AA"));
+  
+  
+}
+
 
 TEST(Checklist, hash_players_dont_communte_in_hash)
 {
