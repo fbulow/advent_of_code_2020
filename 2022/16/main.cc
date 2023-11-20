@@ -584,11 +584,19 @@ public:
     return t().costToOpen(pos(), v);
   }
     
-  
+};
+
+struct ChecklistA : public Checklist
+{
+public:
+  template<class ... ARG>
+  ChecklistA(ARG&& ... arg)
+    : Checklist(std::forward<ARG>(arg)...)
+  {}
   [[nodiscard]]
-  Checklist tic(Valve const & v) const
+  ChecklistA tic(Valve const & v) const
   {
-    return Checklist(*this, v);
+    return ChecklistA(*this, v);
   }
 };
 
@@ -619,7 +627,7 @@ Flow SolA(Topology const &t)
 {
   //New solution
   Cache cache;
-  return evaluate(Checklist(t,30), cache);
+  return evaluate(ChecklistA(t,30), cache);
 
   //Old solution
   MaxValueGetter ret;
@@ -707,25 +715,25 @@ TEST(Checklist_valueOfOpening, example)
   EXPECT_THAT(sut.costToOpen("DD"), Eq(2));
 }
 
-TEST(Checklist_valueOfOpening, example_fail)
+TEST(ChecklistA_valueOfOpening, example_fail)
 {
   auto t = example<Topology>();
-  auto sut = Checklist(t, 30);
+  auto sut = ChecklistA(t, 30);
   EXPECT_THAT(sut.tic("DD").timeLeft(), Eq(28));
 }
 
-TEST(Checklist_example, costToOpen_BB)
+TEST(ChecklistA_example, costToOpen_BB)
 {
   EXPECT_THAT(
-	      Checklist(example<Topology>(), 30)
+	      ChecklistA(example<Topology>(), 30)
 	      .tic("DD")
 	      .costOfOpening("BB"),
 	      Eq(3));
 }
 
-TEST(Checklist, example)
+TEST(ChecklistA, example)
 {
-  auto sut = Checklist(example<Topology>(), 30);
+  auto sut = ChecklistA(example<Topology>(), 30);
   Flow sum = 0;
   Valve v = "AA";
 
@@ -768,10 +776,10 @@ TEST(Checklist, example)
 TEST(evaluate, example_but_only_two_steps)
 {
   auto t = example<Topology>();
-  EXPECT_THAT(Checklist(t, 3).options(), UnorderedElementsAre("BB","DD"));
+  EXPECT_THAT(ChecklistA(t, 3).options(), UnorderedElementsAre("BB","DD"));
 
   Cache c;
-  EXPECT_THAT(evaluate(Checklist(t, 3), c), Eq(20)); //Go to DD and open it
+  EXPECT_THAT(evaluate(ChecklistA(t, 3), c), Eq(20)); //Go to DD and open it
 }
 
 
@@ -783,7 +791,7 @@ TEST(Checklist, no_minutes_equals_no_options)
   }
 
   {
-    auto sut = Checklist(example<Topology>(), 3);
+    auto sut = ChecklistA(example<Topology>(), 3);
     EXPECT_THAT(sut.tic("BB").options(), UnorderedElementsAre());
   }
 }
@@ -792,7 +800,7 @@ TEST(Checklist, no_minutes_equals_no_options)
 TEST(Checklist, example_check_BB)
 {
   auto t = example<Topology>();
-  EXPECT_THAT(Checklist(t, 5).tic("BB").options(),
+  EXPECT_THAT(ChecklistA(t, 5).tic("BB").options(),
 	      UnorderedElementsAre("CC"));
 }
 
