@@ -8,7 +8,7 @@
 #include <optional>
 #include <cassert>
 #include <algorithm>
-
+#include <numeric>
 using Minutes = int;
 using Valve = std::string ;
 using Flow = int;
@@ -479,9 +479,8 @@ class Checklist
   std::set<Valve> notVisited_;
 
 public:
-  void setPlayers(std::set<Player> v)
-  {players_ = std::move(v);}
-
+  Checklist& setPlayers(std::set<Player> v)
+  {players_ = std::move(v); return *this;}
   Topology const & t() const {return *t_;}
   Checklist(Topology const &_t, Minutes minutesLeft)
     :t_(std::make_shared<Topology>(_t))
@@ -540,10 +539,18 @@ public:
   [[nodiscard]]
   std::size_t hash() const
   {
-    std::hash<Valve> hv{};
-    std::size_t ret = timeLeft() + (hv(pos())<<1);
+    std::size_t ret = //timeLeft() + (hv(pos())<<1);
+      std::accumulate(players_.begin(),
+		      players_.end(),size_t(0),
+		      [](auto sum, Player const &p)
+		      {
+			auto a = std::hash<Minutes>{}(std::get<Minutes>(p));
+			auto b = std::hash<Valve>  {}(std::get<Valve>(p));
+			return sum+a*b;
+		      });
+			  
     for(auto const & v: notVisited_)
-      ret+=hv(v);
+      ret+=std::hash<Valve>{}(v);
     return ret;
   }
 
@@ -631,6 +638,29 @@ Flow SolA(Topology const &t)
 #include <gmock/gmock.h>
 
 using namespace testing;
+
+TEST(Checklist, hash_players_dont_communte_in_hash)
+{
+  //Regardless of topology
+  auto sut = Checklist(example<Topology>(),30);
+
+  //swapping time between the two players should change the hash
+  // AA is zero
+
+  // BB first
+  auto ba = Checklist(example<Topology>(),30)
+    .setPlayers({{1, "AA"},
+		 {2, "BB"}})
+    .hash();
+
+  // AA first
+  auto ab = Checklist(example<Topology>(),30)
+    .setPlayers({{2, "AA"},
+		 {1, "BB"}})
+    .hash();
+  
+  EXPECT_THAT(ab, Ne(ba));
+}
 
 TEST(Checklist, current_player_is_the_one_with_the_most_time_left)
 {
