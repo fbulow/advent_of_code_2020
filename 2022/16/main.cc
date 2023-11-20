@@ -168,11 +168,10 @@ class Topology : public Input
     Valve target;
     Minutes cost;
   };
-  std::map<Valve, std::vector<TargetAndCost>> data_;
+  std::map<Valve, std::vector<TargetAndCost>> data_{};
   
   
 public:
-  Topology() = default;
   Topology(std::istream &in, Valve const & startAt="AA", Minutes totalTime=30)
     :Input(in)
   {
@@ -480,6 +479,9 @@ class Checklist
   std::set<Valve> notVisited_;
 
 public:
+  void setPlayers(std::set<Player> v)
+  {players_ = std::move(v);}
+
   Topology const & t() const {return *t_;}
   Checklist(Topology const &_t, Minutes minutesLeft)
     :t_(std::make_shared<Topology>(_t))
@@ -518,13 +520,19 @@ public:
     addPlayer(other.timeLeft()-other.costToOpen(dest), dest);
   }
 
+
   [[nodiscard]]
-  Valve const& pos() const
-  {return std::get<Valve>(*players_.begin());}
+  Player currentPlayer() const {return *players_.rbegin();}
+
+  [[nodiscard]]
+  Valve pos() const
+  {
+    return std::get<Valve>(currentPlayer());
+  }
 
   [[nodiscard]]
   Minutes timeLeft() const
-  {return std::get<Minutes>(*players_.begin());}
+  {return std::get<Minutes>(currentPlayer());}
 
   void addPlayer(Minutes const &m, Valve const &v)
   {players_.insert({m, v});}
@@ -623,6 +631,41 @@ Flow SolA(Topology const &t)
 #include <gmock/gmock.h>
 
 using namespace testing;
+
+TEST(Checklist, current_player_is_the_one_with_the_most_time_left)
+{
+  //Regardless of topology
+  auto sut = Checklist(example<Topology>(),30);
+  //Players added as a set
+  // Where the one with most remaining time is the current one.
+  //In this case BB ...
+  sut.setPlayers({{0, "AA"},
+		  {1, "BB"}});
+  EXPECT_THAT(sut.pos(), Eq("BB"));
+  EXPECT_THAT(sut.timeLeft(), Eq(1));
+  // and in this case AA ..
+
+  sut.setPlayers({{2, "AA"},
+		  {1, "BB"}});
+
+  EXPECT_THAT(sut.pos(), Eq("AA"));
+  EXPECT_THAT(sut.timeLeft(), Eq(2));
+
+  // Player order doesn't matter when they have equal amount of time
+  // left, as long as it is deterministic.
+
+  auto TheSame = Eq("BB"); // either AA or BB would be ok...
+
+  sut.setPlayers({{1, "AA"},
+		  {1, "BB"}});
+
+  EXPECT_THAT(sut.pos(), TheSame);
+
+  sut.setPlayers({{1, "AA"},
+		  {1, "BB"}});
+
+  EXPECT_THAT(sut.pos(), TheSame);
+}
 
 
 TEST(Checklist_valueOfOpening, example)
