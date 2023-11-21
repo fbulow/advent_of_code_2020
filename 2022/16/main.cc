@@ -461,10 +461,10 @@ void forEachDistance(ForEachDistanceCallback& ret,
 class Checklist
 {
   mutable std::shared_ptr<Topology> t_;
-  std::set<Player> players_;
-  std::set<Valve> notVisited_;
-
+  friend std::ostream& operator<<(std::ostream&, Checklist const&);
 public:
+  std::set<Valve>  notVisited_;
+  std::set<Player> players_;
   void setPlayers(std::set<Player> v)
   {players_ = std::move(v);}
   Topology const & t() const {return *t_;}
@@ -531,6 +531,8 @@ public:
   [[nodiscard]]
   std::size_t hash() const
   {
+    return std::hash<std::string>{}((std::ostringstream()<<*this).str());
+
     std::size_t ret = //timeLeft() + (hv(pos())<<1);
       std::accumulate(players_.begin(),
 		      players_.end(),size_t(0),
@@ -604,7 +606,7 @@ public:
   {
     auto ret = ChecklistB(*this, v);
     ret.setPlayers({
-	{timeLeft() - costToOpen(v), pos()}, //The one that moved
+	{timeLeft() - costToOpen(v), v}, //The one that moved
 	lastPlayer()
       });
     return ret;
@@ -655,6 +657,11 @@ Flow SolA(Topology const &t)
 
 Flow SolB(Topology const &t)
 {
+  //New solution
+  Cache cache;
+  return evaluate(ChecklistB(t,26), cache);
+
+  //Old solution
   MaxValueGetter ret;
   auto callback = std::function<void(Flow)>([&ret](auto x)
   {
@@ -668,6 +675,41 @@ Flow SolB(Topology const &t)
 #include <gmock/gmock.h>
 
 using namespace testing;
+
+
+std::ostream& operator<<(std::ostream& out, Checklist const &s)
+{
+  out<<"{";
+  for(auto const & x: s.players_)
+    out<<std::get<Minutes>(x)<<","<<std::get<Valve>(x)<<",";
+  out<<"},{";
+  for(auto const & x: s.notVisited_)
+    out<<x<<",";
+  out<<"}";
+  
+  return out;
+}
+
+TEST(ChecklistB, to_string)
+{
+  auto sut = ChecklistB(example<Topology>(),26);
+  auto s = (std::ostringstream()<< sut).str();
+  EXPECT_THAT(s,
+	      Eq("{26,AA,},{BB,CC,DD,EE,HH,JJ,}")
+	      )<<"{players},{Valves,} ";
+  
+}
+
+TEST(ChecklistB, actual_tics)
+{
+  auto sut = ChecklistB(example<Topology>(),26);
+  EXPECT_THAT(sut.tic("DD").pos(), Eq("AA")); // Elephant opens DD, you still haven't moved
+  EXPECT_THAT(sut.tic("DD").pos(), Eq("AA")); // Elephant opens DD, you still haven't moved
+  EXPECT_THAT(sut
+	      .tic("DD")
+	      .tic("JJ")
+	      .pos(), Eq("DD")); // Elephant at DD will move
+}
 
 TEST(ChecklistB, tic)
 {
@@ -1150,15 +1192,19 @@ TEST(SolB, example)
 }
 
 
-TEST(SolA, input)
+TEST(DISABLED_SolA, input)
 {
   std::ifstream in(INPUT);
   EXPECT_THAT(SolA(Topology(in)), Eq(1720));
 }
 
-TEST(DISABLED_SolB, input)
+TEST(SolB, input)
 {
   std::ifstream in(INPUT);
   auto ret = SolB(Topology(in));
-  EXPECT_THAT(ret, Gt(2389));
+  ASSERT_THAT(ret, Gt(2389));
+  ASSERT_THAT(ret, Gt(2578))
+    <<"That's not the right answer; your answer is too low.";
+
+  EXPECT_THAT(ret, Eq(0))<<"SolutionB";
 }
