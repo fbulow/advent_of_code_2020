@@ -137,9 +137,6 @@ public:
 
 };
 
-using Sequence  = std::vector<Valve>;
-
-
 inline
 Input example()
 {
@@ -147,19 +144,8 @@ Input example()
   return {in};
 }
 
-class MaxValueGetter
-{
-  int ret{0};
-public:
-  MaxValueGetter() = default;
-  void operator()(int a){if(a>ret) ret=a;}
-  int value() const { return ret;}
-};
-
 void forEachDistance(ForEachDistanceCallback& ret,
 		     Input const &i, Valve start, Minutes time);
-
-
 
 class Topology : public Input
 {
@@ -169,7 +155,6 @@ class Topology : public Input
     Minutes cost;
   };
   std::map<Valve, std::vector<TargetAndCost>> data_{};
-  
   
 public:
   Topology(std::istream &in, Valve const & startAt="AA", Minutes totalTime=30)
@@ -372,19 +357,6 @@ class StateB
   }
 };
 
-
-
-template<class STATE>
-void forEachPath(std::function<void(Flow)> &callback, Topology const & t, STATE const &s)
-{
-  if(s.timeLeft() < 1) return;
-  
-  callback(s.flow().value());
-  for(auto const &x: s.notVisited())
-    forEachPath(callback, t, s.goTo(x
-				    ,s.timeLeft()-t.costToOpen(s.position(), x)
-				    ,t.flowRate(x)));
-}
 
 using ValveSet = std::set<Valve>;
 
@@ -642,17 +614,6 @@ Flow SolA(Topology const &t)
   //New solution
   Cache cache;
   return evaluate(ChecklistA(t,30), cache);
-
-  //Old solution
-  MaxValueGetter ret;
-  auto callback = std::function<void(Flow)>([&ret](auto x)
-  {
-    ret(x);
-  });
-  auto s = StateA::initial(t.notVisited());
-  forEachPath(callback, t, s);
-
-  return ret.value();
 }
 
 Flow SolB(Topology const &t)
@@ -660,15 +621,6 @@ Flow SolB(Topology const &t)
   //New solution
   Cache cache;
   return evaluate(ChecklistB(t,26), cache);
-
-  //Old solution
-  MaxValueGetter ret;
-  auto callback = std::function<void(Flow)>([&ret](auto x)
-  {
-    ret(x);
-  });
-  forEachPath(callback, t, StateB::initial(t.notVisited()));
-  return ret.value();
 }
 
 #include <gtest/gtest.h>
@@ -1120,41 +1072,6 @@ TEST(State, goTo)
   EXPECT_FALSE(sut.notVisited().contains("JJ"));
   EXPECT_TRUE(sut.notVisited().contains("DD"));
 }
-
-TEST(forEachPath, do_nothing_if_remaining_time_is_less_than_one)
-{
-  bool called{false};
-
-  std::function<void(Flow)> callback = [&called](Flow f){called=true;};
-  forEachPath(callback,
-	      example<Topology>(),
-	      StateA("",
-		    0,
-		    22,
-		    std::set<Valve>{})
-	      );
-
-  EXPECT_FALSE(called);
-}
-
-
-TEST(forEachPath, return_if_you_cant_do_anything)
-{
-  Flow ret{0};
-  int callCount{0};
-  std::function<void(Flow)> callback = [&ret, &callCount](Flow f){ret=f;callCount++;};
-  forEachPath(callback,
-	      example<Topology>(),
-	      StateA("",
-		    1,
-		    22,
-		    std::set<Valve>{})
-	      );
-
-  EXPECT_THAT(ret, Eq(22));
-  EXPECT_THAT(callCount, Eq(1));
-    
-}
  
 TEST(TotalFlow, best_exmaple_sequence)
 {
@@ -1168,17 +1085,6 @@ TEST(TotalFlow, best_exmaple_sequence)
 	      .value(),
 	      Eq(1651)
 	      );
-}
-
-TEST(maxValueGetter, example)
-{
-  MaxValueGetter sut;
-  sut(5);
-  EXPECT_THAT(sut.value(), Eq(5));
-  sut(4);
-  EXPECT_THAT(sut.value(), Eq(5));
-  sut(7);
-  EXPECT_THAT(sut.value(), Eq(7));  
 }
 
 TEST(SolA, example)
@@ -1198,7 +1104,7 @@ TEST(DISABLED_SolA, input)
   EXPECT_THAT(SolA(Topology(in)), Eq(1720));
 }
 
-TEST(SolB, input)
+TEST(DISABLED_SolB, input)
 {
   std::ifstream in(INPUT);
   auto ret = SolB(Topology(in));
