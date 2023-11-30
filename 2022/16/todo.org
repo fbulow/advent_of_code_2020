@@ -1,0 +1,10 @@
+* part b
+** TODO New string based hash function
+** DONE Split Checlist into
+- Checklist
+  Topology, visited nodes, and a  of players
+- Player
+  Position and remainingTime
+
+
+
