@@ -1,53 +1,17 @@
-#include<gtest/gtest.h>
+#include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <sstream>
 #include <fstream>
+#include <algorithm>
+
+#include "rep.hh"
+
 using namespace testing;
 using namespace std;
 
-
-struct Rep
-{
-  string asString;
-  int asInt;
-
-  static vector<Rep> intsOnly()
-  {
-    return {
-      Rep{"0", 0},
-      Rep{"1", 1},
-      Rep{"2", 2},
-      Rep{"3", 3},
-      Rep{"4", 4},
-      Rep{"5", 5},
-      Rep{"6", 6},
-      Rep{"7", 7},
-      Rep{"8", 8},
-      Rep{"9", 9}};
-
-  }
-  static vector<Rep> all()
-  {
-    auto ret = intsOnly();
-    ret.emplace_back("zero",	  0);
-    ret.emplace_back("one",	  1);
-    ret.emplace_back("two",	  2);
-    ret.emplace_back("three",	  3);
-    ret.emplace_back("four",	  4);
-    ret.emplace_back("five",	  5);
-    ret.emplace_back("six",	  6);
-    ret.emplace_back("seven",	  7);
-    ret.emplace_back("eight",	  8);
-    ret.emplace_back("nine",	  9);
-  return ret;
-  }
-};
-
-using Reps = vector<Rep>;
-
 int firstValue(auto begin, auto end, Reps const &reps)
 {
-  string s(begin, end);
+  string_view s(&*begin, distance(begin, end));
   for(auto const &r:reps)
     {
       if(s.starts_with(r.asString))
@@ -63,12 +27,12 @@ int firstValue(string s, Reps const &reps)
 		    reps);
 }
 
-int lastValue(auto const &s, Reps reps)
+int lastValue(auto s, Reps reps)
 {
   for(auto &r: reps)
-    r.asString = string{r.asString.rbegin(), r.asString.rend()};
-  
-  return firstValue(s.rbegin(), s.rend(), reps);
+    reverse(r.asString.begin(), r.asString.end());
+  reverse(s.begin(), s.end());
+  return firstValue(s, reps);
 }
 
 
@@ -143,6 +107,6 @@ TEST(SolB, input)
   }
   {
     ifstream in(INPUT);
-    ASSERT_THAT(solB(in), Eq(281));
+    ASSERT_THAT(solB(in), Eq(54706));
   }
 }

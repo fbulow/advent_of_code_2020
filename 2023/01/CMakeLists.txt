@@ -6,6 +6,7 @@ Find_package(GTest)
 
 add_executable(${PROJECT_NAME}
 tests.cc
+rep.cc
 )
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
