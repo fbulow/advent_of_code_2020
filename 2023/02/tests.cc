@@ -4,6 +4,7 @@
 #include <fstream>
 #include <algorithm>
 #include <string>
+#include <numeric>
 
 using namespace std;
 
@@ -48,19 +49,59 @@ int possible(string s)
   return nr;
 }
 
-int solA(istream &in)
+int sol(istream &in, auto fcn)
 {
   int ret{0};
   string s;
   getline(in,s);
   while(!s.empty())
     {
-      ret+=possible(s);
+      ret+=fcn(s);
       getline(in,s);
     }
   return ret;
 }
-	 
+
+int solA(istream &in)
+{
+  return sol(in, possible);
+}
+
+int power(string s)
+{
+  istringstream in(s);
+  string slask;
+  in>>slask;
+  assert(slask=="Game");
+  string nrStr;
+  in>>nrStr;//1:
+
+  map<Color, int> ret;
+  string colorStr;
+  int count;
+  in>>count>>colorStr;
+  while(not colorStr.empty())
+    {
+      auto c = color(colorStr);
+      ret[c] = max(ret[c], count);
+      colorStr.clear();
+      in>>count>>colorStr;
+    }
+  return accumulate(ret.begin(),
+		    ret.end(),
+		    1,
+		    [](auto lhs, auto rhs)
+		    {
+		      return lhs * rhs.second;
+		    });
+}
+
+
+int solB(istream &in)
+{
+  return sol(in, power);
+}
+
 
 using namespace testing;
 
@@ -79,7 +120,22 @@ TEST(possible, example)
 
   {
     ifstream in(INPUT);
-    EXPECT_THAT(solA(in), Eq(8));
+    EXPECT_THAT(solA(in), Eq(2541));
   }
   
+}
+
+TEST(power, example)
+{
+  EXPECT_THAT(power( "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green" ), Eq(48));
+
+  {
+    ifstream in(EXAMPLE);
+    EXPECT_THAT(solB(in), Eq(2286));
+  }
+
+  {
+    ifstream in(INPUT);
+    EXPECT_THAT(solB(in), Eq(66016));
+  }
 }
