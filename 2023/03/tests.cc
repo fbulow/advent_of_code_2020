@@ -23,14 +23,6 @@ bool operator==(Coord const &a, Coord const &b)
 }
 
 using Positions = vector<Coord>;
-Positions range(int row, int startCol, int endCol)
-{
-  Positions ret;
-  ret.reserve(endCol-startCol);
-  while(startCol < endCol)
-    ret.emplace_back(row, startCol++);
-  return ret;
-}
 
 struct Number{
   int value;
@@ -91,15 +83,18 @@ bool isSymbol(char c)
   
 }
 
-struct Symbols : Positions
+template<auto FCN>
+struct PosMatching : Positions
 {
-  Symbols() = default;
-  Symbols& read(int row, string const & s)
+public:
+  
+  PosMatching() = default;
+  PosMatching& read(int row, string const & s)
   {
     int col =0;
     for(char c:s)
       {
-	if(isSymbol(c))
+	if(FCN(c))
 	  emplace_back(row, col);
 	col++;
       }
@@ -107,8 +102,10 @@ struct Symbols : Positions
   }
 };
 
-template<class T>
-auto solA(T &&in)
+using Symbols = PosMatching<isSymbol>;
+
+
+auto solA(auto &&in)
 {
   Symbols s;
   Numbers n;
@@ -140,26 +137,10 @@ auto solA(T &&in)
   return ret;
 }
 
-struct LooksLikeGears : Positions
-{
-  LooksLikeGears() = default;
-  LooksLikeGears& read(int row, string const & s)
-  {
-    int col =0;
-    for(char c:s)
-      {
-	if(c=='*')
-	  emplace_back(row, col);
-	col++;
-      }
-    return *this;
-  }
-};
+using LooksLikeGears = PosMatching<[](char c){return c=='*';}>;
 
 
-
-template<class T>
-auto solB(T &&in)
+auto solB(auto &&in)
 {
   Numbers n;
   LooksLikeGears s;
@@ -234,11 +215,6 @@ TEST(Symbols, ctor)
   EXPECT_THAT(Symbols().read(0, ".*..2."), ElementsAre(Coord{0, 1}));
   EXPECT_THAT(Symbols().read(1, ".*..2."), ElementsAre(Coord{1, 1}));
   EXPECT_THAT(Symbols().read(1, "**..2"), ElementsAre(Coord{1,0}, Coord{1, 1}));
-}
-
-TEST(Positions, ctor)
-{
-  EXPECT_THAT(range(2, 5, 6), ElementsAre(Coord{2, 5}));
 }
 
 TEST(Numbers, row)
