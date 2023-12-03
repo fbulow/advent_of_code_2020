@@ -140,8 +140,86 @@ auto solA(T &&in)
   return ret;
 }
 
+struct LooksLikeGears : Positions
+{
+  LooksLikeGears() = default;
+  LooksLikeGears& read(int row, string const & s)
+  {
+    int col =0;
+    for(char c:s)
+      {
+	if(c=='*')
+	  emplace_back(row, col);
+	col++;
+      }
+    return *this;
+  }
+};
+
+
+
+template<class T>
+auto solB(T &&in)
+{
+  Numbers n;
+  LooksLikeGears s;
+  string str;
+  getline(in, str);
+  int row = 0;
+  while(!str.empty())
+    {
+      n.read(row, str);
+      s.read(row, str);
+
+      str.clear();
+      getline(in, str);
+      row++;
+    }
+
+  auto GearRatio = [n](Coord const & c)
+  {
+    int count{0};
+    int ret{1};
+    
+    for(auto const &num: n)
+      if(num.adjacent(c))
+	{
+	  ret*=num.value;
+	  count++;
+	}
+    if(count==2)
+      return ret;
+    else
+      return 0;
+  };
+
+  return accumulate(s.begin(),
+		    s.end(),
+		    0,
+		    [GearRatio](long long int sum, Coord const &c)
+		    {
+		      return sum+GearRatio(c);
+		    });
+}
+
 
 using namespace testing;
+
+TEST(solB, example)
+{
+  istringstream in("467..114..\n"
+		   "...*......\n"
+		   "..35..633.\n"
+		   "......#...\n"
+		   "617*......\n"
+		   ".....+.58.\n"
+		   "..592.....\n"
+		   "......755.\n"
+		   "...$.*....\n"
+		   ".664.598..\n");
+  ASSERT_THAT(solB(in), Eq(467835));
+  ASSERT_THAT(solB(ifstream(INPUT)), Eq(84399773));
+}
 
 TEST(Input, example)
 {
