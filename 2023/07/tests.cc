@@ -1,22 +1,31 @@
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
-
 #include <algorithm>
 #include <fstream>
 #include <numeric>
 #include <sstream>
 #include <string>
 #include <set>
+#include <map>
+#include <cassert>
+#include <vector>
 using namespace std;
 
 using Int = long long unsigned int;
-
+using Card = char;
+using Type = int;
+using Histogram = map<Card, int>;
 struct Hand : string
 {
   Hand() = default;
   Hand(char const * c)
     : string{c[0], c[1], c[2], c[3], c[4]}
   {}
+  operator Histogram() const
+  {
+    map<Card, int> ret;
+    for(Card c:*this)
+      ret[c]++;
+    return ret;
+  }
 };
 
 ostream &operator<<(ostream &out, Hand const &h)
@@ -25,9 +34,11 @@ ostream &operator<<(ostream &out, Hand const &h)
   return out << a;
 }
 
-
-using Card = char;
-using Type = int;
+void PrintTo(Hand const &h, std::ostream* out)
+{
+  string const &s = h;
+  (*out) << h;
+}
 
 constexpr Type High_card	= 1;
 constexpr Type One_pair		= 2;
@@ -46,11 +57,14 @@ int largestCount(map<Card, int> const &s)
   return ret;
 }
 
-Type type(Hand const&h)
+auto largestCount(vector<int> const &s)
 {
-  map<Card, int> s;
-  for(Card c:h)
-    s[c]++;
+  return *s.rbegin();
+}
+
+
+Type type(vector<int> const &s)
+{
   switch(s.size())
     {
     case 1:
@@ -83,27 +97,33 @@ Type type(Hand const&h)
   return One_pair;
 }
 
-int cardValue(Card c)
+Type type(Histogram const &h)
 {
-  constexpr string_view  s("AKQJT98765432");
+  vector<int> s;
+  transform(h.begin(),
+	    h.end(),
+	    back_inserter(s),
+	    [](auto const &x){return x.second;});
+  sort(s.begin(), s.end());
+  return type(s);
+}
+
+int cardValue(Card c, string_view s)
+{
   return s.size()-s.find(c);
 }
 
-bool pairCompare(auto lh, auto rh)
+bool pairCompare(auto lh, auto rh, auto order)
 {
   if(*lh==*rh)
-    return pairCompare(next(lh), next(rh));
+    return pairCompare(next(lh), next(rh), order);
   else 
-    return (cardValue(*lh) < cardValue(*rh));
-
+    return (cardValue(*lh, order) < cardValue(*rh, order));
 }
 
-bool rhHigherHasCard(Hand const & lh, Hand const & rh)
+bool rhHigherHasCard(Hand const & lh, Hand const & rh, string_view order)
 {
-  auto l = lh.cbegin();
-  auto r = rh.cbegin();
-
-  return pairCompare(lh.begin(), rh.begin());
+  return pairCompare(lh.begin(), rh.begin(), order);
 }
 
 bool operator<(Hand const &lhs, Hand const &rhs)
@@ -118,13 +138,49 @@ bool operator<(Hand const &lhs, Hand const &rhs)
   else if (lt>rt)
     return false;
   else
-    return rhHigherHasCard(lhs, rhs);
+    return rhHigherHasCard(lhs, rhs, string_view("AKQJT98765432"));
 }
 
-auto solA(istream &&in)
-{
-  map<Hand, Int> m;
 
+auto signatureB(Histogram const &s)
+{
+  vector<int> ret;
+  int jCount{0};
+  for(auto const & x:s)
+    if (x.first=='J')
+      jCount+=x.second;
+    else
+      ret.push_back(x.second);
+  if(ret.empty())
+    ret.push_back(jCount);
+  else
+    {
+      sort(ret.begin(), ret.end());
+      (*ret.rbegin())+=jCount;
+    }
+  return ret;
+}
+
+Type typeB(Histogram s)
+{
+  return type(signatureB(s));
+}
+
+
+bool lessB(Hand const &lhs, Hand const &rhs)
+{
+  auto lt = typeB(lhs);
+  auto rt = typeB(rhs);
+  if(lt<rt)
+    return true;
+  else if (lt>rt)
+    return false;
+  else
+    return rhHigherHasCard(lhs, rhs, string_view("AKQT98765432J"));
+}
+
+auto sol(istream &&in, auto &&m)
+{
   string s;
   Hand hand;
   Int bid;
@@ -148,8 +204,60 @@ auto solA(istream &&in)
   return ret;
 }
 
+auto solB(istream &&in)
+{
+  auto lb = [](auto const& a, auto const& b){return lessB(a,b);};
+  map<Hand, Int, decltype(lb)> s;
+  return sol(move(in), move(s));
+}
+
+auto solA(istream &&in)
+{
+  return sol(move(in), map<Hand, Int>());
+}
+
+
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 using namespace testing;
+
+TEST(signatureB, several)
+{
+  EXPECT_THAT(signatureB(Hand("23456")), ElementsAre(1,1,1,1,1));
+  EXPECT_THAT(signatureB(Hand("J3456")), ElementsAre(1,1,1,2));
+  EXPECT_THAT(signatureB(Hand("22456")), ElementsAre(1,1,1,2));
+}
+
+TEST(solB, input)
+{
+  EXPECT_THAT(solB(ifstream(EXAMPLE)), Eq(5905));
+  EXPECT_THAT(solB(ifstream(INPUT)), Eq(249515436));
+}
+
+TEST(lessB, examples)
+{
+  ASSERT_THAT(typeB(Hand("QQQJA")), Eq(Four_of_a_kind));  
+  ASSERT_THAT(typeB(Hand("T55J5")), Eq(Four_of_a_kind));  
+  EXPECT_TRUE(lessB("T55J5", "QQQJA"));
+
+  EXPECT_THAT(typeB(Hand("T55J5")), Eq(Four_of_a_kind));
+  EXPECT_TRUE(lessB("KK677", "T55J5"));
+}
+
+TEST(solB, example)
+{
+  auto lb = [](auto const& a, auto const& b){return lessB(a,b);};
+  set<Hand, decltype(lb)> s{
+    "32T3K",
+    "KK677",
+    "T55J5",
+    "KTJJT",
+    "QQQJA"
+  };
+
+  EXPECT_THAT(s, ElementsAre("32T3K", "KK677", "T55J5", "QQQJA", "KTJJT"));
+}
 
 TEST(solA, example)
 {
@@ -181,33 +289,35 @@ TEST(operatorLt_of_Hand, own)
 
 TEST(rhHigherHasCard, example)
 {
-  EXPECT_TRUE(rhHigherHasCard("23457", "234A7"));
-  EXPECT_FALSE(rhHigherHasCard("234A7", "23457"));
+  EXPECT_TRUE(rhHigherHasCard("23457", "234A7", string_view("AKQJT98765432")));
+  EXPECT_FALSE(rhHigherHasCard("234A7", "23457", string_view("AKQJT98765432")));
 }
 
 TEST(cardValue, examples)
 {
- EXPECT_THAT(cardValue('K'), Lt(cardValue('A')));
- EXPECT_THAT(cardValue('Q'), Lt(cardValue('K')));
- EXPECT_THAT(cardValue('J'), Lt(cardValue('Q')));
- EXPECT_THAT(cardValue('T'), Lt(cardValue('J')));
- EXPECT_THAT(cardValue('9'), Lt(cardValue('T')));
- EXPECT_THAT(cardValue('8'), Lt(cardValue('9')));
- EXPECT_THAT(cardValue('7'), Lt(cardValue('8')));
- EXPECT_THAT(cardValue('6'), Lt(cardValue('7')));
- EXPECT_THAT(cardValue('5'), Lt(cardValue('6')));
- EXPECT_THAT(cardValue('4'), Lt(cardValue('5')));
- EXPECT_THAT(cardValue('3'), Lt(cardValue('4')));
- EXPECT_THAT(cardValue('2'), Lt(cardValue('3')));
+  auto cv = [](Card c){return cardValue(c, "AKQJT98765432");};
+  
+ EXPECT_THAT(cv('K'), Lt(cv('A')));
+ EXPECT_THAT(cv('Q'), Lt(cv('K')));
+ EXPECT_THAT(cv('J'), Lt(cv('Q')));
+ EXPECT_THAT(cv('T'), Lt(cv('J')));
+ EXPECT_THAT(cv('9'), Lt(cv('T')));
+ EXPECT_THAT(cv('8'), Lt(cv('9')));
+ EXPECT_THAT(cv('7'), Lt(cv('8')));
+ EXPECT_THAT(cv('6'), Lt(cv('7')));
+ EXPECT_THAT(cv('5'), Lt(cv('6')));
+ EXPECT_THAT(cv('4'), Lt(cv('5')));
+ EXPECT_THAT(cv('3'), Lt(cv('4')));
+ EXPECT_THAT(cv('2'), Lt(cv('3')));
 }
 
 TEST(type, examples)
 {
-  EXPECT_THAT(type("AAAAA"), Eq(Five_of_a_kind));
-  EXPECT_THAT(type("AA8AA"), Eq(Four_of_a_kind));
-  EXPECT_THAT(type("23456"), Eq(High_card));
-  EXPECT_THAT(type("23332"), Eq(Full_house));
-  EXPECT_THAT(type("TTT98"), Eq(Three_of_a_kind));
-  EXPECT_THAT(type("23432"), Eq(Two_pair));
-  EXPECT_THAT(type("23456"), Eq(High_card));
+  EXPECT_THAT(type(Hand("AAAAA")), Eq(Five_of_a_kind));
+  EXPECT_THAT(type(Hand("AA8AA")), Eq(Four_of_a_kind));
+  EXPECT_THAT(type(Hand("23456")), Eq(High_card));
+  EXPECT_THAT(type(Hand("23332")), Eq(Full_house));
+  EXPECT_THAT(type(Hand("TTT98")), Eq(Three_of_a_kind));
+  EXPECT_THAT(type(Hand("23432")), Eq(Two_pair));
+  EXPECT_THAT(type(Hand("23456")), Eq(High_card));
 }
