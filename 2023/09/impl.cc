@@ -27,7 +27,8 @@ auto nextValue(vector<Int> v)
     }
 }
 
-auto solA(istream &&in)
+template<auto nxtValue>
+auto sol(istream &&in)
 {
   Int ret = 0;
   string line;
@@ -39,25 +40,24 @@ auto solA(istream &&in)
 	vector<Int> v;
 	while(!(is>>i).fail())
 	  v.push_back(i);
-	ret += nextValue(v);
+	ret += nxtValue(v);
       }
   return ret;
+}
+	 
+
+auto solA(istream &&in)
+{
+  return sol<nextValue>(std::move(in));
 }
 
 auto solB(istream &&in)
 {
-  Int ret = 0;
-  string line;
-  while(getline(in,line))
-    if(!line.empty())
-      {
-	istringstream is(line);
-	Int i;
-	vector<Int> v;
-	while(!(is>>i).fail())
-	  v.push_back(i);
-	reverse(v.begin(), v.end());
-	ret += nextValue(v);
-      }
-  return ret;
-}
+  return sol<
+    [](vector<Int> x)
+    {
+      reverse(x.begin(), x.end());
+      return nextValue(x);
+    }>(std::move(in));
+}	     
+  

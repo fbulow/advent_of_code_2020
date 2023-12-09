@@ -32,6 +32,6 @@ TEST(solB, example)
 	      Eq(2));
   ASSERT_THAT(
 	      solB(ifstream(INPUT)),
-	      Eq(0));
+	      Eq(867));
 }
 
