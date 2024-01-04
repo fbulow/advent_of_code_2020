@@ -48,79 +48,20 @@ def countGardners(garden):
     return sum(sum(isGardner(x) for x in row) for row in garden)
 
 
-def solA(file):
-    return countGardners(iter(64, addWalls(readFile(file))))
+def solA(file, N=64):
+    return countGardners(iter(N, addWalls(readFile(file))))
+
+
+if __name__ == '__main__':
+
+    assert(solA("input")==3660)
     
 
-def genIsRock(rocks, rows, cols):
-    def ret(pos):
-        return (pos[0]%rows, pos[1]%cols) in rocks
-    return ret
-    
 
-def adjacent(pos):
-    row, col = pos
-    return ((row-1, col),
-            (row+1, col),
-            (row,   col-1),
-            (row,   col+1))
-    
-
-def isAdjacentB(pos, permanent, current):
-    for npos in adjacent(pos):
-        if npos in permanent: return True
-        elif npos in current: return True
-    return False
-
-def iterB(N,
-          isRock,
-          edge,
-          counted,
-          retA, retB
-          ):
-    if N==-1:
-        return retA
-    else:
-        newEdge = set() #new current
-        for pos in edge:
-            if pos in counted:
-                pass
-            elif isRock(pos):
-                pass
-            else:
-                retB = retB+1
-                for p in adjacent(pos):
-                    newEdge.add(p)
-    return iterB(N-1,
-                 isRock,
-                 newEdge,
-                 edge.union(counted),
-                 retB, retA #retA and retB intentionally swapped
-                 )
-
-def solB(file, N = 26501365):
-    rocks = set()
-    newEdge = set();
-
-    data = readFile(file)
-    for row in range(len(data)):
-        for col in range(len(data[row])):
-            c = data[row][col]
-            if c=="#":
-                rocks.add((row,col))
-            elif c=="S":
-                newEdge.add((row,col))
-    return iterB(N,
-                 genIsRock(rocks, len(data), len(data[0])),
-                 newEdge,
-                 set(),
-                 0,0)
-                 
-
-print((solB("example", 6), "16 garden plots."))
-print((solB("example", 10 ), "50 garden plots."))
-print((solB("example", 50 ), "1594 garden plots."))
-print((solB("example", 100), "6536 garden plots."))
+    print((solA("example", 6), "16 garden plots."))
+    print((solA("example", 10 ), "50 garden plots."))
+    print((solA("example", 50 ), "1594 garden plots."))
+    print((solA("example", 100), "6536 garden plots."))
 
     
                 
