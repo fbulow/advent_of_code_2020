@@ -52,6 +52,7 @@ def solA(file, N=64):
     return countGardners(iter(N, addWalls(readFile(file))))
 
 
+
 if __name__ == '__main__':
 
     assert(solA("input")==3660)

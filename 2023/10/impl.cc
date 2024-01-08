@@ -43,10 +43,15 @@ public:
     assert(false);
   }
   friend bool operator==(Pos const &,Pos const &);
+  friend bool operator<(Pos const &,Pos const &);
 };
 
 bool operator==(Pos const &,Pos const &) = default;
+bool operator<(Pos const &,Pos const &) = default;
 
+
+class Map;
+Dir initialDir(Map const &m, Pos const & initialPos);
 
 struct Map : vector<string>
 {
@@ -54,6 +59,13 @@ struct Map : vector<string>
   Map(initializer_list<string> x)
     :vector<string>(x)
   {}
+  Map(istream &&in)
+  {
+    string row;
+    while(getline(in,row))
+      push_back(row);
+  }
+
   Tile& at(Pos const &p) {return (*this)[p.row()][p.col()];}
   Tile const & at(Pos const &p) const {return (*this)[p.row()][p.col()];}
 };

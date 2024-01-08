@@ -7,19 +7,20 @@
 #include <map>
 #include <cassert>
 #include <vector>
+
 using namespace std;
 
+using Int = long long;
 
 constexpr size_t Left  = 0;
 constexpr size_t Right = 1;
 
-
 struct Navigation
 {
   string s;
-  int pos{0};
+  Int pos{0};
 
-  int nxt()
+  Int nxt()
   {
     pos%=s.size();
     switch(s[pos++])
@@ -66,7 +67,7 @@ struct Input
   }
   auto solA() 
   {
-    int ret{0};
+    Int ret{0};
     string pos = "AAA";
     while(pos!="ZZZ")
       {
@@ -76,7 +77,7 @@ struct Input
     return ret;
   }
 
-  auto solB() 
+  auto solBnaive() 
   {
     long long unsigned ret{0};
     set<string> pos;
@@ -101,3 +102,85 @@ struct Input
     return ret;
   }
 };
+
+
+struct Seq
+{
+  Int offset;
+  Int period; //Add this to get to the next time when it is "true" ;-)
+
+  static Seq alwaysTrue()
+  {return {0, 1};}
+
+  Seq(Int firstTime, Int secondTime)
+    :offset(firstTime)
+    ,period(secondTime - firstTime) 
+  {}
+  
+  Seq merge(Seq other) const
+  {
+     
+    
+    other.period*=period;
+
+    k*x + m = i*y + n
+
+      0 + m%k = (i*y)%k + n%k
+
+      (m-n)%k = (i*y)%k
+      
+      
+    auto p = other.offset 
+    return other;
+  }
+};
+
+
+
+/*
+Int solveB(vector<string> starts,
+       Navigation const &n,
+       map<string, vector<string>> const &loc)
+{
+  vector<Sequence> s{Sequence::alwaysTrue()};
+  
+  for(auto const &start:starts)
+    {
+      vector<Sequence> tmp;
+      for(auto const &newSeq : Sequences(start,n,loc))
+	{
+	  for(auto const &oldSeq :s)
+	    tmp.emplace_back(newSeq.merege(oldSeq));
+	}
+      s = tmp;
+    }
+
+  return min_element(s.begin(),
+		     s.end(),
+		     [](Sequence const &s)
+		     {
+		       return s.offset;
+		     })
+}
+
+
+struct SolB:Input
+{
+  SolB(Input&& inp)
+    :Input(move(inp))
+  {
+    
+  }
+
+  vector<string> startPositions() const
+  {
+    //TODO
+  }
+
+  auto operator()()
+  {
+    return solveB(startPositions(), n, loc);
+  }
+}
+
+/**/

@@ -28,7 +28,7 @@ TEST(solA, example_and_input)
   ASSERT_THAT(Input(ifstream(INPUT)).solA(), Eq(13301));
 }
 
-TEST(solB, example_and_input)
+TEST(solB, example)
 {
   istringstream example("LR\n"
 			"\n"
@@ -41,7 +41,20 @@ TEST(solB, example_and_input)
 			"22Z = (22B, 22B)\n"
 			"XXX = (XXX, XXX)\n");
 
-  ASSERT_THAT(Input(move(example)).solB(), Eq(6));
-  ASSERT_THAT(Input(ifstream(INPUT)).solB(), Eq(13301));
+  ASSERT_THAT(Input(std::move(example)).solBnaive(), Eq(6));
+  //  ASSERT_THAT(Input(ifstream(INPUT)).solB(), Eq(13301));
 }
 
+TEST(Sequence, merge)
+{
+  EXPECT_EQ(1,
+	    Seq(1, 5).merge(Seq(1, 10)).offset);
+  EXPECT_EQ(8,
+	    Seq(1, 5).merge(Seq(1, 3)).period);
+  
+  EXPECT_EQ(5,
+	    Seq(2, 5 // 2, 5, 8, 11
+		).merge(
+			Seq(1, 3) //1, 3, 5
+			).offset);
+}

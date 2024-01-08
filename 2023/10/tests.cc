@@ -37,6 +37,13 @@ struct Navigation{
   Map m;
   Pos p;
   Dir d;
+
+  template<class MAP>
+  Navigation(MAP && m_)
+  :m(std::forward<MAP>(m_))
+    ,p(findS(m))
+    ,d(initialDir(m, p))
+  {}
   
   void step()
   {
@@ -46,32 +53,90 @@ struct Navigation{
   }
 };
 
-long int solA(Map const & m)
+struct NavigationA : Navigation
 {
-  auto initialPos = findS(m);
+  NavigationA(Map const & m)
+    :NavigationA(Navigation(m))
+  {}
+  NavigationA(istream && in)
+    :NavigationA(Map(std::move(in)))
+  {}
+  NavigationA(Navigation&& n)
+    :Navigation(std::move(n))
+  {}
+  
+  long int count{0};
+  auto ans() const {return furthestDistance(count);}
+  void step(){count++;Navigation::step();}
+};
 
-  Navigation n{m, initialPos, initialDir(m, initialPos)};
+struct NavigationB : Navigation
+{
+  NavigationB(Map const & m)
+    :NavigationB(Navigation(m))
+  {}
+  NavigationB(istream && in)
+    :NavigationB(Map(std::move(in)))
+  {}
+  NavigationB(Navigation&& n)
+    :Navigation(std::move(n))
+  {}
+  
+  void step(){;Navigation::step();}
+  int ans() 
+  {
+    return 0;
+  }
+};
 
-  long int count{1};
+
+long int sol(auto n)
+{
+
+  auto initialPos = n.p;
+
   n.step();
   
   while(n.p != initialPos)
-    {
-      n.step();
-      count++;
-    }
+    n.step();
   
-  return furthestDistance(count);
+  return n.ans();
 }
 
-long int solA(istream &&in)
+long int solA(NavigationA n)
 {
-  Map m;
-  string row;
-  while(getline(in,row))
-    m.push_back(row);
-  return solA(m);
+  return sol(n);
 }
+
+long int solB(NavigationB n)
+{
+  return sol(n);
+}
+
+using Quadrant = int;
+
+struct LoopCounter
+{
+  int count{0};
+  int quadrant{0};
+
+  LoopCounter& push(Quadrant q)
+  {
+    if(quadrant==0)
+      {}
+    else if(quadrant==1 && q==4)
+      count--;
+    else if(quadrant==4 && q==1)
+      count++;
+    else if(q>quadrant)
+      count++;
+    else if(q<quadrant)
+      count--;
+    quadrant=q;
+    return *this;
+  }
+};
+
 
 /**/
 
@@ -79,6 +144,31 @@ long int solA(istream &&in)
 #include <gmock/gmock.h>
 
 using namespace testing;
+
+TEST(LoopCounter, examples)
+{
+  // 1|2
+  // -+-
+  // 4|3
+
+  auto sut = LoopCounter();
+  sut.push(1);
+  EXPECT_THAT(sut.count, Eq(0));
+  sut.push(2);
+  EXPECT_THAT(sut.count, Eq(1));
+  sut.push(1);
+  EXPECT_THAT(sut.count, Eq(0));
+  sut.push(4);
+  EXPECT_THAT(sut.count, Eq(-1));
+  sut.push(1);
+  EXPECT_THAT(sut.count, Eq(0));
+}
+
+TEST(DISABLED_solB, example)
+{
+  ASSERT_THAT(solB(ifstream(EXAMPLE)), Eq(10));
+  EXPECT_THAT(solB(ifstream(INPUT)), Eq(0));
+}
 
 TEST(dirFromTile, example)
 {
