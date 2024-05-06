@@ -1,0 +1,9 @@
+{
+    "version": 4,
+    "vendor": {
+        "conan": {}
+    },
+    "include": [
+        "/home/fbulow/github/advent_of_code_2020/2023/14/build/CMakePresets.json"
+    ]
+}
