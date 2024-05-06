@@ -34,3 +34,5 @@ TAGS
 *.app
 
 build/
+
+*.py~
