@@ -25,5 +25,9 @@ def doubles(places):
 
 print(len(set(ag(inst(chars)))))
 
+
+def oe(inst,d): return (x for i, x in enumerate(inst) if i%2==d)
+def even(inst): return oe(inst,1)
+def odd(inst): return oe(inst,0)
     
-    
+print(len(set(ag(inst(odd(chars)))).union(set(ag(inst(even(chars)))))))
