@@ -4,7 +4,7 @@ def grid():
     ret = dict()
     for r in range(1000):
         for c in range(1000):
-            ret[(r,c)]=False
+            ret[(r,c)]=0
     return ret
 
 on = "on"
@@ -34,26 +34,13 @@ class Inst():
     def apply(self, grid):
         if self.cmd == on:
             for c in self.coords():
-                g[c]=True
+                g[c]=g[c]+1
         elif i.cmd == off:
             for c in self.coords():
-                g[c]=False
+                g[c]=max(0,g[c]-1)
         else:
             for c in self.coords():
-                g[c] = not(g[c])
-    
-assert(
-    Inst("turn on 489,959 through 759,964").cmd == on)
-assert(
-    Inst("turn off 489,959 through 759,964").cmd == off)
-assert(
-    Inst("toggle 489,959 through 759,964").cmd == toggle)
-
-assert(
-    Inst("toggle 489,959 through 759,964").top_left == (489,959))
-assert(
-    Inst("toggle 489,959 through 759,964").bottom_right == (759,964))
-
+                g[c] = g[c]+2
 
 g = grid()
 for i in (Inst(row) for row in open("input")):
