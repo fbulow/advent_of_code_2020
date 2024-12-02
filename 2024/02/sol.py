@@ -7,14 +7,11 @@ def diffs(line):
     v = list(as_ints(line))
     return (b-a for a,b in zip(v[:-1], v[1:]))
 
-def is_ok_increaseing(line):
-    return all((x in (1,2,3) for x in diffs(line)))
-
-def is_ok_decreaseing(line):
-    return all((x in (-1,-2,-3) for x in diffs(line)))
+def all_in(line, accepted):
+    return all((x in accepted for x in diffs(line)))
 
 def is_ok(line):
-    return is_ok_increaseing(line) or is_ok_decreaseing(line)
+    return all_in(line,(1,2,3)) or all_in(line,(-1, -2, -3))
 
 def solA(lines=open('input').readlines()):
     return sum(1 for line in lines if is_ok(line))
