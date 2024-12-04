@@ -34,11 +34,6 @@ def count_xmas(lines):
     return _count_xmas(lines)+_count_xmas(mirror(lines))
 
 
-
-def solB(lines = puzzle_input()):
-    pass
-
-
 def solA(lines = puzzle_input()):
     return sum((
         count_xmas(lines),
@@ -46,10 +41,64 @@ def solA(lines = puzzle_input()):
         count_xmas(diagonals(lines)),
         count_xmas(diagonals(mirror(lines)))
         ))
-                
+
+
+def A_counts(row, col, lines):
+    return all(lines[r][c]==char for char, r, c in\
+               (('M', row-1, col-1),
+                ('S', row-1, col+1),
+                ('A', row, col),
+                ('M', row+1, col-1),
+                ('S', row+1, col+1),
+                ))
+
+def count_all_example_x(lines):
+    ret = 0
+    for row in range(1, len(lines)-1):
+        for col in range(1, len(lines[0])-1):
+            if A_counts(row, col, lines):
+                ret+=1
+    return ret
+            
+
+def solB(lines = puzzle_input()):
+    return count_all_example_x(lines) +\
+        count_all_example_x(mirror(lines)) +\
+        count_all_example_x(transpose(mirror(lines))) +\
+        count_all_example_x(mirror(transpose(lines)))
 
 
 class Test_(TestCase):
+    def test_solB(self):
+        self.assertEqual(9,
+                         solB([".M.S......",
+                              "..A..MSMS.",
+                              ".M.S.MAA..",
+                              "..A.ASMSM.",
+                              ".M.S.M....",
+                              "..........",
+                              "S.S.S.S.S.",
+                              ".A.A.A.A..",
+                              "M.M.M.M.M.",
+                               ".........."]))
+
+                         
+    def test_A_counts(self):
+        self.assertTrue(
+            A_counts(1, 1, "M.S .A. M.S".split()))
+        self.assertFalse(
+            A_counts(1, 1, "M.S .A. M..".split()))
+        self.assertFalse(
+            A_counts(1, 1, "M.S .A. ...".split()))
+        self.assertFalse(
+            A_counts(1, 1, "M.S ... ...".split()))
+        self.assertFalse(
+            A_counts(1, 1, "M.. ... ...".split()))
+        self.assertFalse(
+            A_counts(1, 1, "... ... ...".split()))
+
+
+
     def test_solA(self):
         self.assertEqual(1 , 
                          solA(["....X.",
@@ -77,8 +126,8 @@ class Test_(TestCase):
                                "......"]))
 
     def test_count_xmas(self):
+        self.assertEqual(1, count_xmas([" XMAS"]))
         self.assertEqual(2, count_xmas([" XMAS XMAS"]))
-        self.assertEqual(2, count_xmas([" XMAS SAMX"]))
                         
     def test_mirror(self):
         self.assertEqual("cba gfe".split(),
