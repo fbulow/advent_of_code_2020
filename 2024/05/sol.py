@@ -26,15 +26,42 @@ def in_sequence(moves, sequence):
 def middle_value(sequence):
     return sequence[len(sequence)//2]
 
+def fix_order(moves, sequence):
+    sequence = list(sequence)
+    done = False
+    while not done:
+        done = True
+        for ab in moves:
+            try:
+                ia, ib = (sequence.index(x) for x in ab)
+                if ia > ib:
+                   done=False
+                   sequence[ia], sequence[ib] = sequence[ib], sequence[ia]
+            except ValueError:
+                pass
+    return tuple(sequence)
+
 def solA(lines):
     m,s  = moves_and_sequences(lines)
     return sum(middle_value(x) for x in s if in_sequence(m, x))
 
 def solB(lines):
-    pass
+    m,s  = moves_and_sequences(lines)
+    return sum(middle_value(fix_order(m, x)) for x in s if not in_sequence(m, x))
+
 
 
 class Test_(TestCase):
+    def test_solB(self):
+        self.assertEqual(
+            123,
+            solB(puzzle_input('example')))
+        
+    def test_fix_order(self):
+        moves, seq = moves_and_sequences(puzzle_input('example'))
+        self.assertEqual(
+            (97,75,47,61,53),
+            fix_order(moves, (75,97,47,61,53)))
     def test_data(self):
         moves, seq = moves_and_sequences(puzzle_input('input'))
         self.assertTrue(all(len(set(x))==len(x) for x in seq))
