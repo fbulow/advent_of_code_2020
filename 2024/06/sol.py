@@ -13,15 +13,25 @@ def get_choord(char, lines):
         for col, c in enumerate(line):
             if char == c:
                 yield row, col
-    
-def solA(lines):
+
+
+def prep(lines):
     dir = (-1,0)
     pos = next(get_choord('^', lines))
     obstacles = set(get_choord('#', lines))
     floor = set(get_choord('.', lines))
     floor.add(pos)
-    visited = set()
+    return {"dir":dir,
+            "pos":pos,
+            "obstacles" :obstacles,
+            "floor" : floor}
+            
+                
+def solA(lines):    
+    return len(visited(**prep(lines)))
 
+def visited(pos, dir, obstacles, floor):
+    visited = set()
     while pos in floor:
         visited.add(pos)
         nxt = (pos[0]+dir[0], pos[1]+dir[1])
@@ -32,11 +42,47 @@ def solA(lines):
                     (0,-1): (-1,0) }[dir]
         else:
             pos=nxt
-    return len(visited)
+    return visited
+
+def is_loop(pos, floor, obstacles):
+    dir = (-1,0)
+    previous = set()
+    while pos in floor:
+        nxt = (pos[0]+dir[0], pos[1]+dir[1])
+        if nxt in obstacles:
+            dir = { (-1,0): (0,1),
+                    (0,1) : (1,0),
+                    (1,0) : (0,-1),
+                    (0,-1): (-1,0) }[dir]
+        else:
+            pos=nxt
+        if (pos, dir) in previous:
+            return True
+        else:
+            previous.add((pos, dir))
+    return False
+
+def candidates(pos, **arg):
+    return (x for x in visited(pos=pos, **arg) if x!=pos)
+    
 
 def solB(lines):
-    pass
+    ret = 0
+    arg = prep(lines)
+    for c in candidates(**arg):
+        floor = set((x for x in arg["floor"] if not x==c))
+        obstacles = set((x for x in arg["obstacles"]))
+        obstacles.add(c)
+        
+        if is_loop(arg["pos"], floor, obstacles):
+            ret+=1
+    return ret
+
 class Test_(TestCase):
+    def test_solB(self):
+        self.assertEqual(
+            6,
+            solB(puzzle_input('example')))
     def test_solA(self):
         self.assertEqual(
             41,
