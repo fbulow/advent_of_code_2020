@@ -39,7 +39,11 @@ def solA(lines):
     return ret
 
 def solB(lines):
-    None
+    ret = 0
+    for row in range(len(lines)):
+        for col in range(len(lines[0])):
+            ret += len(trail(lines, row, col))
+    return ret
 
 class Test_(TestCase):
     def test_solA(self):
@@ -71,6 +75,6 @@ print(f"A: {ret_a}")
 if(ret_a>=1530):
     print( "A to big")
 
-# ret_b = solB(puzzle_input('input'))
-# print(f"B: {ret_b}")
+ret_b = solB(puzzle_input('input'))
+print(f"B: {ret_b}")
 # #main()
