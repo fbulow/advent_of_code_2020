@@ -45,6 +45,9 @@ def contrib(stone, levels, cache=dict()):
         cache[(stone,levels)] = ret
         return ret
 
+def solB(lines):
+    return solA(lines, 75)
+
 class Test_(TestCase):
     def test_contrib(self):
         self.assertEqual(
